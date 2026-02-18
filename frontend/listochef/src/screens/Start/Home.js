@@ -20,7 +20,10 @@ import ProfileIconActive from "../../../assets/icons/profile_iconActive.svg";
 const Tab = createBottomTabNavigator();
 
 const ICONS = {
-  NavigationRecipeList: { active: RecipeListIconActive, inactive: RecipeListIcon },
+  NavigationRecipeList: {
+    active: RecipeListIconActive,
+    inactive: RecipeListIcon,
+  },
   GroceryList: { active: GroceryListIconActive, inactive: GroceryListIcon },
   Pantry: { active: PantryIconActive, inactive: PantryIcon },
   Expenses: { active: ExpensesIconActive, inactive: ExpensesIcon },
@@ -39,8 +42,8 @@ const Home = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       headerShown: false,
-      tabBarStyle: { backgroundColor: "#173509", height: 100 },
-      tabBarItemStyle: { paddingTop: 10 },
+      tabBarStyle: { backgroundColor: "#173509" },
+      tabBarItemStyle: { paddingTop: 17 },
       tabBarShowLabel: false,
       tabBarIcon: ({ focused, size }) => {
         const iconSize = size * 1.5;
