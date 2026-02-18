@@ -5,8 +5,52 @@ import {
   ImageBackground,
   Pressable,
 } from "react-native";
+import { useState, useEffect, useContext } from "react";
 
 const RecipesList = (props) => {
+  const [recipeList, setRecipeList] = useState([]);
+
+  useEffect(() => {
+    setRecipeList([
+      {
+        id: "1",
+        recipeName: "Spaghetti Bolognese",
+        type: "pasta",
+        time: 20,
+        difficulty: "easy",
+        photo: "",
+        creationDate: "17/02/2026",
+        isSaved: true,
+      },
+      {
+        id: "2",
+        recipeName: "Paella",
+        type: "arroz, conejo",
+        time: 60,
+        difficulty: "hard",
+        photo: "",
+        creationDate: "18/02/2026",
+        isSaved: true,
+      },
+      {
+        id: "3",
+        recipeName: "Bolognese Sauce",
+        type: "sauce, meat, vegetable",
+        time: 30,
+        difficulty: "medium",
+        photo: "",
+        creationDate: "15/02/2026",
+        isSaved: true,
+      },
+    ]);
+  }, []);
+
+  useEffect(() => {
+    console.log(recipeList);
+    console.log("hola");
+    console.log(recipeList[1].recipeName);
+  }, [recipeList]);
+
   return (
     <ImageBackground
       source={require("../../../assets/fondoApp.png")}
