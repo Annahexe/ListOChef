@@ -1,5 +1,6 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
+
 import Start from "./src/screens/Start/Start";
 import Login from "./src/screens/Start/Login/Login";
 import Register from "./src/screens/Start/Register/Register";

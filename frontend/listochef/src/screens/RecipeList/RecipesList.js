@@ -9,7 +9,7 @@ import {
 const RecipesList = (props) => {
   return (
     <ImageBackground
-      source={require('../../../assets/fondoApp2.png')}
+      source={require('../../../assets/fondoApp.png')}
       style={styles.background}
       resizeMode="cover">
       <View style={styles.overlay}>
