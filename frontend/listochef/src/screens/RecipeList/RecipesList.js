@@ -3,7 +3,10 @@ import { useState, useEffect, useContext } from "react";
 import RecipeCard from "../../components/RecipeCard";
 import AddCircleButton from "../../components/AddCircleButton";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+
 import { Seeker } from "../../components/Seeker";
+import { TitleIconPage } from "../../components/TitleIconPage";
+import RecipeListTitleIcon from "../../../assets/icons/recipeList_titleIcon.svg";
 
 const RecipesList = (props) => {
   const [recipeList, setRecipeList] = useState([]);
@@ -52,7 +55,7 @@ const RecipesList = (props) => {
     <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text style={styles.title}>Recipes List</Text>
+          <TitleIconPage titleText="Recipes List" icon={RecipeListTitleIcon} />
 
           <Seeker placeholderText="Search recipe..."></Seeker>
 
@@ -92,10 +95,6 @@ const styles = StyleSheet.create({
     marginTop: 60,
     position: "relative",
     alignItems: "center",
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
   },
   tag: {
     borderRadius: 10,
