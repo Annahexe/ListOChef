@@ -1,15 +1,9 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView } from "react-native";
 import { useState, useEffect, useContext } from "react";
 import RecipeCard from "../../components/RecipeCard";
 import AddCircleButton from "../../components/AddCircleButton";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { Seeker } from "../../components/Seeker";
 
 const RecipesList = (props) => {
   const [recipeList, setRecipeList] = useState([]);
@@ -23,8 +17,7 @@ const RecipesList = (props) => {
         type: "pasta",
         time: 20,
         difficulty: "easy",
-        photo:
-          "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
+        photo: "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
         creationDate: "17/02/2026",
         isSaved: true,
       },
@@ -34,8 +27,7 @@ const RecipesList = (props) => {
         type: "arroz, conejo",
         time: 60,
         difficulty: "hard",
-        photo:
-          "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
+        photo: "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
         creationDate: "18/02/2026",
         isSaved: false,
       },
@@ -45,8 +37,7 @@ const RecipesList = (props) => {
         type: "sauce, meat, vegetable",
         time: 30,
         difficulty: "medium",
-        photo:
-          "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
+        photo: "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
         creationDate: "15/02/2026",
         isSaved: true,
       },
@@ -58,18 +49,12 @@ const RecipesList = (props) => {
   };
 
   return (
-    <ImageBackground
-      source={require("../../../assets/fondoApp.png")}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.title}>Recipes List</Text>
 
-          <View style={styles.seeker}>
-            <Text>search</Text>
-          </View>
+          <Seeker placeholderText="Search recipe..."></Seeker>
 
           <View style={styles.tag}>
             <Text style={{ color: "white" }}>Tag</Text>
@@ -77,22 +62,12 @@ const RecipesList = (props) => {
           </View>
 
           <View style={{ flex: 1, width: "100%" }}>
-            <ScrollView
-              style={{ width: "100%", marginBottom: 15 }}
-              contentContainerStyle={{ paddingBottom: 5 }}
-            >
+            <ScrollView style={{ width: "100%", marginBottom: 15 }} contentContainerStyle={{ paddingBottom: 5 }}>
               {recipeList.map((recipe, index) => (
-                <RecipeCard
-                  key={index}
-                  name={recipe.recipeName}
-                  isSaved={recipe.isSaved}
-                  image={recipe.photo}
-                ></RecipeCard>
+                <RecipeCard key={index} name={recipe.recipeName} isSaved={recipe.isSaved} image={recipe.photo}></RecipeCard>
               ))}
             </ScrollView>
-            <View
-              style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}
-            >
+            <View style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}>
               <Pressable onPress={onAddRecipe}>
                 <AddCircleButton />
               </Pressable>
@@ -121,13 +96,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-  },
-  seeker: {
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#2C5818",
-    padding: 10,
-    margin: 10,
   },
   tag: {
     borderRadius: 10,
