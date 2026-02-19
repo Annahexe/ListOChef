@@ -7,11 +7,15 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Seeker } from "../../components/Seeker";
 import { TitleIconPage } from "../../components/TitleIconPage";
 import RecipeListTitleIcon from "../../../assets/icons/recipeList_titleIcon.svg";
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
+import { FilterOrderDropdown  } from "../../components/FilterOrderDropdown";
 
 const RecipesList = (props) => {
   const [recipeList, setRecipeList] = useState([]);
   const tabBarHeight = useBottomTabBarHeight();
+  const [filterOrderValue, setFilterOrderValue] = useState("Oldest");
 
   useEffect(() => {
     setRecipeList([
@@ -61,11 +65,19 @@ const RecipesList = (props) => {
           <Seeker placeholderText="Search recipe..."></Seeker>
 
           <View style={styles.featuredRecipe}>
-            <View style={{flexDirection: "row", alignItems: "center",}}>
-            <FontAwesome5 name="history" size={26} color="white" />
-            <Text style={{ color: "white", fontSize: 20, fontWeight: 600, marginLeft: 10 }}>Last recipe seen</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <FontAwesome5 name="history" size={26} color="white" />
+              <Text style={{ color: "white", fontSize: 20, fontWeight: "600", marginLeft: 10 }}>Last recipe seen</Text>
             </View>
             <Text style={styles.label}>Potato Omelet</Text>
+          </View>
+
+          <View style={styles.filterOrderContainer}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <MaterialCommunityIcons name="calendar-blank-outline" size={28} color="black" />
+              <Text style={{ fontSize: 15, fontWeight: "600", marginLeft: 8, marginRight: 30 }}>Order by...</Text>
+              <FilterOrderDropdown filterOrderValue={filterOrderValue} setFilterOrderValue={setFilterOrderValue} />
+            </View>
           </View>
 
           <View style={{ flex: 1, width: "100%" }}>
@@ -115,6 +127,25 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 12,
     color: "white",
+  },
+  filterOrderContainer: {
+    width: "90%",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  pickerContainer: {
+    flex: 1,
+    height: 35,
+    borderWidth: 1.5,
+    borderColor: "#2C5818",
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  picker: {
+    height: 55,
+    width: "100%",
+    marginTop: -12, 
+    paddingVertical: 0,
   },
   button: {
     marginTop: 10,

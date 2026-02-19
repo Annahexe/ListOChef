@@ -1,5 +1,6 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
+import { Provider as PaperProvider } from "react-native-paper";
 
 import Start from "./src/screens/Start/Start";
 import Login from "./src/screens/Start/Login/Login";
@@ -9,6 +10,7 @@ import Home from "./src/screens/Start/Home";
 const Stack = createStackNavigator();
 
 const App = () => (
+  <PaperProvider>
   <NavigationContainer>
     <Stack.Navigator options="false" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Start" component={Start} />
@@ -17,6 +19,7 @@ const App = () => (
       <Stack.Screen name="Home" component={Home} />
     </Stack.Navigator>
   </NavigationContainer>
+  </PaperProvider>
 );
 
 export default App;
