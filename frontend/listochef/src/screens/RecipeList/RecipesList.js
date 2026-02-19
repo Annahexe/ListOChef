@@ -7,6 +7,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Seeker } from "../../components/Seeker";
 import { TitleIconPage } from "../../components/TitleIconPage";
 import RecipeListTitleIcon from "../../../assets/icons/recipeList_titleIcon.svg";
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 const RecipesList = (props) => {
   const [recipeList, setRecipeList] = useState([]);
@@ -59,9 +60,12 @@ const RecipesList = (props) => {
 
           <Seeker placeholderText="Search recipe..."></Seeker>
 
-          <View style={styles.tag}>
-            <Text style={{ color: "white" }}>Tag</Text>
-            <Text style={styles.label}>Label</Text>
+          <View style={styles.featuredRecipe}>
+            <View style={{flexDirection: "row", alignItems: "center",}}>
+            <FontAwesome5 name="history" size={26} color="white" />
+            <Text style={{ color: "white", fontSize: 20, fontWeight: 600, marginLeft: 10 }}>Last recipe seen</Text>
+            </View>
+            <Text style={styles.label}>Potato Omelet</Text>
           </View>
 
           <View style={{ flex: 1, width: "100%" }}>
@@ -92,21 +96,24 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: 60,
+    marginTop: 50,
     position: "relative",
     alignItems: "center",
   },
-  tag: {
+  featuredRecipe: {
+    width: "95%",
     borderRadius: 10,
     backgroundColor: "#4B7D33",
-    padding: 10,
+    padding: 20,
     margin: 10,
   },
   label: {
+    fontSize: 30,
+    fontWeight: "600",
     borderRadius: 10,
     backgroundColor: "#77AF5C",
     padding: 10,
-    margin: 10,
+    marginVertical: 12,
     color: "white",
   },
   button: {
