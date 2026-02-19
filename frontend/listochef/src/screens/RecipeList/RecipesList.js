@@ -4,11 +4,16 @@ import {
   View,
   ImageBackground,
   Pressable,
+  ScrollView,
 } from "react-native";
 import { useState, useEffect, useContext } from "react";
+import RecipeCard from "../../components/RecipeCard";
+import AddCircleButton from "../../components/AddCircleButton";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
 const RecipesList = (props) => {
   const [recipeList, setRecipeList] = useState([]);
+  const tabBarHeight = useBottomTabBarHeight();
 
   useEffect(() => {
     setRecipeList([
@@ -18,7 +23,8 @@ const RecipesList = (props) => {
         type: "pasta",
         time: 20,
         difficulty: "easy",
-        photo: "",
+        photo:
+          "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
         creationDate: "17/02/2026",
         isSaved: true,
       },
@@ -28,9 +34,10 @@ const RecipesList = (props) => {
         type: "arroz, conejo",
         time: 60,
         difficulty: "hard",
-        photo: "",
+        photo:
+          "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
         creationDate: "18/02/2026",
-        isSaved: true,
+        isSaved: false,
       },
       {
         id: "3",
@@ -38,18 +45,17 @@ const RecipesList = (props) => {
         type: "sauce, meat, vegetable",
         time: 30,
         difficulty: "medium",
-        photo: "",
+        photo:
+          "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
         creationDate: "15/02/2026",
         isSaved: true,
       },
     ]);
   }, []);
 
-  useEffect(() => {
-    console.log(recipeList);
-    console.log("hola");
-    console.log(recipeList[1].recipeName);
-  }, [recipeList]);
+  const onAddRecipe = () => {
+    return props.navigation.navigate("AddRecipe");
+  };
 
   return (
     <ImageBackground
@@ -60,19 +66,38 @@ const RecipesList = (props) => {
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.title}>Recipes List</Text>
+
           <View style={styles.seeker}>
             <Text>search</Text>
           </View>
+
           <View style={styles.tag}>
-            <Text style={{ color: "white" }}>search</Text>
-            <Text style={styles.label}>search</Text>
+            <Text style={{ color: "white" }}>Tag</Text>
+            <Text style={styles.label}>Label</Text>
           </View>
-          <Pressable
-            style={styles.button}
-            onPress={() => props.navigation.navigate("AddRecipe")}
-          >
-            <Text style={styles.buttonText}> + </Text>
-          </Pressable>
+
+          <View style={{ flex: 1, width: "100%" }}>
+            <ScrollView
+              style={{ width: "100%", marginBottom: 15 }}
+              contentContainerStyle={{ paddingBottom: 5 }}
+            >
+              {recipeList.map((recipe, index) => (
+                <RecipeCard
+                  key={index}
+                  name={recipe.recipeName}
+                  isSaved={recipe.isSaved}
+                  image={recipe.photo}
+                ></RecipeCard>
+              ))}
+            </ScrollView>
+            <View
+              style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}
+            >
+              <Pressable onPress={onAddRecipe}>
+                <AddCircleButton />
+              </Pressable>
+            </View>
+          </View>
         </View>
       </View>
     </ImageBackground>
@@ -81,16 +106,16 @@ const RecipesList = (props) => {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    justifyContent: "left",
+    justifyContent: "center",
   },
   overlay: {
     flex: 1,
     backgroundColor: "rgba(255, 255, 235, 0.7)",
   },
   container: {
+    flex: 1,
     marginTop: 60,
     position: "relative",
-    justifyContent: "center",
     alignItems: "center",
   },
   title: {
@@ -128,6 +153,10 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 40,
     color: "white",
+  },
+  floatingButton: {
+    position: "absolute",
+    right: 20,
   },
 });
 export default RecipesList;
