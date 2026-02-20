@@ -1,18 +1,30 @@
-import { StyleSheet, Text, View, } from 'react-native';
+import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 
 const Profile = (props) => {
   return (
-    <View style={styles.layout}>
-      <Text style={styles.title}>Profile</Text>
-    </View>
+    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
+      <View style={styles.overlay}>
+        <View style={styles.container}>
+        <Text style={styles.title}>Profile</Text>
+        </View>
+      </View>
+    </ImageBackground>
   );
 };
 const styles = StyleSheet.create({
-  layout: {
+  background: {
     flex: 1,
-    justifyContent: 'center',
-    alignContent: 'center',
-    padding: 8,
+    justifyContent: "center",
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(255, 255, 235, 0.7)",
+  },
+  container: {
+    flex: 1,
+    marginTop: 40,
+    position: "relative",
+    alignItems: "center",
   },
   title: {
     margin: 24,
