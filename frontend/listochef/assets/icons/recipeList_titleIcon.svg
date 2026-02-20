@@ -1,0 +1,23 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_d_127_115)">
+<rect x="4" width="40" height="40" rx="10" fill="#E9FFDE"/>
+<rect x="4" width="40" height="40" rx="10" fill="url(#paint0_radial_127_115)"/>
+</g>
+<path d="M12.9243 24.7645C16.6441 23.6219 20.0755 23.5425 22.8243 25.9814M12.9243 22.2496C16.6441 21.107 20.0755 21.0268 22.8243 23.4657M12.9243 19.8014C16.6441 18.6588 20.0755 18.5786 22.8243 21.0175M12.9243 17.1717C16.6441 16.0291 20.0755 15.9488 22.8243 18.3877M12.9243 14.6069C16.6441 13.4652 20.0755 13.385 22.8243 15.8239M12.9243 12.2137C16.6441 11.0711 20.0755 10.9908 22.8243 13.4297M10 7.37894L10.0917 31.5525C15.4912 29.0951 20.3334 29.4058 24.5149 33C28.9488 30.241 33.5872 28.7691 38.9083 31.5855L39 7.64157C34.5113 5.74653 29.6236 4.79817 24.5157 8.72675C20.4666 5.47714 15.122 5.36989 10 7.37894ZM26.4493 19.5084C26.3889 21.8139 27.7245 23.4235 29.7702 24.6784L34.0653 24.1235C36.7623 22.0376 36.738 20.0353 36.6541 18.0347L26.4493 19.5084ZM27.5764 13.0362L26.4187 16.4733C27.7786 16.5594 29.2137 15.9151 30.4246 17.4428L31.2476 15.0917C29.3414 15.264 28.5263 13.9128 27.5764 13.0362Z" stroke="#4B643F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<defs>
+<filter id="filter0_d_127_115" x="0" y="0" width="48" height="48" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_127_115"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_127_115" result="shape"/>
+</filter>
+<radialGradient id="paint0_radial_127_115" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(24 20) rotate(90) scale(20)">
+<stop stop-color="#2C5818" stop-opacity="0"/>
+<stop offset="1" stop-color="#8DAF7E"/>
+</radialGradient>
+</defs>
+</svg>
