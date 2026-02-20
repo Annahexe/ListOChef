@@ -11,7 +11,9 @@ const PhotoPicker = (props) => (
           color="black"
           style={{ alignSelf: "center" }}
         />
-        <Text style={{ fontSize: 20 }}>Choose your photo</Text>
+        <Text style={{ fontSize: 20, fontFamily: "InterMedium" }}>
+          Choose your photo
+        </Text>
       </Pressable>
     ) : (
       <Pressable onPress={props.choosePhoto}>

@@ -1,11 +1,11 @@
 import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-import AntDesign from "@expo/vector-icons/AntDesign";
 import * as ImagePicker from "expo-image-picker";
 
 import PhotoPicker from "../../components/PhotoPicker";
 import ItemInput from "../../components/ItemInput";
+import TitleModalScreen from "../../components/TitleModalScreen";
 
 const AddRecipe = ({ navigation }) => {
   const [form, setForm] = useState({
@@ -53,12 +53,10 @@ const AddRecipe = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.titlecontainer}>
-        <Text style={styles.title}>New Recipe</Text>
-        <Pressable onPress={() => navigation.goBack()}>
-          <AntDesign name="close" size={35} color="black" />
-        </Pressable>
-      </View>
+      <TitleModalScreen
+        title={"New Recipe"}
+        onPress={() => navigation.goBack()}
+      />
 
       <ScrollView style={styles.scrollContainer}>
         <PhotoPicker photo={form.photo} choosePhoto={choosePhoto} />
@@ -146,16 +144,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
   },
-  titlecontainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 40,
-    fontWeight: "bold",
-  },
   scrollContainer: {
     paddingLeft: 20,
     paddingRight: 20,
@@ -170,14 +158,14 @@ const styles = StyleSheet.create({
   button: {
     width: "48%",
     marginHorizontal: "1%",
-    marginVertical: 10,
+    marginBottom: 10,
     padding: 10,
     borderRadius: 20,
     textAlign: "center",
   },
   textButton: {
     fontSize: 25,
-    fontWeight: "bold",
+    fontFamily: "InterBold",
     color: "white",
     textAlign: "center",
   },

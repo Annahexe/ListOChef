@@ -11,6 +11,14 @@ import RecipeCard from "../../components/RecipeCard";
 import AddCircleButton from "../../components/AddCircleButton";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
+import { Seeker } from "../../components/Seeker";
+import { TitleIconPage } from "../../components/TitleIconPage";
+import RecipeListTitleIcon from "../../../assets/icons/recipeList_titleIcon.svg";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+
+import { FilterOrderDropdown } from "../../components/FilterOrderDropdown";
+
 const RecipesList = (props) => {
   const [recipeList, setRecipeList] = useState([]);
   const tabBarHeight = useBottomTabBarHeight();
@@ -57,6 +65,10 @@ const RecipesList = (props) => {
     return props.navigation.navigate("AddRecipe");
   };
 
+  const onViewRecipe = () => {
+    return props.navigation.navigate("ViewRecipe");
+  };
+
   return (
     <ImageBackground
       source={require("../../../assets/fondoApp.png")}
@@ -67,13 +79,47 @@ const RecipesList = (props) => {
         <View style={styles.container}>
           <Text style={styles.title}>Recipes List</Text>
 
-          <View style={styles.seeker}>
-            <Text>search</Text>
+          <Seeker placeholderText="Search recipe..."></Seeker>
+
+          <View style={styles.featuredRecipe}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <FontAwesome5 name="history" size={26} color="white" />
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 20,
+                  marginLeft: 10,
+                  fontFamily: "InterSemiBold",
+                }}
+              >
+                Last recipe seen
+              </Text>
+            </View>
+            <Text style={styles.label}>Potato Omelet</Text>
           </View>
 
-          <View style={styles.tag}>
-            <Text style={{ color: "white" }}>Tag</Text>
-            <Text style={styles.label}>Label</Text>
+          <View style={styles.filterOrderContainer}>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <MaterialCommunityIcons
+                name="calendar-blank-outline"
+                size={28}
+                color="black"
+              />
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontFamily: "MontserratSemiBold",
+                  marginLeft: 8,
+                  marginRight: 20,
+                }}
+              >
+                Order by...
+              </Text>
+              <FilterOrderDropdown
+                filterOrderValue={filterOrderValue}
+                setFilterOrderValue={setFilterOrderValue}
+              />
+            </View>
           </View>
 
           <View style={{ flex: 1, width: "100%" }}>
@@ -82,12 +128,14 @@ const RecipesList = (props) => {
               contentContainerStyle={{ paddingBottom: 5 }}
             >
               {recipeList.map((recipe, index) => (
-                <RecipeCard
-                  key={index}
-                  name={recipe.recipeName}
-                  isSaved={recipe.isSaved}
-                  image={recipe.photo}
-                ></RecipeCard>
+                <Pressable onPress={onViewRecipe}>
+                  <RecipeCard
+                    key={index}
+                    name={recipe.recipeName}
+                    isSaved={recipe.isSaved}
+                    image={recipe.photo}
+                  ></RecipeCard>
+                </Pressable>
               ))}
             </ScrollView>
             <View
@@ -141,6 +189,27 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     color: "white",
+    fontFamily: "MontserratSemiBold",
+  },
+  filterOrderContainer: {
+    width: "90%",
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 5,
+  },
+  pickerContainer: {
+    flex: 1,
+    height: 35,
+    borderWidth: 1.5,
+    borderColor: "#2C5818",
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  picker: {
+    height: 55,
+    width: "100%",
+    marginTop: -12,
+    paddingVertical: 0,
   },
   button: {
     marginTop: 10,

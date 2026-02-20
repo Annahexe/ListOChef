@@ -1,25 +1,25 @@
 import { View, Text, TextInput, StyleSheet } from "react-native";
 
-const ItemInput = (props) => (
-  <View>
+const ItemView = (props) => (
+  <View style={{ flex: 1, marginHorizontal: 5 }}>
     <Text style={styles.title}>{props.label}</Text>
-    <TextInput
-      style={styles.textInput}
-      placeholder={props.placeholder}
-      placeholderTextColor="white"
-      value={props.value}
-      onChangeText={props.onChangeText}
-      keyboardType={props.keyboardType}
-    />
+    <View style={styles.textInfo}>
+      {props.ingredients?.map((ingredient, index) => (
+        <Text key={index} style={styles.text}>
+          · {ingredient}
+        </Text>
+      ))}
+      {props.info ? <Text style={styles.text}>{props.info}</Text> : null}
+      {props.time ? <Text style={styles.text}>{props.time} min</Text> : null}
+    </View>
   </View>
 );
 const styles = StyleSheet.create({
-  textInput: {
+  textInfo: {
     width: "100%",
     fontSize: 20,
     fontFamily: "InterMedium",
     backgroundColor: "#A5B19F",
-    textAlign: "Left",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 10,
@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     marginBottom: 10,
+    elevation: 5,
   },
   title: {
     fontSize: 23,
@@ -36,5 +37,10 @@ const styles = StyleSheet.create({
     color: "#2C5818",
     marginTop: 10,
   },
+  text: {
+    fontSize: 18,
+    fontFamily: "InterMedium",
+    color: "white",
+  },
 });
-export default ItemInput;
+export default ItemView;
