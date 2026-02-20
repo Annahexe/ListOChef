@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     borderTopEndRadius: 15,
     borderTopStartRadius: 15,
     width: "100%",
-    height: 180,
+    height: 150,
     resizeMode: "cover",
   },
   infoContainer: {
