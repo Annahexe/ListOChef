@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   },
   anchorText: {
     color: "#2C5818",
-    fontWeight: "600",
+    fontFamily: "MontserratSemiBold",
     fontSize: 16
   },
   menuContent: {

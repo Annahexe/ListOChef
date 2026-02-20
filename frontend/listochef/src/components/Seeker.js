@@ -9,7 +9,8 @@ export const Seeker = (props) => {
         placeholder={props.placeholderText}
         contentStyle={{
           fontSize: 16,
-          fontWeight: "600",
+          fontFamily: "MontserratSemiBold",
+          transform:[{ translateY: 1 }]
         }}
         mode="outlined"
         left={<TextInput.Icon icon="magnify" color="#4B643F" size={30} />}

@@ -67,7 +67,7 @@ const RecipesList = (props) => {
           <View style={styles.featuredRecipe}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <FontAwesome5 name="history" size={26} color="white" />
-              <Text style={{ color: "white", fontSize: 20, fontWeight: "600", marginLeft: 10 }}>Last recipe seen</Text>
+              <Text style={{ color: "white", fontSize: 20, marginLeft: 10, fontFamily: "InterSemiBold"  }}>Last recipe seen</Text>
             </View>
             <Text style={styles.label}>Potato Omelet</Text>
           </View>
@@ -75,7 +75,7 @@ const RecipesList = (props) => {
           <View style={styles.filterOrderContainer}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <MaterialCommunityIcons name="calendar-blank-outline" size={28} color="black" />
-              <Text style={{ fontSize: 15, fontWeight: "600", marginLeft: 8, marginRight: 30 }}>Order by...</Text>
+              <Text style={{ fontSize: 15, fontFamily: "MontserratSemiBold", marginLeft: 8, marginRight: 20 }}>Order by...</Text>
               <FilterOrderDropdown filterOrderValue={filterOrderValue} setFilterOrderValue={setFilterOrderValue} />
             </View>
           </View>
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: 50,
+    marginTop: 40,
     position: "relative",
     alignItems: "center",
   },
@@ -116,22 +116,23 @@ const styles = StyleSheet.create({
     width: "95%",
     borderRadius: 10,
     backgroundColor: "#4B7D33",
-    padding: 20,
+    padding: 15,
     margin: 10,
   },
   label: {
-    fontSize: 30,
-    fontWeight: "600",
+    fontSize: 28,
     borderRadius: 10,
     backgroundColor: "#77AF5C",
     padding: 10,
-    marginVertical: 12,
+    marginVertical: 10,
     color: "white",
+    fontFamily: "MontserratSemiBold" 
   },
   filterOrderContainer: {
     width: "90%",
     flexDirection: "row",
     alignItems: "center",
+    marginVertical: 5,
   },
   pickerContainer: {
     flex: 1,

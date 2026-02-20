@@ -19,10 +19,10 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   title: {
+    fontFamily:"MontserratBold",
     marginLeft: 10,
-    marginBottom: 12,
-    fontSize: 40,
-    fontWeight: "bold",
+    marginBottom: 4,
+    fontSize: 36,
     color: "#414141",
   }
 });
