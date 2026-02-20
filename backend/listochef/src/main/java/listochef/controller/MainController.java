@@ -133,6 +133,7 @@ public class MainController {
 		String nickName = jsondata.getString("nickname");
 		String email = jsondata.getString("email");
 		String password = jsondata.getString("password");
+		String [] recipes = {};
 		Bson query = eq("nickname", nickName);
 		cursor = usersCollection.find(query).iterator();
 		if(cursor.hasNext()) {
@@ -141,6 +142,7 @@ public class MainController {
 			doc.append("email",email);
 			doc.append("password", password);
 			doc.append("avatar", "");
+			doc.append("isSaved", recipes);
 			usersCollection.insertOne(doc);
 			return ResponseEntity.status(HttpStatus.OK).build();
 		}else {
