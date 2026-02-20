@@ -136,7 +136,7 @@ public class MainController {
 		String [] recipes = {};
 		Bson query = eq("nickname", nickName);
 		cursor = usersCollection.find(query).iterator();
-		if(cursor.hasNext()) {
+		if(!cursor.hasNext()) {
 			Document doc = new Document();
 			doc.append("nickname", nickName);
 			doc.append("email",email);
