@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: 40,
+    marginTop: 50,
     position: "relative",
     alignItems: "center",
   },
@@ -118,6 +118,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#4B7D33",
     padding: 15,
     margin: 10,
+
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    elevation: 5,
   },
   label: {
     fontSize: 28,
