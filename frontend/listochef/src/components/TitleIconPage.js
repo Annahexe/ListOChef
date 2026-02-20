@@ -5,7 +5,9 @@ export const TitleIconPage = (props) => {
 
   return (
     <View style={styles.container}>
-      {Icon && <Icon width={60} height={60} />}
+      <View style={styles.iconStyle}>
+      {Icon && <Icon width={60} height={60}/>}
+      </View>
       <Text style={styles.title}>{props.titleText}</Text>
     </View>
   );
@@ -24,5 +26,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     fontSize: 36,
     color: "#414141",
+  },
+  iconStyle: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+
+    elevation: 5,
   }
 });
