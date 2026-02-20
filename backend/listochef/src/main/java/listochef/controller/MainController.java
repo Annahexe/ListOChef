@@ -32,13 +32,9 @@ public class MainController {
 
 	@GetMapping("/ListOChef/recipeList")
 	ResponseEntity<Object> recipeList(){
-		MongoClient mongoClient = new MongoClient("localhost", 27017);
-		MongoDatabase database = mongoClient.getDatabase("ListOChef");
-		MongoCollection<Document> coleccion = database.getCollection("recipes");
-		MongoCursor<Document> cursor;
-		
+
 		//Into para meter toda la info
-		List<Document> list = coleccion.find().into(new ArrayList<>());
+		List<Document> list = recipesCollection.find().into(new ArrayList<>());
 		
 		return ResponseEntity.status(HttpStatus.OK).body(list);
 	}
