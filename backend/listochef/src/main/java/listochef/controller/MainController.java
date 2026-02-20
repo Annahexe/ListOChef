@@ -20,9 +20,6 @@ import static com.mongodb.client.model.Filters.*;
 
 @RestController
 public class MainController {
-<<<<<<< Updated upstream
-		
-=======
 
 	MongoClient mongoClient = new MongoClient("localhost", 27017);
 	MongoDatabase database = mongoClient.getDatabase("ListOChef");
@@ -31,7 +28,6 @@ public class MainController {
 	MongoCursor<Document> cursor;
 	static String user;
 
->>>>>>> Stashed changes
 	@GetMapping("/ListOChef/recipeList")
 	ResponseEntity<Object> recipeList(){
 		MongoClient mongoClient = new MongoClient("localhost", 27017);
@@ -43,9 +39,6 @@ public class MainController {
 		List<Document> list = coleccion.find().into(new ArrayList<>());
 		
 		return ResponseEntity.status(HttpStatus.OK).body(list);
-<<<<<<< Updated upstream
-				}
-=======
 	}
 
 	@PostMapping("/ListOChef/recipeCreate")
@@ -111,5 +104,4 @@ public class MainController {
 		}
 		
 	}
->>>>>>> Stashed changes
 }
