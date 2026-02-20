@@ -44,6 +44,8 @@ const styles = StyleSheet.create({
     borderStyle: "dashed",
     borderColor: "#2C5818",
     alignItems: "center",
+
+    elevation: 5,
   },
 });
 

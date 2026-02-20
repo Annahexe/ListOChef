@@ -4,12 +4,14 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 const RecipeCard = (props) => {
   return (
     <View style={styles.card}>
+      <View style={{borderTopLeftRadius: 15, borderTopRightRadius: 15, overflow: 'hidden',}}>
       <Image
         style={styles.mainImage}
         source={{
           uri: props.image,
         }}
       ></Image>
+      </View>
       <View style={styles.infoContainer}>
         <Text style={styles.title}>{props.name}</Text>
 
@@ -36,12 +38,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.4,
     shadowRadius: 4,
+
+    elevation: 5,
   },
   mainImage: {
     borderTopEndRadius: 15,
     borderTopStartRadius: 15,
     width: "100%",
-    height: 180,
+    height: 150,
     resizeMode: "cover",
   },
   infoContainer: {

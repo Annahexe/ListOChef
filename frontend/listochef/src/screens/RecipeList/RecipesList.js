@@ -22,6 +22,7 @@ import { FilterOrderDropdown } from "../../components/FilterOrderDropdown";
 const RecipesList = (props) => {
   const [recipeList, setRecipeList] = useState([]);
   const tabBarHeight = useBottomTabBarHeight();
+  const [filterOrderValue, setFilterOrderValue] = useState("Oldest");
 
   useEffect(() => {
     setRecipeList([
@@ -77,7 +78,7 @@ const RecipesList = (props) => {
     >
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text style={styles.title}>Recipes List</Text>
+          <TitleIconPage titleText="Recipes List" icon={RecipeListTitleIcon} />
 
           <Seeker placeholderText="Search recipe..."></Seeker>
 
@@ -128,9 +129,8 @@ const RecipesList = (props) => {
               contentContainerStyle={{ paddingBottom: 5 }}
             >
               {recipeList.map((recipe, index) => (
-                <Pressable onPress={onViewRecipe}>
+                <Pressable key={index} onPress={onViewRecipe}>
                   <RecipeCard
-                    key={index}
                     name={recipe.recipeName}
                     isSaved={recipe.isSaved}
                     image={recipe.photo}
@@ -162,32 +162,29 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: 60,
+    marginTop: 50,
     position: "relative",
     alignItems: "center",
   },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  seeker: {
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#2C5818",
-    padding: 10,
-    margin: 10,
-  },
-  tag: {
+  featuredRecipe: {
+    width: "95%",
     borderRadius: 10,
     backgroundColor: "#4B7D33",
-    padding: 10,
+    padding: 15,
     margin: 10,
+
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    elevation: 5,
   },
   label: {
+    fontSize: 28,
     borderRadius: 10,
     backgroundColor: "#77AF5C",
     padding: 10,
-    margin: 10,
+    marginVertical: 10,
     color: "white",
     fontFamily: "MontserratSemiBold",
   },
