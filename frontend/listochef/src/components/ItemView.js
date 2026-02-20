@@ -10,7 +10,7 @@ const ItemView = (props) => (
         </Text>
       ))}
       {props.info ? <Text style={styles.text}>{props.info}</Text> : null}
-      {props.time ? <Text style={styles.text}>{props.time} min</Text> : null}
+      {props.time ? <Text style={styles.text}>{props.time}min</Text> : null}
     </View>
   </View>
 );
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   title: {
-    fontSize: 23,
+    fontSize: 20,
     fontFamily: "InterBold",
     marginVertical: 5,
     color: "#2C5818",

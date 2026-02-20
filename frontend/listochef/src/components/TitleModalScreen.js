@@ -13,6 +13,7 @@ const TitleModalScreen = (props) => (
 );
 const styles = StyleSheet.create({
   titlecontainer: {
+    marginTop: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
