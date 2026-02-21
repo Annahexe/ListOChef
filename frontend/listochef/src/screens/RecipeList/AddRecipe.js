@@ -1,11 +1,13 @@
-import { View, Text, Pressable, StyleSheet, ScrollView } from "react-native";
+import { View, Text, Pressable, StyleSheet, Keyboard } from "react-native";
 import { useState } from "react";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import * as ImagePicker from "expo-image-picker";
 
 import PhotoPicker from "../../components/PhotoPicker";
 import ItemInput from "../../components/ItemInput";
 import TitleModalScreen from "../../components/TitleModalScreen";
+import AutocompleteInput from "../../components/AutocompleteInput";
 
 const AddRecipe = ({ navigation }) => {
   const [form, setForm] = useState({
@@ -30,19 +32,13 @@ const AddRecipe = ({ navigation }) => {
   const onSaved = () => {
     const today = new Date();
 
-    const date = today.getDate();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
-
-    const formattedDate = `${date}/${month}/${year}`;
-
     const newRecipe = {
       recipeName: form.name,
       type: form.type,
       time: form.time,
       steps: form.steps,
       photo: form.photo,
-      creationDate: formattedDate,
+      creationDate: today,
     };
 
     console.log(newRecipe);
@@ -60,8 +56,16 @@ const AddRecipe = ({ navigation }) => {
           onPress={() => navigation.goBack()}
         />
 
-        <ScrollView style={styles.scrollContainer}>
+        <KeyboardAwareScrollView
+          style={styles.scrollContainer}
+          nestedScrollEnabled={true} //perimte Scroll dentro de Scroll
+          keyboardShouldPersistTaps="handled"
+          extraScrollHeight={60}
+          enableOnAndroid={true}
+          contentContainerStyle={{ paddingBottom: 200 }}
+        >
           <PhotoPicker photo={form.photo} choosePhoto={choosePhoto} />
+
           <ItemInput
             label="Name"
             placeholder="Ex: Roast beef"
@@ -72,14 +76,19 @@ const AddRecipe = ({ navigation }) => {
             keyboardType="default"
           />
 
-          <ItemInput
+          <AutocompleteInput
             label="Type"
-            placeholder="Ex: Breakfast, lunch, dinner..."
+            placeholder="Ex: Breakfast"
             value={form.type}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, type: text }))
-            }
-            keyboardType="default"
+            options={[
+              "Breakfast",
+              "Lunch",
+              "Dinner",
+              "Snack",
+              "Dessert",
+              "Brunch",
+            ]}
+            onSelect={(text) => setForm((prev) => ({ ...prev, type: text }))}
           />
 
           <ItemInput
@@ -102,7 +111,7 @@ const AddRecipe = ({ navigation }) => {
             <View style={{ width: "45%" }}>
               <ItemInput
                 label="Time"
-                placeholder="20 min"
+                placeholder="Ex: 20 min"
                 value={form.time}
                 onChangeText={(text) =>
                   setForm((prev) => ({ ...prev, time: text }))
@@ -112,18 +121,18 @@ const AddRecipe = ({ navigation }) => {
             </View>
 
             <View style={{ width: "45%" }}>
-              <ItemInput
+              <AutocompleteInput
                 label="Difficulty"
-                placeholder="low"
+                placeholder="Ex: Low "
                 value={form.difficulty}
-                onChangeText={(text) =>
+                options={["Low", "Medium", "Hard"]}
+                onSelect={(text) =>
                   setForm((prev) => ({ ...prev, difficulty: text }))
                 }
-                keyboardType="default"
               />
             </View>
           </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
 
         <View style={styles.buttonContainer}>
           <Pressable
@@ -152,7 +161,7 @@ const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center", // o flex-end si quieres tipo bottom sheet
+    justifyContent: "center",
     padding: 20,
     paddingVertical: 50,
   },
@@ -160,7 +169,6 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 20,
     flex: 2,
-    overflow: "hidden",
   },
   scrollContainer: {
     paddingLeft: 20,
