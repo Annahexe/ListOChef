@@ -8,6 +8,7 @@ import PhotoPicker from "../../components/PhotoPicker";
 import ItemInput from "../../components/ItemInput";
 import TitleModalScreen from "../../components/TitleModalScreen";
 import AutocompleteInput from "../../components/AutocompleteInput";
+import AutocompleteList from "../../components/AutocompleteList";
 
 const AddRecipe = ({ navigation }) => {
   const [form, setForm] = useState({
@@ -18,6 +19,33 @@ const AddRecipe = ({ navigation }) => {
     time: "",
     difficulty: "",
   });
+
+  const [ingredientsList, setIngredientsList] = useState([
+    "Pasta",
+    "Tomato",
+    "Tomato Sauce",
+    "Minced meat",
+    "Oil",
+    "Olive oil",
+    "Spices",
+    "Onion",
+    "Cheese",
+    "Apple",
+    "Orange",
+    "Jam",
+    "Egg",
+  ]);
+  const [tagsList, setTagsList] = useState([
+    "Pasta",
+    "Fish",
+    "Vegetable",
+    "Pork",
+    "Beef",
+    "Chicken",
+    "Vegan",
+  ]);
+  const [ingredients, setIngredients] = useState([""]);
+  const [tags, setTags] = useState([""]);
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -34,9 +62,11 @@ const AddRecipe = ({ navigation }) => {
 
     const newRecipe = {
       recipeName: form.name,
+      ingredients: ingredients,
       type: form.type,
       time: form.time,
       steps: form.steps,
+      tags: tags,
       photo: form.photo,
       creationDate: today,
     };
@@ -46,7 +76,10 @@ const AddRecipe = ({ navigation }) => {
     return navigation.goBack();
   };
 
-  const isFormComplete = Object.values(form).every((value) => value);
+  const isFormComplete =
+    Object.values(form).every((value) => value) &&
+    ingredients.every((value) => value) &&
+    tags.every((value) => value);
 
   return (
     <View style={styles.backdrop}>
@@ -62,7 +95,7 @@ const AddRecipe = ({ navigation }) => {
           keyboardShouldPersistTaps="handled"
           extraScrollHeight={60}
           enableOnAndroid={true}
-          contentContainerStyle={{ paddingBottom: 200 }}
+          contentContainerStyle={{ paddingBottom: 20 }}
         >
           <PhotoPicker photo={form.photo} choosePhoto={choosePhoto} />
 
@@ -74,6 +107,14 @@ const AddRecipe = ({ navigation }) => {
               setForm((prev) => ({ ...prev, name: text }))
             }
             keyboardType="default"
+          />
+
+          <AutocompleteList
+            label="Ingredients"
+            values={ingredients}
+            setValues={setIngredients}
+            options={ingredientsList}
+            placeholder="Ex: Pasta"
           />
 
           <AutocompleteInput
@@ -132,6 +173,14 @@ const AddRecipe = ({ navigation }) => {
               />
             </View>
           </View>
+
+          <AutocompleteList
+            label="Tags"
+            values={tags}
+            setValues={setTags}
+            options={tagsList}
+            placeholder="Ex: Pasta"
+          />
         </KeyboardAwareScrollView>
 
         <View style={styles.buttonContainer}>
@@ -147,7 +196,13 @@ const AddRecipe = ({ navigation }) => {
               styles.button,
               { backgroundColor: isFormComplete ? "#4B643F" : "#85917F" },
             ]}
-            onPress={isFormComplete ? onSaved : null}
+            onPress={
+              isFormComplete
+                ? onSaved
+                : () => {
+                    alert("Please fill in all fields before saving");
+                  }
+            }
           >
             <Text style={styles.textButton}>Save</Text>
           </Pressable>
