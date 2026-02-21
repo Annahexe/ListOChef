@@ -12,10 +12,11 @@ import { useState } from "react";
 const AutocompleteInput = (props) => {
   const [showList, setShowList] = useState(false);
 
+  const inputValue = props.value || "";
   // Filtra las opciones según el texto actual
-  const filteredOptions = props.value
+  const filteredOptions = inputValue
     ? props.options.filter((item) =>
-        item.toLowerCase().includes(props.value.toLowerCase()),
+        item.toLowerCase().includes(inputValue.toLowerCase()),
       )
     : props.options;
 
@@ -41,7 +42,11 @@ const AutocompleteInput = (props) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{props.label}</Text>
+      {props.label === "" ? (
+        <></>
+      ) : (
+        <Text style={styles.title}>{props.label}</Text>
+      )}
 
       <TextInput
         style={styles.input}
