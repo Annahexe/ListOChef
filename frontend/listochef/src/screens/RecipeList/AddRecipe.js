@@ -9,6 +9,7 @@ import ItemInput from "../../components/ItemInput";
 import TitleModalScreen from "../../components/TitleModalScreen";
 import AutocompleteInput from "../../components/AutocompleteInput";
 import AutocompleteList from "../../components/AutocompleteList";
+import ModalButtons from "../../components/ModalButtons";
 
 const AddRecipe = ({ navigation }) => {
   const [form, setForm] = useState({
@@ -183,30 +184,11 @@ const AddRecipe = ({ navigation }) => {
           />
         </KeyboardAwareScrollView>
 
-        <View style={styles.buttonContainer}>
-          <Pressable
-            onPress={() => navigation.goBack()}
-            style={[styles.button, { backgroundColor: "#4B643F" }]}
-          >
-            <Text style={styles.textButton}>Cancel</Text>
-          </Pressable>
-
-          <Pressable
-            style={[
-              styles.button,
-              { backgroundColor: isFormComplete ? "#4B643F" : "#85917F" },
-            ]}
-            onPress={
-              isFormComplete
-                ? onSaved
-                : () => {
-                    alert("Please fill in all fields before saving");
-                  }
-            }
-          >
-            <Text style={styles.textButton}>Save</Text>
-          </Pressable>
-        </View>
+        <ModalButtons
+          onCancel={() => navigation.goBack()}
+          onSave={onSaved}
+          isFormComplete={isFormComplete}
+        />
       </View>
     </View>
   );
@@ -231,24 +213,6 @@ const styles = StyleSheet.create({
     flex: 2,
     marginVertical: 15,
     paddingBottom: 50,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    paddingHorizontal: 20,
-  },
-  button: {
-    width: "48%",
-    marginHorizontal: "1%",
-    marginBottom: 10,
-    padding: 10,
-    borderRadius: 20,
-    textAlign: "center",
-  },
-  textButton: {
-    fontSize: 25,
-    fontFamily: "InterBold",
-    color: "white",
-    textAlign: "center",
   },
 });
 
