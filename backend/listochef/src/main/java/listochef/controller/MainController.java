@@ -133,22 +133,28 @@ public class MainController {
 		String nickName = jsondata.getString("nickname");
 		String email = jsondata.getString("email");
 		String password = jsondata.getString("password");
-		String [] recipes = {};
+		List<String> recipes = new ArrayList<>();
 		Bson query = eq("nickname", nickName);
 		cursor = usersCollection.find(query).iterator();
-		if(cursor.hasNext()) {
-			Document doc = new Document();
-			doc.append("nickname", nickName);
-			doc.append("email",email);
-			doc.append("password", password);
-			doc.append("avatar", "");
-			doc.append("isSaved", recipes);
-			usersCollection.insertOne(doc);
-			return ResponseEntity.status(HttpStatus.OK).build();
-		}else {
-			System.out.println("Ya existe este usuario en la base de datos");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		try {
+			if(!cursor.hasNext()) {
+				Document doc = new Document();
+				doc.append("nickname", nickName);
+				doc.append("email",email);
+				doc.append("password", password);
+				doc.append("avatar", "");
+				doc.append("isSaved", recipes);
+				usersCollection.insertOne(doc);
+				return ResponseEntity.status(HttpStatus.OK).build();
+			}else {
+				System.out.println("Ya existe este usuario en la base de datos");
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
+		
 	}
 	@PostMapping("/ListOChef/login")
 	ResponseEntity<Object> login(@RequestBody String data){

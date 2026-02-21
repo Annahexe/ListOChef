@@ -1,11 +1,11 @@
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import GeneralRecipes from './GeneralRecipes';
-import AddRecipe from './AddRecipe';
-import ViewRecipe from './ViewRecipe';
-import RecipesList from './RecipesList';
+import GeneralRecipes from "./GeneralRecipes";
+import AddRecipe from "./AddRecipe";
+import ViewRecipe from "./ViewRecipe";
+import RecipesList from "./RecipesList";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const NavigationRecipeList = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -13,9 +13,17 @@ const NavigationRecipeList = () => (
       <Stack.Screen name="RecipesList" component={RecipesList} />
       <Stack.Screen name="GeneralRecipes" component={GeneralRecipes} />
     </Stack.Group>
-    <Stack.Group screenOptions={{ presentation: 'modal' }}>
-      <Stack.Screen name="AddRecipe" component={AddRecipe} options={{ headerShown: true, headerMode: 'none' }} />
-      <Stack.Screen name="ViewRecipe" component={ViewRecipe} options={{ headerShown: true, headerMode: 'none' }} />
+    <Stack.Group screenOptions={{ presentation: "transparentModal" }}>
+      <Stack.Screen
+        name="AddRecipe"
+        component={AddRecipe}
+        options={{ headerShown: false, headerMode: "none" }}
+      />
+      <Stack.Screen
+        name="ViewRecipe"
+        component={ViewRecipe}
+        options={{ headerShown: false, headerMode: "none" }}
+      />
     </Stack.Group>
   </Stack.Navigator>
 );
