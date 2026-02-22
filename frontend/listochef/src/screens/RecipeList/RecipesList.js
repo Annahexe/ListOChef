@@ -1,11 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView } from "react-native";
 import { useState, useEffect, useContext } from "react";
 import RecipeCard from "../../components/RecipeCard";
 import AddCircleButton from "../../components/AddCircleButton";
@@ -24,6 +17,12 @@ const RecipesList = (props) => {
   const tabBarHeight = useBottomTabBarHeight();
   const [filterOrderValue, setFilterOrderValue] = useState("Oldest");
 
+  const toTime = (ddmmyyyy) => {
+    // "17/02/2026" -> [17, 2, 2026]
+    const [dd, mm, yyyy] = ddmmyyyy.split("/").map(Number);
+    return new Date(yyyy, mm - 1, dd).getTime();
+  }; //used to convert String creationDate to real date value
+
   useEffect(() => {
     setRecipeList([
       {
@@ -32,8 +31,7 @@ const RecipesList = (props) => {
         type: "pasta",
         time: 20,
         difficulty: "easy",
-        photo:
-          "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
+        photo: "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
         creationDate: "17/02/2026",
         isSaved: true,
       },
@@ -43,8 +41,7 @@ const RecipesList = (props) => {
         type: "arroz, conejo",
         time: 60,
         difficulty: "hard",
-        photo:
-          "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
+        photo: "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
         creationDate: "18/02/2026",
         isSaved: false,
       },
@@ -54,8 +51,7 @@ const RecipesList = (props) => {
         type: "sauce, meat, vegetable",
         time: 30,
         difficulty: "medium",
-        photo:
-          "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
+        photo: "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
         creationDate: "15/02/2026",
         isSaved: true,
       },
@@ -70,12 +66,18 @@ const RecipesList = (props) => {
     return props.navigation.navigate("ViewRecipe");
   };
 
+  const sortedRecipes = [...recipeList].sort((a, b) => {
+    const timeA = toTime(a.creationDate);
+    const timeB = toTime(b.creationDate);
+
+    if (filterOrderValue === "Oldest") {
+      return timeA - timeB;
+    }
+    return timeB - timeA;
+  });
+
   return (
-    <ImageBackground
-      source={require("../../../assets/fondoApp.png")}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <View style={styles.container}>
           <TitleIconPage titleText="Recipes List" icon={RecipeListTitleIcon} />
@@ -101,11 +103,7 @@ const RecipesList = (props) => {
 
           <View style={styles.filterOrderContainer}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <MaterialCommunityIcons
-                name="calendar-blank-outline"
-                size={28}
-                color="black"
-              />
+              <MaterialCommunityIcons name="calendar-blank-outline" size={28} color="black" />
               <Text
                 style={{
                   fontSize: 15,
@@ -116,31 +114,19 @@ const RecipesList = (props) => {
               >
                 Order by...
               </Text>
-              <FilterOrderDropdown
-                filterOrderValue={filterOrderValue}
-                setFilterOrderValue={setFilterOrderValue}
-              />
+              <FilterOrderDropdown filterOrderValue={filterOrderValue} setFilterOrderValue={setFilterOrderValue} />
             </View>
           </View>
 
           <View style={{ flex: 1, width: "100%" }}>
-            <ScrollView
-              style={{ width: "100%", marginBottom: 15 }}
-              contentContainerStyle={{ paddingBottom: 5 }}
-            >
-              {recipeList.map((recipe, index) => (
+            <ScrollView style={{ width: "100%", marginBottom: 15 }} contentContainerStyle={{ paddingBottom: 5 }}>
+              {sortedRecipes.map((recipe, index) => (
                 <Pressable key={index} onPress={onViewRecipe}>
-                  <RecipeCard
-                    name={recipe.recipeName}
-                    isSaved={recipe.isSaved}
-                    image={recipe.photo}
-                  ></RecipeCard>
+                  <RecipeCard name={recipe.recipeName} isSaved={recipe.isSaved} image={recipe.photo}></RecipeCard>
                 </Pressable>
               ))}
             </ScrollView>
-            <View
-              style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}
-            >
+            <View style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}>
               <Pressable onPress={onAddRecipe}>
                 <AddCircleButton />
               </Pressable>
