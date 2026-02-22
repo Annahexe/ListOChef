@@ -80,7 +80,7 @@ const RecipesList = (props) => {
         <View style={styles.container}>
           <TitleIconPage titleText="Recipes List" icon={RecipeListTitleIcon} />
 
-          <Seeker placeholderText="Search recipe..."></Seeker>
+          <Seeker placeholderText="Search recipe..." onPress={() => props.navigation.navigate("SearchRecipes")}></Seeker>
 
           <View style={styles.featuredRecipe}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
