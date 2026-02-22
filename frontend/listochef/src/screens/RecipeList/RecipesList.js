@@ -3,6 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import RecipeCard from "../../components/RecipeCard";
 import AddCircleButton from "../../components/AddCircleButton";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import Context from "../../context/Context";
 
 import { Seeker } from "../../components/Seeker";
 import { TitleIconPage } from "../../components/TitleIconPage";
@@ -13,6 +14,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { FilterOrderDropdown } from "../../components/FilterOrderDropdown";
 
 const RecipesList = (props) => {
+  const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
   const [recipeList, setRecipeList] = useState([]);
   const tabBarHeight = useBottomTabBarHeight();
   const [filterOrderValue, setFilterOrderValue] = useState("Oldest");
@@ -98,7 +100,7 @@ const RecipesList = (props) => {
                 Last recipe seen
               </Text>
             </View>
-            <Text style={styles.label}>Potato Omelet</Text>
+            <Text style={styles.label} onPress={onViewRecipe}>{lastRecipeSeen}</Text>
           </View>
 
           <View style={styles.filterOrderContainer}>
