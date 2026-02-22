@@ -6,7 +6,7 @@ import {
   Pressable,
 } from "react-native";
 
-const GeneralRecipes = (props) => {
+const SearchRecipes = (props) => {
   return (
     <ImageBackground
       source={require("../../../assets/fondoApp2.png")}
@@ -15,7 +15,7 @@ const GeneralRecipes = (props) => {
     >
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text style={styles.title}>Recipes List</Text>
+          <Text style={styles.title}>SearchRecipes</Text>
           <View style={styles.seeker}>
             <Text>search</Text>
           </View>
@@ -86,4 +86,4 @@ const styles = StyleSheet.create({
     color: "white",
   },
 });
-export default GeneralRecipes;
+export default SearchRecipes;
