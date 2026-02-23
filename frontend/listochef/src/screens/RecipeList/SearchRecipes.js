@@ -6,9 +6,7 @@ import RecipeCard from "../../components/RecipeCard";
 import Feather from "@expo/vector-icons/Feather";
 
 const SearchRecipes = (props) => {
-  const [search, setSearch] = useState("");
   const [recipeList, setRecipeList] = useState([]);
-  const [results, setResults] = useState([]);
 
   const TAGS = ["All", "Pasta", "Fish", "Pork", "Beef", "Chicken", "Meat"];
 
@@ -19,15 +17,11 @@ const SearchRecipes = (props) => {
       if (selectedTag == "All") {
         return ["All"];
       }
-
       const tagsWithoutAll = previousSelectedTags.filter((element) => element !== "All");
-
       if (tagsWithoutAll.includes(selectedTag)) {
         const selectedTagsList = tagsWithoutAll.filter((element) => element !== selectedTag);
-
         return selectedTagsList.length === 0 ? ["All"] : selectedTagsList;
       }
-
       return [...tagsWithoutAll, selectedTag];
     });
   };
