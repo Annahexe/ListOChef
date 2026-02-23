@@ -1,34 +1,42 @@
 import { Text, View, Image, StyleSheet, Pressable } from "react-native";
+import { useContext } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Context from "../context/Context";
 
 const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe }) => {
+  const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
+
+  const handlePress = () => {
+    setLastRecipeSeen(recipe);
+    onViewRecipe();
+  };
 
   return (
     <View style={styles.card}>
-      <Pressable onPress={onViewRecipe}>
-      <View style={{ borderTopLeftRadius: 15, borderTopRightRadius: 15, overflow: "hidden" }}>
-        <Image
-          style={styles.mainImage}
-          source={{
-            uri: recipe.photo,
-          }}
-        ></Image>
+      <Pressable onPress={handlePress}>
+        <View style={{ borderTopLeftRadius: 15, borderTopRightRadius: 15, overflow: "hidden" }}>
+          <Image
+            style={styles.mainImage}
+            source={{
+              uri: recipe.photo,
+            }}
+          ></Image>
 
-        {isDetailedBox && <FontAwesome style={styles.heartOverlay} name={"heart"} size={30} color={recipe.isSaved ? "red" : "white"} />}
-      </View>
-      <View style={styles.container}>
-        <View style={styles.infoContainer}>
-          <Text style={[styles.title, isDetailedBox && styles.titleCentered]}>{recipe.recipeName}</Text>
-          {!isDetailedBox && <FontAwesome name={recipe.isSaved ? "heart" : "heart-o"} size={30} color={recipe.isSaved ? "red" : "black"} />}
+          {isDetailedBox && <FontAwesome style={styles.heartOverlay} name={"heart"} size={30} color={recipe.isSaved ? "red" : "white"} />}
         </View>
-        {isDetailedBox && (
-          <View style={styles.infoContainerLabels}>
-            <Text style={styles.infoLabel}>{recipe.type}</Text>
-            <Text style={styles.infoLabel}>{recipe.time}min</Text>
-            <Text style={styles.infoLabel}>{recipe.difficulty}</Text>
+        <View style={styles.container}>
+          <View style={styles.infoContainer}>
+            <Text style={[styles.title, isDetailedBox && styles.titleCentered]}>{recipe.recipeName}</Text>
+            {!isDetailedBox && <FontAwesome name={recipe.isSaved ? "heart" : "heart-o"} size={30} color={recipe.isSaved ? "red" : "black"} />}
           </View>
-        )}
-      </View>
+          {isDetailedBox && (
+            <View style={styles.infoContainerLabels}>
+              <Text style={styles.infoLabel}>{recipe.type}</Text>
+              <Text style={styles.infoLabel}>{recipe.time}min</Text>
+              <Text style={styles.infoLabel}>{recipe.difficulty}</Text>
+            </View>
+          )}
+        </View>
       </Pressable>
     </View>
   );

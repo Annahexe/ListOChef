@@ -30,9 +30,10 @@ const RecipesList = (props) => {
       {
         id: "1",
         recipeName: "Spaghetti Bolognese",
-        type: "pasta",
+        type: "Lunch",
+        tags: ["Pasta", "Meat", "Tomato"],
         time: 20,
-        difficulty: "easy",
+        difficulty: "Easy",
         photo: "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
         creationDate: "17/02/2026",
         isSaved: true,
@@ -40,9 +41,10 @@ const RecipesList = (props) => {
       {
         id: "2",
         recipeName: "Paella",
-        type: "arroz, conejo",
+        type: "Rice",
+        tags: ["Rice", "Chicken"],
         time: 60,
-        difficulty: "hard",
+        difficulty: "Hard",
         photo: "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
         creationDate: "18/02/2026",
         isSaved: false,
@@ -50,11 +52,34 @@ const RecipesList = (props) => {
       {
         id: "3",
         recipeName: "Bolognese Sauce",
-        type: "sauce, meat, vegetable",
+        type: "Sauce",
+        tags: ["Tomato", "Meat", "Beef"],
         time: 30,
-        difficulty: "medium",
+        difficulty: "Medium",
         photo: "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
         creationDate: "15/02/2026",
+        isSaved: true,
+      },
+      {
+        id: "4",
+        recipeName: "Gnocchi Bolognese",
+        type: "Lunch",
+        tags: ["Tomato", "Pasta", "Beef", "Pasta"],
+        time: 30,
+        difficulty: "Medium",
+        photo: "https://www.eatclub.de/wp-content/uploads/2024/01/gnocchi-bolognese.jpg",
+        creationDate: "15/02/2026",
+        isSaved: false,
+      },
+      {
+        id: "5",
+        recipeName: "Potato Omelette",
+        type: "Breakfast",
+        tags: ["Potato", "Eggs"],
+        time: 20,
+        difficulty: "Medium",
+        photo: "https://mojo.generalmills.com/api/public/content/9xIHKwJDH0-1wbHPsVCCVQ_gmi_hi_res_jpeg.jpeg?v=2bfc22c6&t=16e3ce250f244648bef28c5949fb99ff",
+        creationDate: "20/02/2026",
         isSaved: true,
       },
     ]);
@@ -101,7 +126,7 @@ const RecipesList = (props) => {
               </Text>
             </View>
             <Text style={styles.label} onPress={onViewRecipe}>
-              {lastRecipeSeen}
+              {lastRecipeSeen.recipeName}
             </Text>
           </View>
 
