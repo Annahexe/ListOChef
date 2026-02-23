@@ -124,7 +124,7 @@ const RecipesList = (props) => {
             <ScrollView style={{ width: "100%", marginBottom: 15 }} contentContainerStyle={{ paddingBottom: 5 }}>
               {sortedRecipes.map((recipe, index) => (
                 <Pressable key={index} onPress={onViewRecipe}>
-                  <RecipeCard name={recipe.recipeName} isSaved={recipe.isSaved} image={recipe.photo}></RecipeCard>
+                  <RecipeCard recipe={recipe}></RecipeCard>
                 </Pressable>
               ))}
             </ScrollView>

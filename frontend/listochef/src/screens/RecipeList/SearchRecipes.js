@@ -38,10 +38,10 @@ const SearchRecipes = (props) => {
       {
         id: "1",
         recipeName: "Spaghetti Bolognese",
-        type: "lunch",
-        tags: ["pasta", "meat", "easy"],
+        type: "Lunch",
+        tags: ["Pasta", "Meat", "Tomato"],
         time: 20,
-        difficulty: "easy",
+        difficulty: "Easy",
         photo: "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
         creationDate: "17/02/2026",
         isSaved: true,
@@ -49,10 +49,10 @@ const SearchRecipes = (props) => {
       {
         id: "2",
         recipeName: "Paella",
-        type: "rice",
-        tags: ["pasta", "meat", "easy"],
+        type: "Rice",
+        tags: ["Rice", "Chicken"],
         time: 60,
-        difficulty: "hard",
+        difficulty: "Hard",
         photo: "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
         creationDate: "18/02/2026",
         isSaved: false,
@@ -60,10 +60,10 @@ const SearchRecipes = (props) => {
       {
         id: "3",
         recipeName: "Bolognese Sauce",
-        type: "sauce",
-        tags: ["pasta", "meat", "easy"],
+        type: "Sauce",
+        tags: ["Tomato", "Meat", "Beef"],
         time: 30,
-        difficulty: "medium",
+        difficulty: "Medium",
         photo: "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
         creationDate: "15/02/2026",
         isSaved: true,
@@ -72,9 +72,9 @@ const SearchRecipes = (props) => {
         id: "4",
         recipeName: "Gnocchi Bolognese",
         type: "Lunch",
-        tags: ["pasta", "meat", "normal"],
+        tags: ["Tomato", "Pasta", "Beef", "Pasta"],
         time: 30,
-        difficulty: "medium",
+        difficulty: "Medium",
         photo: "https://www.eatclub.de/wp-content/uploads/2024/01/gnocchi-bolognese.jpg",
         creationDate: "15/02/2026",
         isSaved: false,
@@ -98,7 +98,7 @@ const SearchRecipes = (props) => {
           <ScrollView style={{ width: "100%", marginBottom: "12%" }} contentContainerStyle={{ paddingBottom: 20 }}>
             {recipeList.map((recipe, index) => (
               <Pressable key={index} onPress={onViewRecipe}>
-                <RecipeCard name={recipe.recipeName} isSaved={recipe.isSaved} image={recipe.photo}></RecipeCard>
+                <RecipeCard recipe={recipe} isDetailedBox={true} ></RecipeCard>
               </Pressable>
             ))}
           </ScrollView>
