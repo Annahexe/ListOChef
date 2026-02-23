@@ -24,7 +24,7 @@ const SearchRecipes = (props) => {
 
       if (tagsWithoutAll.includes(selectedTag)) {
         const selectedTagsList = tagsWithoutAll.filter((element) => element !== selectedTag);
-        
+
         return selectedTagsList.length === 0 ? ["All"] : selectedTagsList;
       }
 
@@ -82,10 +82,6 @@ const SearchRecipes = (props) => {
     ]);
   }, []);
 
-  const onViewRecipe = () => {
-    return props.navigation.navigate("ViewRecipe");
-  };
-
   return (
     <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
@@ -97,9 +93,7 @@ const SearchRecipes = (props) => {
           <TagsCarousel tagsList={TAGS} selectedTags={selectedTags} onToggleTag={toggleTag} />
           <ScrollView style={{ width: "100%", marginBottom: "12%" }} contentContainerStyle={{ paddingBottom: 20 }}>
             {recipeList.map((recipe, index) => (
-              <Pressable key={index} onPress={onViewRecipe}>
-                <RecipeCard recipe={recipe} isDetailedBox={true} ></RecipeCard>
-              </Pressable>
+              <RecipeCard key={index} recipe={recipe} isDetailedBox={true} onViewRecipe={() => props.navigation.navigate("ViewRecipe")}></RecipeCard>
             ))}
           </ScrollView>
         </View>

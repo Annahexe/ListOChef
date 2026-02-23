@@ -1,9 +1,11 @@
-import { Text, View, Image, StyleSheet } from "react-native";
+import { Text, View, Image, StyleSheet, Pressable } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
-const RecipeCard = ({ recipe, isDetailedBox }) => {
+const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe }) => {
+
   return (
     <View style={styles.card}>
+      <Pressable onPress={onViewRecipe}>
       <View style={{ borderTopLeftRadius: 15, borderTopRightRadius: 15, overflow: "hidden" }}>
         <Image
           style={styles.mainImage}
@@ -11,11 +13,13 @@ const RecipeCard = ({ recipe, isDetailedBox }) => {
             uri: recipe.photo,
           }}
         ></Image>
+
+        {isDetailedBox && <FontAwesome style={styles.heartOverlay} name={"heart"} size={30} color={recipe.isSaved ? "red" : "white"} />}
       </View>
       <View style={styles.container}>
         <View style={styles.infoContainer}>
-          <Text style={styles.title}>{recipe.recipeName}</Text>
-          <FontAwesome name={recipe.isSaved ? "heart" : "heart-o"} size={30} color={recipe.isSaved ? "red" : "black"} />
+          <Text style={[styles.title, isDetailedBox && styles.titleCentered]}>{recipe.recipeName}</Text>
+          {!isDetailedBox && <FontAwesome name={recipe.isSaved ? "heart" : "heart-o"} size={30} color={recipe.isSaved ? "red" : "black"} />}
         </View>
         {isDetailedBox && (
           <View style={styles.infoContainerLabels}>
@@ -25,6 +29,7 @@ const RecipeCard = ({ recipe, isDetailedBox }) => {
           </View>
         )}
       </View>
+      </Pressable>
     </View>
   );
 };
@@ -50,11 +55,10 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },
   container: {
-    paddingVertical: 10,
+    paddingVertical: "2%",
     paddingHorizontal: 18,
   },
   infoContainer: {
-    justifyContent: "center",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -87,6 +91,26 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "rgba(75, 100, 63, 0.5)",
     marginHorizontal: "2%",
+  },
+  imageWrapper: {
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    overflow: "hidden",
+    position: "relative",
+  },
+  heartOverlay: {
+    position: "absolute",
+    top: 10,
+    right: 12,
+    padding: 6,
+    borderRadius: 50,
+    textShadowColor: "black",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
+
+  titleCentered: {
+    textAlign: "center",
   },
 });
 export default RecipeCard;

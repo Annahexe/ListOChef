@@ -100,7 +100,9 @@ const RecipesList = (props) => {
                 Last recipe seen
               </Text>
             </View>
-            <Text style={styles.label} onPress={onViewRecipe}>{lastRecipeSeen}</Text>
+            <Text style={styles.label} onPress={onViewRecipe}>
+              {lastRecipeSeen}
+            </Text>
           </View>
 
           <View style={styles.filterOrderContainer}>
@@ -123,9 +125,7 @@ const RecipesList = (props) => {
           <View style={{ flex: 1, width: "100%" }}>
             <ScrollView style={{ width: "100%", marginBottom: 15 }} contentContainerStyle={{ paddingBottom: 5 }}>
               {sortedRecipes.map((recipe, index) => (
-                <Pressable key={index} onPress={onViewRecipe}>
-                  <RecipeCard recipe={recipe}></RecipeCard>
-                </Pressable>
+                <RecipeCard key={index} recipe={recipe} onViewRecipe={onViewRecipe}></RecipeCard>
               ))}
             </ScrollView>
             <View style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}>
