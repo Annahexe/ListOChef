@@ -2,7 +2,7 @@ import { Text, View, Image, StyleSheet, Pressable } from "react-native";
 import { useContext } from "react";
 import Context from "../context/Context";
 
-import Hearth from "./Hearth";
+import Heart from "./Heart";
 
 const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe, onToggleSaved }) => {
   const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
@@ -24,8 +24,8 @@ const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe, onToggleSaved }) => {
           />
 
           {isDetailedBox && (
-            <Hearth
-              colorHearth={recipe.isSaved ? "red" : "white"}
+            <Heart
+              colorHeart={recipe.isSaved ? "red" : "white"}
               stiles={"onImage"}
               onPress={() => onToggleSaved?.(recipe.id)}
             />
@@ -37,8 +37,8 @@ const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe, onToggleSaved }) => {
               {recipe.recipeName}
             </Text>
             {!isDetailedBox && (
-              <Hearth
-                colorHearth={recipe.isSaved ? "red" : "white"}
+              <Heart
+                colorHeart={recipe.isSaved ? "red" : "white"}
                 onPress={() => onToggleSaved?.(recipe.id)}
               />
             )}
@@ -120,17 +120,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     position: "relative",
   },
-  heartOverlay: {
-    position: "absolute",
-    top: 10,
-    right: 12,
-    padding: 6,
-    borderRadius: 50,
-    textShadowColor: "black",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-  },
-
   titleCentered: {
     textAlign: "center",
   },

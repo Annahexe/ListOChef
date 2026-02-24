@@ -10,7 +10,7 @@ import { useState, useEffect, useContext } from "react";
 
 import ItemView from "../../components/ItemView";
 import TitleModalScreen from "../../components/TitleModalScreen";
-import Hearth from "../../components/Hearth";
+import Hearth from "../../components/Heart";
 
 import Context from "../../context/Context";
 
