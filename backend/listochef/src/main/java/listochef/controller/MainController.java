@@ -29,6 +29,7 @@ public class MainController {
 	MongoCollection<Document> usersCollection = database.getCollection("users");
 	MongoCursor<Document> cursor;
 	static String user;
+	Bson query;
     
     @GetMapping(value = "/ListOChef/recipeList", params = {"type", "!recipeName"})
     public ResponseEntity<Object> recipeListByType(@RequestParam String type) {
@@ -96,9 +97,51 @@ public class MainController {
 
 		//Into para meter toda la info
 		List<Document> list = recipesCollection.find().into(new ArrayList<>());
+		List<Document> recipes = new ArrayList<>();
+		for (Document doc : list) {
+            Document r = new Document();
+            r.append("id", doc.getObjectId("_id").toString());
+            r.append("recipeName", doc.getString("recipeName"));
+            r.append("type", doc.getString("type"));
+            r.append("time", doc.get("time"));
+            r.append("difficulty", doc.getString("difficulty"));
+            r.append("photo", doc.getString("photo"));
+            recipes.add(r);
+        }
 		
-		return ResponseEntity.status(HttpStatus.OK).body(list);
+		Document response = new Document("recipes", recipes);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
+	
+//	@GetMapping("/ListOChef/recipesUser")
+//	ResponseEntity<Object> recipesUser(@RequestParam (value = "nick") String nick){
+//
+//		query = eq("nickname", nick);
+//		//Into para meter toda la info
+//		cursor = usersCollection.find(query).iterator();
+//		if(cursor.hasNext()) {
+//			List<Document> recipes = new ArrayList<>();
+//			JSONObject obj = new JSONObject(cursor.next());
+//			String[] ids = (String[]) obj.get("isSaved");
+//			
+//		}
+//		
+//		for (Document doc : list) {
+//            Document r = new Document();
+//            r.append("id", doc.getObjectId("_id").toString());
+//            r.append("recipeName", doc.getString("recipeName"));
+//            r.append("type", doc.getString("type"));
+//            r.append("time", doc.get("time"));
+//            r.append("difficulty", doc.getString("difficulty"));
+//            r.append("photo", doc.getString("photo"));
+//            recipes.add(r);
+//        }
+//		
+//		Document response = new Document("recipes", recipes);
+//		return ResponseEntity.status(HttpStatus.OK).body(response);
+//	}
+	
+	
 
 	@PostMapping("/ListOChef/recipeCreate")
 	ResponseEntity<Object> recipeCreate(@RequestBody String recipeBody, @RequestParam String userNickname) {
