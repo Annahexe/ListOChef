@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,102 +31,111 @@ public class MainController {
 	MongoCursor<Document> cursor;
 	static String user;
 	Bson query;
-    
-    @GetMapping(value = "/ListOChef/recipeList", params = {"type", "!recipeName"})
-    public ResponseEntity<Object> recipeListByType(@RequestParam String type) {
-        return filterByTypeAndOrName(type, null);
-    }
 
-    @GetMapping(value = "/ListOChef/recipeList", params = {"!type", "recipeName"})
-    public ResponseEntity<Object> recipeListByName(@RequestParam String recipeName) {
-        return filterByTypeAndOrName(null, recipeName);
-    }
+	@GetMapping(value = "/ListOChef/recipeList", params = { "type", "!recipeName" })
+	public ResponseEntity<Object> recipeListByType(@RequestParam String type) {
+		return filterByTypeAndOrName(type, null);
+	}
 
-    @GetMapping(value = "/ListOChef/recipeList", params = {"type", "recipeName"})
-    public ResponseEntity<Object> recipeListByTypeAndName(
-            @RequestParam String type,
-            @RequestParam String recipeName
-    ) {
-        return filterByTypeAndOrName(type, recipeName);
-    }
+	@GetMapping(value = "/ListOChef/recipeList", params = { "!type", "recipeName" })
+	public ResponseEntity<Object> recipeListByName(@RequestParam String recipeName) {
+		return filterByTypeAndOrName(null, recipeName);
+	}
 
-    private ResponseEntity<Object> filterByTypeAndOrName(String type, String recipeName) {
+	@GetMapping(value = "/ListOChef/recipeList", params = { "type", "recipeName" })
+	public ResponseEntity<Object> recipeListByTypeAndName(@RequestParam String type, @RequestParam String recipeName) {
+		return filterByTypeAndOrName(type, recipeName);
+	}
 
-        List<Bson> filters = new ArrayList<>();
+	private ResponseEntity<Object> filterByTypeAndOrName(String type, String recipeName) {
 
-        if (type != null && !type.trim().isEmpty()) {
-            String regexType = "(^|,\\s*)" + java.util.regex.Pattern.quote(type.trim()) + "(\\s*,|$)";
-            filters.add(regex("type", regexType, "i"));
-        }
+		List<Bson> filters = new ArrayList<>();
 
-        if (recipeName != null && !recipeName.trim().isEmpty()) {
-            filters.add(regex("recipeName",
-                    java.util.regex.Pattern.quote(recipeName.trim()), "i"));
-        }
+		if (type != null && !type.trim().isEmpty()) {
+			String regexType = "(^|,\\s*)" + java.util.regex.Pattern.quote(type.trim()) + "(\\s*,|$)";
+			filters.add(regex("type", regexType, "i"));
+		}
 
-        List<Document> results;
+		if (recipeName != null && !recipeName.trim().isEmpty()) {
+			filters.add(regex("recipeName", java.util.regex.Pattern.quote(recipeName.trim()), "i"));
+		}
 
-        if (filters.isEmpty()) {
-            results = recipesCollection.find().into(new ArrayList<>());
-        } else if (filters.size() == 1) {
-            results = recipesCollection.find(filters.get(0)).into(new ArrayList<>());
-        } else {
-            results = recipesCollection.find(and(filters)).into(new ArrayList<>());
-        }
+		List<Document> results;
 
-        List<Document> recipes = new ArrayList<>();
+		if (filters.isEmpty()) {
+			results = recipesCollection.find().into(new ArrayList<>());
+		} else if (filters.size() == 1) {
+			results = recipesCollection.find(filters.get(0)).into(new ArrayList<>());
+		} else {
+			results = recipesCollection.find(and(filters)).into(new ArrayList<>());
+		}
 
-        for (Document doc : results) {
-            Document r = new Document();
-            r.append("id", doc.getObjectId("_id").toString());
-            r.append("recipeName", doc.getString("recipeName"));
-            r.append("type", doc.getString("type"));
-            r.append("time", doc.get("time"));
-            r.append("difficulty", doc.getString("difficulty"));
-            r.append("photo", doc.getString("photo"));
-            r.append("isSaved", doc.getBoolean("isSaved"));
-            recipes.add(r);
-        }
-
-        Document response = new Document("recipes", recipes);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }
-
-
-	@GetMapping("/ListOChef/recipeList")
-	ResponseEntity<Object> recipeList(){
-
-		//Into para meter toda la info
-		List<Document> list = recipesCollection.find().into(new ArrayList<>());
 		List<Document> recipes = new ArrayList<>();
-		for (Document doc : list) {
-            Document r = new Document();
-            r.append("id", doc.getObjectId("_id").toString());
-            r.append("recipeName", doc.getString("recipeName"));
-            r.append("type", doc.getString("type"));
-            r.append("time", doc.get("time"));
-            r.append("difficulty", doc.getString("difficulty"));
-            r.append("photo", doc.getString("photo"));
-            recipes.add(r);
-        }
-		
+
+		for (Document doc : results) {
+			Document r = new Document();
+			r.append("id", doc.getObjectId("_id").toString());
+			r.append("recipeName", doc.getString("recipeName"));
+			r.append("type", doc.getString("type"));
+			r.append("time", doc.get("time"));
+			r.append("difficulty", doc.getString("difficulty"));
+			r.append("photo", doc.getString("photo"));
+			r.append("isSaved", doc.getBoolean("isSaved"));
+			recipes.add(r);
+		}
+
 		Document response = new Document("recipes", recipes);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
-	
-//	@GetMapping("/ListOChef/recipesUser")
-//	ResponseEntity<Object> recipesUser(@RequestParam (value = "nick") String nick){
-//
-//		query = eq("nickname", nick);
-//		//Into para meter toda la info
-//		cursor = usersCollection.find(query).iterator();
-//		if(cursor.hasNext()) {
-//			List<Document> recipes = new ArrayList<>();
-//			JSONObject obj = new JSONObject(cursor.next());
-//			String[] ids = (String[]) obj.get("isSaved");
-//			
-//		}
-//		
+
+	@GetMapping("/ListOChef/recipeList")
+	ResponseEntity<Object> recipeList() {
+
+		// Into para meter toda la info
+		List<Document> list = recipesCollection.find().into(new ArrayList<>());
+		List<Document> recipes = new ArrayList<>();
+		for (Document doc : list) {
+			Document r = new Document();
+			r.append("id", doc.getObjectId("_id").toString());
+			r.append("recipeName", doc.getString("recipeName"));
+			r.append("type", doc.getString("type"));
+			r.append("time", doc.get("time"));
+			r.append("difficulty", doc.getString("difficulty"));
+			r.append("photo", doc.getString("photo"));
+			recipes.add(r);
+		}
+
+		Document response = new Document("recipes", recipes);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
+	@GetMapping("/ListOChef/recipesUser")
+	ResponseEntity<Object> recipesUser(@RequestParam(value = "nick") String nick) {
+		query = eq("nickname", nick);
+		// Into para meter toda la info
+		cursor = usersCollection.find(query).iterator();
+		if (cursor.hasNext()) {
+			
+			Document userDoc = cursor.next();
+			List<String> ids = userDoc.getList("isSaved", String.class);
+			List<ObjectId> objectsIds = new ArrayList<>();
+			for(String id : ids) {
+				objectsIds.add(new ObjectId(id));
+			}
+			
+				query = in("_id",objectsIds);
+				List<Document> recipes = new ArrayList<>();
+				cursor = recipesCollection.find(query).iterator();
+				while(cursor.hasNext()) {
+					recipes.add(cursor.next());
+				}
+				if(recipes.isEmpty()) {
+					return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No hay resultados");
+				}
+				return ResponseEntity.status(HttpStatus.OK).body(recipes);
+			}
+		
+// Posible mejor de calidad visual
 //		for (Document doc : list) {
 //            Document r = new Document();
 //            r.append("id", doc.getObjectId("_id").toString());
@@ -136,12 +146,10 @@ public class MainController {
 //            r.append("photo", doc.getString("photo"));
 //            recipes.add(r);
 //        }
-//		
+
 //		Document response = new Document("recipes", recipes);
-//		return ResponseEntity.status(HttpStatus.OK).body(response);
-//	}
-	
-	
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	}
 
 	@PostMapping("/ListOChef/recipeCreate")
 	ResponseEntity<Object> recipeCreate(@RequestBody String recipeBody, @RequestParam String userNickname) {
@@ -164,14 +172,14 @@ public class MainController {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 			}
 		} catch (Exception e) {
-			
+
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 
 	}
-	
+
 	@PostMapping("/ListOChef/createUser")
-	ResponseEntity<Object> createUser(@RequestBody String data){
+	ResponseEntity<Object> createUser(@RequestBody String data) {
 		JSONObject jsondata = new JSONObject(data);
 		String nickName = jsondata.getString("nickname");
 		String email = jsondata.getString("email");
@@ -180,16 +188,16 @@ public class MainController {
 		Bson query = eq("nickname", nickName);
 		cursor = usersCollection.find(query).iterator();
 		try {
-			if(!cursor.hasNext()) {
+			if (!cursor.hasNext()) {
 				Document doc = new Document();
 				doc.append("nickname", nickName);
-				doc.append("email",email);
+				doc.append("email", email);
 				doc.append("password", password);
 				doc.append("avatar", "");
 				doc.append("isSaved", recipes);
 				usersCollection.insertOne(doc);
 				return ResponseEntity.status(HttpStatus.OK).build();
-			}else {
+			} else {
 				System.out.println("Ya existe este usuario en la base de datos");
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 			}
@@ -197,21 +205,22 @@ public class MainController {
 			System.out.println(e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
-		
+
 	}
+
 	@PostMapping("/ListOChef/login")
-	ResponseEntity<Object> login(@RequestBody String data){
+	ResponseEntity<Object> login(@RequestBody String data) {
 		JSONObject jsondata = new JSONObject(data);
 		String nickName = jsondata.getString("nickname");
 		String password = jsondata.getString("password");
-		Bson query = and(eq("nickname", nickName), eq("password",password));
+		Bson query = and(eq("nickname", nickName), eq("password", password));
 		cursor = usersCollection.find(query).iterator();
-		if(cursor.hasNext()) {
+		if (cursor.hasNext()) {
 			user = nickName;
 			return ResponseEntity.status(HttpStatus.OK).build();
-		}else {
+		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
-		
+
 	}
 }
