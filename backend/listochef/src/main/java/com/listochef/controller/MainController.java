@@ -1,4 +1,4 @@
-package listochef.controller;
+package com.listochef.controller;
 
 import java.util.ArrayList;
 import java.util.List;

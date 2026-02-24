@@ -1,4 +1,4 @@
-package listochef;
+package com.listochef;
 
 public class Test {
 
