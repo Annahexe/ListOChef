@@ -4,12 +4,15 @@ const ItemInput = (props) => (
   <View>
     <Text style={styles.title}>{props.label}</Text>
     <TextInput
-      style={styles.textInput}
+      style={[styles.textInput, props.multiline && styles.multilineInput]}
       placeholder={props.placeholder}
       placeholderTextColor="white"
       value={props.value}
       onChangeText={props.onChangeText}
       keyboardType={props.keyboardType}
+      multiline={props.multiline}
+      numberOfLines={props.numberOfLines}
+      textAlignVertical={props.multiline ? "top" : "center"}
     />
   </View>
 );
@@ -36,6 +39,10 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     color: "#2C5818",
     marginTop: 10,
+  },
+  multilineInput: {
+    height: 140,
+    paddingTop: 12,
   },
 });
 export default ItemInput;
