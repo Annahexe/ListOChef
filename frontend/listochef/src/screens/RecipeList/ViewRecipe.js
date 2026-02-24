@@ -10,7 +10,7 @@ import { useState, useEffect, useContext } from "react";
 
 import ItemView from "../../components/ItemView";
 import TitleModalScreen from "../../components/TitleModalScreen";
-import Hearth from "../../components/Heart";
+import Heart from "../../components/Heart";
 
 import Context from "../../context/Context";
 
@@ -52,8 +52,8 @@ const ViewRecipe = ({ navigation }) => {
                 uri: recipe.photo,
               }}
             ></Image>
-            <Hearth
-              colorHearth={isSaved ? "red" : "white"}
+            <Heart
+              colorHeart={isSaved ? "red" : "white"}
               stiles={"onImage"}
               onPress={() => onToggleSaved?.()}
             />
