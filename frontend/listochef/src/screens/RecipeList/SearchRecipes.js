@@ -1,8 +1,10 @@
-import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView } from "react-native";
+import { StyleSheet, View, ImageBackground, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
+
 import { Seeker } from "../../components/Seeker";
 import { TagsCarousel } from "../../components/TagsCarousel";
 import RecipeCard from "../../components/RecipeCard";
+
 import Feather from "@expo/vector-icons/Feather";
 
 const SearchRecipes = (props) => {
@@ -17,15 +19,25 @@ const SearchRecipes = (props) => {
       if (selectedTag == "All") {
         return ["All"];
       }
-      const tagsWithoutAll = previousSelectedTags.filter((element) => element !== "All");
+      const tagsWithoutAll = previousSelectedTags.filter(
+        (element) => element !== "All",
+      );
       if (tagsWithoutAll.includes(selectedTag)) {
-        const selectedTagsList = tagsWithoutAll.filter((element) => element !== selectedTag);
+        const selectedTagsList = tagsWithoutAll.filter(
+          (element) => element !== selectedTag,
+        );
         return selectedTagsList.length === 0 ? ["All"] : selectedTagsList;
       }
       return [...tagsWithoutAll, selectedTag];
     });
   };
-
+  const toggleSaved = (id) => {
+    setRecipeList((prev) =>
+      prev.map((recipe) =>
+        recipe.id === id ? { ...recipe, isSaved: !recipe.isSaved } : recipe,
+      ),
+    );
+  };
   //demo data
   useEffect(() => {
     setRecipeList([
@@ -36,7 +48,8 @@ const SearchRecipes = (props) => {
         tags: ["Pasta", "Meat", "Tomato"],
         time: 20,
         difficulty: "Easy",
-        photo: "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
+        photo:
+          "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
         creationDate: "17/02/2026",
         isSaved: true,
       },
@@ -47,7 +60,8 @@ const SearchRecipes = (props) => {
         tags: ["Rice", "Chicken"],
         time: 60,
         difficulty: "Hard",
-        photo: "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
+        photo:
+          "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
         creationDate: "18/02/2026",
         isSaved: false,
       },
@@ -58,7 +72,8 @@ const SearchRecipes = (props) => {
         tags: ["Tomato", "Meat", "Beef"],
         time: 30,
         difficulty: "Medium",
-        photo: "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
+        photo:
+          "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
         creationDate: "15/02/2026",
         isSaved: true,
       },
@@ -69,7 +84,8 @@ const SearchRecipes = (props) => {
         tags: ["Tomato", "Pasta", "Beef", "Pasta"],
         time: 30,
         difficulty: "Medium",
-        photo: "https://www.eatclub.de/wp-content/uploads/2024/01/gnocchi-bolognese.jpg",
+        photo:
+          "https://www.eatclub.de/wp-content/uploads/2024/01/gnocchi-bolognese.jpg",
         creationDate: "15/02/2026",
         isSaved: false,
       },
@@ -77,17 +93,42 @@ const SearchRecipes = (props) => {
   }, []);
 
   return (
-    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
+    <ImageBackground
+      source={require("../../../assets/fondoApp.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
       <View style={styles.overlay}>
         <View style={styles.container}>
           <View style={styles.searchBarContainer}>
-            <Feather name="chevron-left" size={60} color="rgba(75, 100, 63, 0.7)" onPress={() => props.navigation.goBack()} />
-            <Seeker placeholderText="Search recipe..." onPress={() => console.log("searching")}></Seeker>
+            <Feather
+              name="chevron-left"
+              size={60}
+              color="rgba(75, 100, 63, 0.7)"
+              onPress={() => props.navigation.goBack()}
+            />
+            <Seeker
+              placeholderText="Search recipe..."
+              onPress={() => console.log("searching")}
+            ></Seeker>
           </View>
-          <TagsCarousel tagsList={TAGS} selectedTags={selectedTags} onToggleTag={toggleTag} />
-          <ScrollView style={{ width: "100%", marginBottom: "12%" }} contentContainerStyle={{ paddingBottom: 20 }}>
+          <TagsCarousel
+            tagsList={TAGS}
+            selectedTags={selectedTags}
+            onToggleTag={toggleTag}
+          />
+          <ScrollView
+            style={{ width: "100%", marginBottom: "12%" }}
+            contentContainerStyle={{ paddingBottom: 20 }}
+          >
             {recipeList.map((recipe, index) => (
-              <RecipeCard key={index} recipe={recipe} isDetailedBox={true} onViewRecipe={() => props.navigation.navigate("ViewRecipe")}></RecipeCard>
+              <RecipeCard
+                key={index}
+                recipe={recipe}
+                isDetailedBox={true}
+                onViewRecipe={() => props.navigation.navigate("ViewRecipe")}
+                onToggleSaved={toggleSaved}
+              ></RecipeCard>
             ))}
           </ScrollView>
         </View>

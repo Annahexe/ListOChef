@@ -176,6 +176,14 @@ const RecipesList = (props) => {
     return props.navigation.navigate("SearchRecipes");
   };
 
+  const toggleSaved = (id) => {
+    setRecipeList((prev) =>
+      prev.map((recipe) =>
+        recipe.id === id ? { ...recipe, isSaved: !recipe.isSaved } : recipe,
+      ),
+    );
+  };
+
   return (
     <ImageBackground
       source={require("../../../assets/fondoApp.png")}
@@ -243,7 +251,9 @@ const RecipesList = (props) => {
                 <RecipeCard
                   key={index}
                   recipe={recipe}
+                  isDetailedBox={false}
                   onViewRecipe={onViewRecipe}
+                  onToggleSaved={toggleSaved}
                 ></RecipeCard>
               ))}
             </ScrollView>

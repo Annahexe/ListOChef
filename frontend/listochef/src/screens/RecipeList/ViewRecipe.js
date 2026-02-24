@@ -8,10 +8,9 @@ import {
 } from "react-native";
 import { useState, useEffect, useContext } from "react";
 
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-
 import ItemView from "../../components/ItemView";
 import TitleModalScreen from "../../components/TitleModalScreen";
+import Hearth from "../../components/Hearth";
 
 import Context from "../../context/Context";
 
@@ -30,6 +29,12 @@ const ViewRecipe = ({ navigation }) => {
   };
 
   if (!recipe) return null;
+
+  const onToggleSaved = () => {
+    setIsSaved((prev) => !prev);
+    setRecipe((prev) => ({ ...prev, isSaved: !prev.isSaved }));
+    setLastRecipeSeen((prev) => ({ ...prev, isSaved: !prev.isSaved }));
+  };
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
@@ -47,16 +52,11 @@ const ViewRecipe = ({ navigation }) => {
                 uri: recipe.photo,
               }}
             ></Image>
-            <Pressable
-              style={styles.saveButton}
-              onPress={() => setIsSaved(!isSaved)}
-            >
-              <FontAwesome
-                name={isSaved ? "heart" : "heart-o"}
-                size={40}
-                color={isSaved ? "red" : "white"}
-              />
-            </Pressable>
+            <Hearth
+              colorHearth={isSaved ? "red" : "white"}
+              stiles={"onImage"}
+              onPress={() => onToggleSaved?.()}
+            />
           </View>
           <ItemView
             label={"Ingredients"}
