@@ -1,9 +1,10 @@
 import { Text, View, Image, StyleSheet, Pressable } from "react-native";
 import { useContext } from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Context from "../context/Context";
 
-const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe }) => {
+import Heart from "./Heart";
+
+const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe, onToggleSaved }) => {
   const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
 
   const handlePress = () => {
@@ -14,20 +15,33 @@ const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe }) => {
   return (
     <View style={styles.card}>
       <Pressable onPress={handlePress}>
-        <View style={{ borderTopLeftRadius: 15, borderTopRightRadius: 15, overflow: "hidden" }}>
+        <View style={styles.imageWrapper}>
           <Image
             style={styles.mainImage}
             source={{
               uri: recipe.photo,
             }}
-          ></Image>
+          />
 
-          {isDetailedBox && <FontAwesome style={styles.heartOverlay} name={"heart"} size={30} color={recipe.isSaved ? "red" : "white"} />}
+          {isDetailedBox && (
+            <Heart
+              colorHeart={recipe.isSaved ? "red" : "white"}
+              stiles={"onImage"}
+              onPress={() => onToggleSaved?.(recipe.id)}
+            />
+          )}
         </View>
         <View style={styles.container}>
           <View style={styles.infoContainer}>
-            <Text style={[styles.title, isDetailedBox && styles.titleCentered]}>{recipe.recipeName}</Text>
-            {!isDetailedBox && <FontAwesome name={recipe.isSaved ? "heart" : "heart-o"} size={30} color={recipe.isSaved ? "red" : "black"} />}
+            <Text style={[styles.title, isDetailedBox && styles.titleCentered]}>
+              {recipe.recipeName}
+            </Text>
+            {!isDetailedBox && (
+              <Heart
+                colorHeart={recipe.isSaved ? "red" : "white"}
+                onPress={() => onToggleSaved?.(recipe.id)}
+              />
+            )}
           </View>
           {isDetailedBox && (
             <View style={styles.infoContainerLabels}>
@@ -106,17 +120,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     position: "relative",
   },
-  heartOverlay: {
-    position: "absolute",
-    top: 10,
-    right: 12,
-    padding: 6,
-    borderRadius: 50,
-    textShadowColor: "black",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 3,
-  },
-
   titleCentered: {
     textAlign: "center",
   },

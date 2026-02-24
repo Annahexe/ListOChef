@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 const ItemView = (props) => (
   <View style={{ flex: 1, marginHorizontal: 5 }}>

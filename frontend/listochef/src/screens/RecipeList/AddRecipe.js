@@ -141,6 +141,8 @@ const AddRecipe = ({ navigation }) => {
               setForm((prev) => ({ ...prev, steps: text }))
             }
             keyboardType="default"
+            multiline
+            numberOfLines={6}
           />
 
           <View
