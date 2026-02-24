@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import GeneralRecipes from "./GeneralRecipes";
+import SearchRecipes from "./SearchRecipes";
 import AddRecipe from "./AddRecipe";
 import ViewRecipe from "./ViewRecipe";
 import RecipesList from "./RecipesList";
@@ -11,7 +11,7 @@ const NavigationRecipeList = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Group>
       <Stack.Screen name="RecipesList" component={RecipesList} />
-      <Stack.Screen name="GeneralRecipes" component={GeneralRecipes} />
+      <Stack.Screen name="SearchRecipes" component={SearchRecipes} />
     </Stack.Group>
     <Stack.Group screenOptions={{ presentation: "transparentModal" }}>
       <Stack.Screen

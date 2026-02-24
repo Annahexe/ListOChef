@@ -1,15 +1,9 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView } from "react-native";
 import { useState, useEffect, useContext } from "react";
 import RecipeCard from "../../components/RecipeCard";
 import AddCircleButton from "../../components/AddCircleButton";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import Context from "../../context/Context";
 
 import { Seeker } from "../../components/Seeker";
 import { TitleIconPage } from "../../components/TitleIconPage";
@@ -20,43 +14,72 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { FilterOrderDropdown } from "../../components/FilterOrderDropdown";
 
 const RecipesList = (props) => {
+  const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
   const [recipeList, setRecipeList] = useState([]);
   const tabBarHeight = useBottomTabBarHeight();
   const [filterOrderValue, setFilterOrderValue] = useState("Oldest");
+
+  const toTime = (ddmmyyyy) => {
+    // "17/02/2026" -> [17, 2, 2026]
+    const [dd, mm, yyyy] = ddmmyyyy.split("/").map(Number);
+    return new Date(yyyy, mm - 1, dd).getTime();
+  }; //used to convert String creationDate to real date value
 
   useEffect(() => {
     setRecipeList([
       {
         id: "1",
         recipeName: "Spaghetti Bolognese",
-        type: "pasta",
+        type: "Lunch",
+        tags: ["Pasta", "Meat", "Tomato"],
         time: 20,
-        difficulty: "easy",
-        photo:
-          "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
+        difficulty: "Easy",
+        photo: "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
         creationDate: "17/02/2026",
         isSaved: true,
       },
       {
         id: "2",
         recipeName: "Paella",
-        type: "arroz, conejo",
+        type: "Rice",
+        tags: ["Rice", "Chicken"],
         time: 60,
-        difficulty: "hard",
-        photo:
-          "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
+        difficulty: "Hard",
+        photo: "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
         creationDate: "18/02/2026",
         isSaved: false,
       },
       {
         id: "3",
         recipeName: "Bolognese Sauce",
-        type: "sauce, meat, vegetable",
+        type: "Sauce",
+        tags: ["Tomato", "Meat", "Beef"],
         time: 30,
-        difficulty: "medium",
-        photo:
-          "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
+        difficulty: "Medium",
+        photo: "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
         creationDate: "15/02/2026",
+        isSaved: true,
+      },
+      {
+        id: "4",
+        recipeName: "Gnocchi Bolognese",
+        type: "Lunch",
+        tags: ["Tomato", "Pasta", "Beef", "Pasta"],
+        time: 30,
+        difficulty: "Medium",
+        photo: "https://www.eatclub.de/wp-content/uploads/2024/01/gnocchi-bolognese.jpg",
+        creationDate: "15/02/2026",
+        isSaved: false,
+      },
+      {
+        id: "5",
+        recipeName: "Potato Omelette",
+        type: "Breakfast",
+        tags: ["Potato", "Eggs"],
+        time: 20,
+        difficulty: "Medium",
+        photo: "https://mojo.generalmills.com/api/public/content/9xIHKwJDH0-1wbHPsVCCVQ_gmi_hi_res_jpeg.jpeg?v=2bfc22c6&t=16e3ce250f244648bef28c5949fb99ff",
+        creationDate: "20/02/2026",
         isSaved: true,
       },
     ]);
@@ -70,17 +93,23 @@ const RecipesList = (props) => {
     return props.navigation.navigate("ViewRecipe");
   };
 
+  const sortedRecipes = [...recipeList].sort((a, b) => {
+    const timeA = toTime(a.creationDate);
+    const timeB = toTime(b.creationDate);
+
+    if (filterOrderValue === "Oldest") {
+      return timeA - timeB;
+    }
+    return timeB - timeA;
+  });
+
   return (
-    <ImageBackground
-      source={require("../../../assets/fondoApp.png")}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <View style={styles.container}>
           <TitleIconPage titleText="Recipes List" icon={RecipeListTitleIcon} />
 
-          <Seeker placeholderText="Search recipe..."></Seeker>
+          <Seeker placeholderText="Search recipe..." onPress={() => props.navigation.navigate("SearchRecipes")}></Seeker>
 
           <View style={styles.featuredRecipe}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -96,16 +125,14 @@ const RecipesList = (props) => {
                 Last recipe seen
               </Text>
             </View>
-            <Text style={styles.label}>Potato Omelet</Text>
+            <Text style={styles.label} onPress={onViewRecipe}>
+              {lastRecipeSeen.recipeName}
+            </Text>
           </View>
 
           <View style={styles.filterOrderContainer}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <MaterialCommunityIcons
-                name="calendar-blank-outline"
-                size={28}
-                color="black"
-              />
+              <MaterialCommunityIcons name="calendar-blank-outline" size={28} color="black" />
               <Text
                 style={{
                   fontSize: 15,
@@ -116,31 +143,17 @@ const RecipesList = (props) => {
               >
                 Order by...
               </Text>
-              <FilterOrderDropdown
-                filterOrderValue={filterOrderValue}
-                setFilterOrderValue={setFilterOrderValue}
-              />
+              <FilterOrderDropdown filterOrderValue={filterOrderValue} setFilterOrderValue={setFilterOrderValue} />
             </View>
           </View>
 
           <View style={{ flex: 1, width: "100%" }}>
-            <ScrollView
-              style={{ width: "100%", marginBottom: 15 }}
-              contentContainerStyle={{ paddingBottom: 5 }}
-            >
-              {recipeList.map((recipe, index) => (
-                <Pressable key={index} onPress={onViewRecipe}>
-                  <RecipeCard
-                    name={recipe.recipeName}
-                    isSaved={recipe.isSaved}
-                    image={recipe.photo}
-                  ></RecipeCard>
-                </Pressable>
+            <ScrollView style={{ width: "100%", marginBottom: 15 }} contentContainerStyle={{ paddingBottom: 5 }}>
+              {sortedRecipes.map((recipe, index) => (
+                <RecipeCard key={index} recipe={recipe} onViewRecipe={onViewRecipe}></RecipeCard>
               ))}
             </ScrollView>
-            <View
-              style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}
-            >
+            <View style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}>
               <Pressable onPress={onAddRecipe}>
                 <AddCircleButton />
               </Pressable>
