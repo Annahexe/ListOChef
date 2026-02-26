@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -24,13 +25,16 @@ import static com.mongodb.client.model.Filters.*;
 @RestController
 public class MainController {
 
-	MongoClient mongoClient = new MongoClient("localhost", 27017);
+	
+	String uri = System.getenv("MONGODB_URI");
+	com.mongodb.client.MongoClient mongoClient = MongoClients.create(uri);
 	MongoDatabase database = mongoClient.getDatabase("ListOChef");
 	MongoCollection<Document> recipesCollection = database.getCollection("recipes");
 	MongoCollection<Document> usersCollection = database.getCollection("users");
+	MongoCollection<Document> pruebas = database.getCollection("Pruebas");
 	MongoCursor<Document> cursor;
-	static String user;
 	Bson query;
+	
 
 	@GetMapping(value = "/ListOChef/recipeList", params = { "type", "!recipeName" })
 	public ResponseEntity<Object> recipeListByType(@RequestParam String type) {
@@ -110,8 +114,8 @@ public class MainController {
 	}
 
 	@GetMapping("/ListOChef/recipesUser")
-	ResponseEntity<Object> recipesUser(@RequestParam(value = "nick") String nick) {
-		query = eq("nickname", nick);
+	ResponseEntity<Object> recipesUser(@RequestParam(value = "email") String email) {
+		query = eq("email", email);
 		// Into para meter toda la info
 		cursor = usersCollection.find(query).iterator();
 		if (cursor.hasNext()) {
@@ -152,9 +156,9 @@ public class MainController {
 	}
 
 	@PostMapping("/ListOChef/recipeCreate")
-	ResponseEntity<Object> recipeCreate(@RequestBody String recipeBody, @RequestParam String userNickname) {
+	ResponseEntity<Object> recipeCreate(@RequestBody String recipeBody, @RequestParam String email) {
 
-		Bson query = eq("nickname", userNickname);
+		Bson query = eq("email", email);
 
 		cursor = usersCollection.find(query).iterator();
 
@@ -181,16 +185,14 @@ public class MainController {
 	@PostMapping("/ListOChef/createUser")
 	ResponseEntity<Object> createUser(@RequestBody String data) {
 		JSONObject jsondata = new JSONObject(data);
-		String nickName = jsondata.getString("nickname");
 		String email = jsondata.getString("email");
 		String password = jsondata.getString("password");
 		List<String> recipes = new ArrayList<>();
-		Bson query = eq("nickname", nickName);
+		Bson query = eq("email", email);
 		cursor = usersCollection.find(query).iterator();
 		try {
 			if (!cursor.hasNext()) {
 				Document doc = new Document();
-				doc.append("nickname", nickName);
 				doc.append("email", email);
 				doc.append("password", password);
 				doc.append("avatar", "");
@@ -211,12 +213,11 @@ public class MainController {
 	@PostMapping("/ListOChef/login")
 	ResponseEntity<Object> login(@RequestBody String data) {
 		JSONObject jsondata = new JSONObject(data);
-		String nickName = jsondata.getString("nickname");
+		String email = jsondata.getString("email");
 		String password = jsondata.getString("password");
-		Bson query = and(eq("nickname", nickName), eq("password", password));
+		Bson query = and(eq("email", email), eq("password", password));
 		cursor = usersCollection.find(query).iterator();
 		if (cursor.hasNext()) {
-			user = nickName;
 			return ResponseEntity.status(HttpStatus.OK).build();
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
