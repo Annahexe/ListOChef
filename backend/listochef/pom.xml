@@ -22,8 +22,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
-        <!-- MongoDB integrado con Spring -->
+        <!-- Firebase--> 
+        <dependency>
+        	<groupId>com.google.firebase</groupId> 
+        	<artifactId>firebase-admin</artifactId> 
+        	<version>9.2.0</version> </dependency> 
+        <!-- Cloudinary--> 
+        <dependency> 
+        	<groupId>com.cloudinary</groupId> 
+        	<artifactId>cloudinary-http44</artifactId> 
+        	<version>1.38.0</version> 
+        </dependency>
+         <!-- MongoDB integrado con Spring -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -35,11 +45,9 @@
             <artifactId>json</artifactId>
             <version>20220924</version>
         </dependency>
-
-    </dependencies>
-
-    <build>
-        <plugins>
+	</dependencies>
+	<build>
+		<plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -51,7 +59,16 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
-    </build>
-
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+		<resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+	</build> 
 </project>
