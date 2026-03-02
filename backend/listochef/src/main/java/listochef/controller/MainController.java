@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mongodb.client.MongoClient;
 //import com.mongodb.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -26,12 +27,16 @@ import static com.mongodb.client.model.Filters.*;
 public class MainController {
 
 	
-	String uri = System.getenv("MONGODB_URI");
-	com.mongodb.client.MongoClient mongoClient = MongoClients.create(uri);
-	MongoDatabase database = mongoClient.getDatabase("ListOChef");
-	MongoCollection<Document> recipesCollection = database.getCollection("recipes");
-	MongoCollection<Document> usersCollection = database.getCollection("users");
-	MongoCollection<Document> pruebas = database.getCollection("Pruebas");
+	private final MongoCollection<Document> recipesCollection;
+    private final MongoCollection<Document> usersCollection;
+    
+
+    public MainController(MongoClient mongoClient) {
+        MongoDatabase database = mongoClient.getDatabase("ListOChef");
+        this.recipesCollection = database.getCollection("recipes");
+        this.usersCollection = database.getCollection("users");
+        
+    }
 	MongoCursor<Document> cursor;
 	Bson query;
 	
