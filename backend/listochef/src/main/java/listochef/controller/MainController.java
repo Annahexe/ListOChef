@@ -39,21 +39,37 @@ public class MainController {
     }
 	MongoCursor<Document> cursor;
 	Bson query;
+	String apikeySecur = System.getenv("apiKey");
 	
 
 	@GetMapping(value = "/ListOChef/recipeList", params = { "type", "!recipeName" })
-	public ResponseEntity<Object> recipeListByType(@RequestParam String type) {
-		return filterByTypeAndOrName(type, null);
+	public ResponseEntity<Object> recipeListByType(@RequestParam String type,@RequestParam (value = "apiKey") String apiKey) {
+		if(apikeySecur.equals(apiKey)) {
+			return filterByTypeAndOrName(type, null);
+		}else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		
 	}
 
 	@GetMapping(value = "/ListOChef/recipeList", params = { "!type", "recipeName" })
-	public ResponseEntity<Object> recipeListByName(@RequestParam String recipeName) {
-		return filterByTypeAndOrName(null, recipeName);
+	public ResponseEntity<Object> recipeListByName(@RequestParam String recipeName,@RequestParam (value = "apiKey") String apiKey) {
+		if(apikeySecur.equals(apiKey)) {
+			return filterByTypeAndOrName(null, recipeName);
+		}else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		
 	}
 
 	@GetMapping(value = "/ListOChef/recipeList", params = { "type", "recipeName" })
-	public ResponseEntity<Object> recipeListByTypeAndName(@RequestParam String type, @RequestParam String recipeName) {
-		return filterByTypeAndOrName(type, recipeName);
+	public ResponseEntity<Object> recipeListByTypeAndName(@RequestParam String type, @RequestParam String recipeName,@RequestParam (value = "apiKey") String apiKey) {
+		if(apikeySecur.equals(apiKey)) {
+			return filterByTypeAndOrName(type, recipeName);
+		}else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		
 	}
 
 	private ResponseEntity<Object> filterByTypeAndOrName(String type, String recipeName) {
@@ -98,8 +114,8 @@ public class MainController {
 	}
 
 	@GetMapping("/ListOChef/recipeList")
-	ResponseEntity<Object> recipeList() {
-
+	ResponseEntity<Object> recipeList(@RequestParam (value = "apiKey") String apiKey) {
+		if(apikeySecur.equals(apiKey)) {
 		// Into para meter toda la info
 		List<Document> list = recipesCollection.find().into(new ArrayList<>());
 		List<Document> recipes = new ArrayList<>();
@@ -115,12 +131,18 @@ public class MainController {
 		}
 
 		Document response = new Document("recipes", recipes);
-		return ResponseEntity.status(HttpStatus.OK).body(response);
+		return ResponseEntity.status(HttpStatus.OK).body(response);	
+		}else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+		}
+		
 	}
 
 	@GetMapping("/ListOChef/recipesUser")
-	ResponseEntity<Object> recipesUser(@RequestParam(value = "email") String email) {
-		query = eq("email", email);
+	ResponseEntity<Object> recipesUser(@RequestParam(value = "email") String email,@RequestParam (value = "apiKey") String apiKey) {
+		if(apikeySecur.equals(apiKey)) {
+			query = eq("email", email);
 		// Into para meter toda la info
 		cursor = usersCollection.find(query).iterator();
 		if (cursor.hasNext()) {
@@ -143,6 +165,10 @@ public class MainController {
 				}
 				return ResponseEntity.status(HttpStatus.OK).body(recipes);
 			}
+		}else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		
 		
 // Posible mejor de calidad visual
 //		for (Document doc : list) {
@@ -158,11 +184,12 @@ public class MainController {
 
 //		Document response = new Document("recipes", recipes);
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
 	}
 
 	@PostMapping("/ListOChef/recipeCreate")
-	ResponseEntity<Object> recipeCreate(@RequestBody String recipeBody, @RequestParam String email) {
-
+	ResponseEntity<Object> recipeCreate(@RequestBody String recipeBody, @RequestParam String email,@RequestParam (value = "apiKey") String apiKey) {
+		if(apikeySecur.equals(apiKey)) {
 		Bson query = eq("email", email);
 
 		cursor = usersCollection.find(query).iterator();
@@ -183,12 +210,17 @@ public class MainController {
 		} catch (Exception e) {
 
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}	
+		}else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
+		
 
 	}
 
 	@PostMapping("/ListOChef/createUser")
-	ResponseEntity<Object> createUser(@RequestBody String data) {
+	ResponseEntity<Object> createUser(@RequestBody String data,@RequestParam (value = "apiKey") String apiKey) {
+		if(apikeySecur.equals(apiKey)) {
 		JSONObject jsondata = new JSONObject(data);
 		String email = jsondata.getString("email");
 		String password = jsondata.getString("password");
@@ -211,12 +243,17 @@ public class MainController {
 		} catch (Exception e) {
 			System.out.println(e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}	
+		}else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
+		
 
 	}
 
 	@PostMapping("/ListOChef/login")
-	ResponseEntity<Object> login(@RequestBody String data) {
+	ResponseEntity<Object> login(@RequestBody String data,@RequestParam (value = "apiKey") String apiKey) {
+		if(apikeySecur.equals(apiKey)) {
 		JSONObject jsondata = new JSONObject(data);
 		String email = jsondata.getString("email");
 		String password = jsondata.getString("password");
@@ -227,6 +264,11 @@ public class MainController {
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
+		
+		}else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		
 
 	}
 }
