@@ -1,19 +1,17 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
+
+import OnboardingCard from "../../../components/OnboardingCard";
+
 const ResetPassword = (props) => {
   return (
-    <View style={styles.container}>
+      <OnboardingCard>
       <Text style={styles.title}>Reset Password</Text>
-      <Pressable
-        style={styles.boton}
-        onPress={() => props.navigation.navigate('Register')}>
-        <Text>Ir a Register</Text>
-      </Pressable>
       <Pressable
         style={styles.boton}
         onPress={() => props.navigation.navigate('Home')}>
         <Text>Ir a Home</Text>
       </Pressable>
-    </View>
+      </OnboardingCard>
   );
 };
 const styles = StyleSheet.create({
@@ -28,8 +26,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-  },
-  boton: {
+  },boton: {
     alignSelf: 'center',
     backgroundColor: 'green',
     padding: 10,

@@ -1,17 +1,17 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
+
+import OnboardingCard from "../../../components/OnboardingCard";
+
 const Register = (props) => {
   return (
-    <View style={styles.container}>
+      <OnboardingCard>
       <Text style={styles.title}>Register</Text>
-      <Pressable style={styles.boton} onPress={() => props.navigation.navigate('Login')}>
-        <Text >Ir a Login</Text>
-      </Pressable>
       <Pressable
         style={styles.boton}
         onPress={() => props.navigation.navigate('Home')}>
         <Text>Ir a Home</Text>
       </Pressable>
-    </View>
+      </OnboardingCard>
   );
 };
 const styles = StyleSheet.create({

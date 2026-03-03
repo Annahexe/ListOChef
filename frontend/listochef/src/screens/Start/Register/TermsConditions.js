@@ -1,17 +1,17 @@
 import { StyleSheet, Text, View, Pressable } from 'react-native';
+
+import OnboardingCard from "../../../components/OnboardingCard";
+
 const TermsConditions = (props) => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Terms and Conditions</Text>
-      <Pressable style={styles.boton} onPress={() => props.navigation.navigate('Login')}>
-        <Text >Ir a Login</Text>
-      </Pressable>
+      <OnboardingCard>
+      <Text style={styles.title}>Terms Conditions</Text>
       <Pressable
         style={styles.boton}
         onPress={() => props.navigation.navigate('Home')}>
         <Text>Ir a Home</Text>
       </Pressable>
-    </View>
+      </OnboardingCard>
   );
 };
 const styles = StyleSheet.create({
