@@ -65,5 +65,6 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratBold",
     fontSize: 40,
     color: "#414141",
+    textAlign: "center"
   },
 });
