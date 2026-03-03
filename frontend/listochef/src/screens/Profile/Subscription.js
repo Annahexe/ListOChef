@@ -3,32 +3,21 @@ import {
   Text,
   View,
   ImageBackground,
-  Pressable,
   ScrollView,
 } from "react-native";
 import { useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 
+import Ionicons from "@expo/vector-icons/Ionicons";
+
 import Context from "../../context/Context";
-import ItemView from "../../components/ItemView";
+import Plan from "../../components/Plan";
 import TitleProfile from "../../components/TitleProfile";
 
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-
-const Profile = (props) => {
+const Subscription = (props) => {
   const { user, setUser } = useContext(Context);
   const navigation = useNavigation();
 
-  const ocultPwd = () => {
-    const pass = user.password;
-
-    if (!pass) return "";
-
-    const visible = pass.slice(-2);
-    const hidden = "*".repeat(Math.max(pass.length - 2, 0));
-
-    return hidden + visible;
-  };
   return (
     <ImageBackground
       source={require("../../../assets/fondoApp.png")}
@@ -41,37 +30,28 @@ const Profile = (props) => {
             name={user.name}
             surname={user.surname}
             email={user.email}
-            type={"data"}
-            onPressData={() => {}}
-            onPressSubscription={() =>
-              props.navigation.navigate("Subscription")
-            }
+            type={"subscription"}
+            onPressData={() => props.navigation.navigate("Profile")}
+            onPressSubscription={() => {}}
             onPressLogout={() => {
               navigation.getParent("root-stack")?.navigate("Start");
             }}
           />
           <View style={styles.containerTitle}>
-            <FontAwesome5
-              style={{ width: "5%" }}
-              name="user-edit"
-              size={24}
+            <Ionicons
+              style={{ width: "10%" }}
+              name="card-outline"
+              size={30}
               color="black"
             />
             <Text style={styles.title}>Personal information</Text>
-            <Pressable style={styles.button}>
-              <Text style={styles.textButton}>Edit</Text>
-            </Pressable>
           </View>
           <ScrollView
             style={styles.containerItems}
             contentContainerStyle={{ paddingBottom: 5 }}
           >
-            <ItemView
-              label={"Complete Name:"}
-              info={user.name + " " + user.surname}
-            ></ItemView>
-            <ItemView label={"E-mail:"} info={user.email}></ItemView>
-            <ItemView label={"Password:"} info={ocultPwd()}></ItemView>
+            <Plan details={"free"} />
+            <Plan details={"premium"} />
           </ScrollView>
         </View>
       </View>
@@ -99,7 +79,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    width: "55%",
+    width: "70%",
     margin: 20,
     fontFamily: "InterBold",
     fontSize: 20,
@@ -127,4 +107,4 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 });
-export default Profile;
+export default Subscription;
