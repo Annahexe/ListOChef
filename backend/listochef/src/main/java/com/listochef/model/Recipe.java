@@ -2,15 +2,13 @@ package com.listochef.model;
 
 import java.util.List;
 
-import org.bson.types.ObjectId;
-
 import java.time.Instant;
 
 public class Recipe {
 
-	private ObjectId _id;
+	private String id;
 	private String user;
-	private String name;
+	private String recipeName;
 	private List<String> ingredients;
 	private String steps;
 	private String category;
@@ -23,12 +21,12 @@ public class Recipe {
 	public Recipe() {
 	}
 
-	public Recipe(ObjectId _id, String user, String name, List<String> ingredients, String steps, String category,
+	public Recipe(String id, String user, String recipeName, List<String> ingredients, String steps, String category,
 			int time, String difficulty, String photo, Instant creationDate, List<String> tags) {
 		super();
-		this._id = _id;
+		this.id = id;
 		this.user = user;
-		this.name = name;
+		this.recipeName = recipeName;
 		this.ingredients = ingredients;
 		this.steps = steps;
 		this.category = category;
@@ -39,12 +37,12 @@ public class Recipe {
 		this.tags = tags;
 	}
 
-	public ObjectId get_id() {
-		return _id;
+	public String getId() {
+		return id;
 	}
 
-	public void set_id(ObjectId _id) {
-		this._id = _id;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getUser() {
@@ -55,12 +53,12 @@ public class Recipe {
 		this.user = user;
 	}
 
-	public String getName() {
-		return name;
+	public String getRecipeName() {
+		return recipeName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setRecipeName(String name) {
+		this.recipeName = name;
 	}
 
 	public List<String> getIngredients() {
@@ -127,4 +125,5 @@ public class Recipe {
 		this.tags = tags;
 	}
 
+	
 }

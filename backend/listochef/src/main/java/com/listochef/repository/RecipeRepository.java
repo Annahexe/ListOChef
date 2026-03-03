@@ -12,5 +12,8 @@ public interface RecipeRepository {
 	Optional<Recipe> findById(String id);
 
 	List<Recipe> findAll();
-
+	
+	List<Recipe> findByFilters(String category, String recipeName);
+	
+	List<Recipe> findByUser(String userNickname);
 }

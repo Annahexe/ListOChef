@@ -1,29 +1,27 @@
 package com.listochef.model;
 
-import org.bson.types.ObjectId;
-
 public class IngredientCategory {
 
-	private ObjectId _id;
+	private String id;
 	private String name;
 	private String icon;
 
 	public IngredientCategory() {
 	}
 
-	public IngredientCategory(ObjectId _id, String name, String icon) {
+	public IngredientCategory(String id, String name, String icon) {
 		super();
-		this._id = _id;
+		this.id = id;
 		this.name = name;
 		this.icon = icon;
 	}
 
-	public ObjectId get_id() {
-		return _id;
+	public String getId() {
+		return id;
 	}
 
-	public void set_id(ObjectId _id) {
-		this._id = _id;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getName() {

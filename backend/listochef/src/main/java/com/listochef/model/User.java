@@ -6,33 +6,33 @@ import org.bson.types.ObjectId;
 
 public class User {
 
-	private ObjectId _id;
+	private String id;
 	private String nickname;
 	private String email;
 	private String password;
 	private String avatar;
-	private List<String> recipesSaved;
+	private List<String> isSaved;
 
 	public User() {
 	}
 
-	public User(ObjectId _id, String nickname, String email, String password, String avatar,
-			List<String> recipesSaved) {
+	public User(String id, String nickname, String email, String password, String avatar,
+			List<String> isSaved) {
 		super();
-		this._id = _id;
+		this.id = id;
 		this.nickname = nickname;
 		this.email = email;
 		this.password = password;
 		this.avatar = avatar;
-		this.recipesSaved = recipesSaved;
+		this.isSaved = isSaved;
 	}
 
-	public ObjectId get_id() {
-		return _id;
+	public String getId() {
+		return id;
 	}
 
-	public void set_id(ObjectId _id) {
-		this._id = _id;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getNickname() {
@@ -68,11 +68,11 @@ public class User {
 	}
 
 	public List<String> getRecipesSaved() {
-		return recipesSaved;
+		return isSaved;
 	}
 
-	public void setRecipesSaved(List<String> recipesSaved) {
-		this.recipesSaved = recipesSaved;
+	public void setRecipesSaved(List<String> isSaved) {
+		this.isSaved = isSaved;
 	}
 
 }
