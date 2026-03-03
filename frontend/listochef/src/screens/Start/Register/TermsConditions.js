@@ -4,7 +4,7 @@ import OnboardingCard from "../../../components/OnboardingCard";
 
 const TermsConditions = (props) => {
   return (
-      <OnboardingCard>
+      <OnboardingCard pageTitle="Terms and Conditions">
       <Text style={styles.title}>Terms Conditions</Text>
       <Pressable
         style={styles.boton}

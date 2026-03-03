@@ -4,8 +4,8 @@ import OnboardingCard from "../../../components/OnboardingCard";
 
 const ResetPassword = (props) => {
   return (
-      <OnboardingCard>
-      <Text style={styles.title}>Reset Password</Text>
+      <OnboardingCard pageTitle="Reset Password">
+      <Text style={styles.text}>We will email you a link to reset your password.</Text>
       <Pressable
         style={styles.boton}
         onPress={() => props.navigation.navigate('Home')}>
@@ -21,10 +21,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
-    margin: 24,
-    fontSize: 18,
-    fontWeight: 'bold',
+  text: {
+    fontSize: 14,
     textAlign: 'center',
   },boton: {
     alignSelf: 'center',

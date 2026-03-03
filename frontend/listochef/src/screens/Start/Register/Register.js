@@ -4,8 +4,8 @@ import OnboardingCard from "../../../components/OnboardingCard";
 
 const Register = (props) => {
   return (
-      <OnboardingCard>
-      <Text style={styles.title}>Register</Text>
+      <OnboardingCard pageTitle="Register">
+      <Text style={styles.title}>holaa</Text>
       <Pressable
         style={styles.boton}
         onPress={() => props.navigation.navigate('Home')}>

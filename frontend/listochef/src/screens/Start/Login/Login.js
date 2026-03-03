@@ -4,7 +4,7 @@ import OnboardingCard from "../../../components/OnboardingCard";
 
 const Login = (props) => {
   return (
-      <OnboardingCard>
+      <OnboardingCard pageTitle="Login">
       <Text style={styles.title}>Login</Text>
       <Pressable
         style={styles.boton}
