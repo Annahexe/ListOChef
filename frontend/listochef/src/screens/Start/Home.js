@@ -27,7 +27,7 @@ const ICONS = {
   GroceryList: { active: GroceryListIconActive, inactive: GroceryListIcon },
   Pantry: { active: PantryIconActive, inactive: PantryIcon },
   Expenses: { active: ExpensesIconActive, inactive: ExpensesIcon },
-  Profile: { active: ProfileIconActive, inactive: ProfileIcon },
+  NavigationProfile: { active: ProfileIconActive, inactive: ProfileIcon },
 };
 
 const SCREENS = [
@@ -35,7 +35,7 @@ const SCREENS = [
   { name: "GroceryList", component: GroceryList },
   { name: "Pantry", component: Pantry },
   { name: "Expenses", component: Expenses },
-  { name: "Profile", component: NavigationProfile },
+  { name: "NavigationProfile", component: NavigationProfile },
 ];
 
 const Home = () => (
