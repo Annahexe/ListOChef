@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 
 import OnboardingCard from "../../../components/OnboardingCard";
 import ItemInput from "../../../components/ItemInput";
@@ -11,17 +11,50 @@ const Register = (props) => {
     email: "",
     password: "",
     confirmPassword: "",
-    difficulty: "",
   });
 
   return (
     <OnboardingCard pageTitle="Register">
+      <ScrollView showsVerticalScrollIndicator={false}>
       <ItemInput
-        label="Name"
+        label="NAME:"
         placeholder="Name/s"
         value={registerData.name}
         onChangeText={(text) => setRegisterData((prev) => ({ ...prev, name: text }))}
         keyboardType="default"
+        style={{ fontSize: 16 }}
+      />
+      <ItemInput
+        label="SURNAME:"
+        placeholder="Surname/s"
+        value={registerData.surname}
+        onChangeText={(text) => setRegisterData((prev) => ({ ...prev, surname: text }))}
+        keyboardType="default"
+        style={{ fontSize: 16 }}
+      />
+      <ItemInput
+        label="E-MAIL:"
+        placeholder="E-Mail"
+        value={registerData.email}
+        onChangeText={(text) => setRegisterData((prev) => ({ ...prev, email: text }))}
+        keyboardType="default"
+        style={{ fontSize: 16 }}
+      />
+      <ItemInput
+        label="PASSWORD:"
+        placeholder="Password"
+        value={registerData.password}
+        onChangeText={(text) => setRegisterData((prev) => ({ ...prev, password: text }))}
+        keyboardType="default"
+        style={{ fontSize: 16 }}
+      />
+      <ItemInput
+        label="CONFIRM PASSWORD:"
+        placeholder="Confirm Password"
+        value={registerData.confirmPassword}
+        onChangeText={(text) => setRegisterData((prev) => ({ ...prev, confirmPassword: text }))}
+        keyboardType="default"
+        style={{ fontSize: 16 }}
       />
       <Text style={styles.smallText}>
         By registering you agree to our
@@ -38,6 +71,7 @@ const Register = (props) => {
           <Text style={[styles.smallText, { color: "#5A983D" }]}>Login</Text>
         </Pressable>
       </Text>
+      </ScrollView>
     </OnboardingCard>
   );
 };

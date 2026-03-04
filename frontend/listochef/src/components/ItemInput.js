@@ -2,7 +2,7 @@ import { View, Text, TextInput, StyleSheet } from "react-native";
 
 const ItemInput = (props) => (
   <View>
-    <Text style={styles.title}>{props.label}</Text>
+    <Text style={[styles.title, props.style]}>{props.label}</Text>
     <TextInput
       style={[styles.textInput, props.multiline && styles.multilineInput]}
       placeholder={props.placeholder}
@@ -18,6 +18,7 @@ const ItemInput = (props) => (
 );
 const styles = StyleSheet.create({
   textInput: {
+    color: "#173509",
     width: "100%",
     fontSize: 20,
     fontFamily: "InterMedium",
