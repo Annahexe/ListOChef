@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import Profile from "./Profile";
-import Subscription from "./Subscription";
 import EditProfile from "./EditProfile";
 
 const Stack = createNativeStackNavigator();
@@ -12,11 +11,6 @@ const NavigationProfile = () => (
       <Stack.Screen
         name="Profile"
         component={Profile}
-        options={{ animation: "none" }}
-      />
-      <Stack.Screen
-        name="Subscription"
-        component={Subscription}
         options={{ animation: "none" }}
       />
     </Stack.Group>

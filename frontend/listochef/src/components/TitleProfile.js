@@ -130,12 +130,12 @@ const styles = StyleSheet.create({
   },
 
   image: {
-    width: 200,
-    height: 200,
+    width: 120,
+    height: 120,
     borderRadius: 100,
   },
   data: {
-    margin: 20,
+    margin: 15,
     alignItems: "center",
   },
   name: {
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     marginVertical: 5,
-    padding: 5,
+    padding: 3,
     borderRadius: 100,
   },
   textStackBar: {

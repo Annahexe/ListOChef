@@ -6,18 +6,25 @@ import {
   Pressable,
   ScrollView,
 } from "react-native";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import Context from "../../context/Context";
 import ItemView from "../../components/ItemView";
+import Subscription from "../../components/Subscription";
 import TitleProfile from "../../components/TitleProfile";
 
+import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 const Profile = (props) => {
   const { user, setUser } = useContext(Context);
+  const [subscription, setSubscription] = useState(false);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    setSubscription(false);
+  }, []);
 
   const ocultPwd = () => {
     const pass = user.password;
@@ -28,6 +35,17 @@ const Profile = (props) => {
     const hidden = "*".repeat(Math.max(pass.length - 2, 0));
 
     return hidden + visible;
+  };
+
+  const onPressData = () => {
+    !subscription ? null : setSubscription(false);
+  };
+  const onPressSubscription = () => {
+    subscription ? null : setSubscription(true);
+  };
+
+  const onEditProfile = () => {
+    return props.navigation.navigate("EditProfile");
   };
   return (
     <ImageBackground
@@ -41,38 +59,55 @@ const Profile = (props) => {
             name={user.name}
             surname={user.surname}
             email={user.email}
-            type={"data"}
-            onPressData={() => {}}
-            onPressSubscription={() =>
-              props.navigation.navigate("Subscription")
-            }
+            type={subscription ? "subscription" : "data"}
+            onPressData={onPressData}
+            onPressSubscription={onPressSubscription}
             onPressLogout={() => {
               navigation.getParent("root-stack")?.navigate("Start");
             }}
           />
-          <View style={styles.containerTitle}>
-            <FontAwesome5
-              style={{ width: "5%" }}
-              name="user-edit"
-              size={24}
-              color="black"
-            />
-            <Text style={styles.title}>Personal information</Text>
-            <Pressable style={styles.button}>
-              <Text style={styles.textButton}>Edit</Text>
-            </Pressable>
-          </View>
-          <ScrollView
-            style={styles.containerItems}
-            contentContainerStyle={{ paddingBottom: 5 }}
-          >
-            <ItemView
-              label={"Complete Name:"}
-              info={user.name + " " + user.surname}
-            ></ItemView>
-            <ItemView label={"E-mail:"} info={user.email}></ItemView>
-            <ItemView label={"Password:"} info={ocultPwd()}></ItemView>
-          </ScrollView>
+          {!subscription && (
+            <>
+              <View style={styles.containerTitle}>
+                <FontAwesome5
+                  style={{ width: "5%" }}
+                  name="user-edit"
+                  size={24}
+                  color="black"
+                />
+                <Text style={styles.title}>Personal information</Text>
+                <Pressable style={styles.button} onPress={onEditProfile}>
+                  <Text style={styles.textButton}>Edit</Text>
+                </Pressable>
+              </View>
+              <ScrollView
+                style={styles.containerItems}
+                contentContainerStyle={{ paddingBottom: 5 }}
+              >
+                <ItemView
+                  label={"Complete Name:"}
+                  info={user.name + " " + user.surname}
+                ></ItemView>
+                <ItemView label={"E-mail:"} info={user.email}></ItemView>
+                <ItemView label={"Password:"} info={ocultPwd()}></ItemView>
+              </ScrollView>
+            </>
+          )}
+          {subscription && (
+            <>
+              <View style={styles.containerTitle}>
+                <Ionicons name="card-outline" size={30} color="black" />
+                <Text style={styles.title}>Subscription</Text>
+              </View>
+              <ScrollView
+                style={styles.containerItems}
+                contentContainerStyle={{ paddingBottom: 5 }}
+              >
+                <Subscription details={"free"} />
+                <Subscription details={"premium"} />
+              </ScrollView>
+            </>
+          )}
         </View>
       </View>
     </ImageBackground>
@@ -97,6 +132,8 @@ const styles = StyleSheet.create({
   containerTitle: {
     flexDirection: "row",
     alignItems: "center",
+    alignSelf: "flex-start",
+    marginLeft: 20,
   },
   title: {
     width: "55%",
