@@ -31,7 +31,10 @@ export default function App() {
     <PaperProvider>
       <Provider>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator
+            id="root-stack"
+            screenOptions={{ headerShown: false }}
+          >
             <Stack.Screen name="Start" component={Start} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Register" component={Register} />

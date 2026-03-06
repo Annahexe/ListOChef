@@ -17,9 +17,17 @@ export const Provider = ({ children }) => {
     creationDate: "17/02/2026",
     isSaved: true,
   });
+  const [user, setUser] = useState({
+    name: "John",
+    surname: "Doe",
+    email: "user@gmail.com",
+    password: "micontraseña",
+  });
 
   return (
-    <Context.Provider value={{ lastRecipeSeen, setLastRecipeSeen }}>
+    <Context.Provider
+      value={{ lastRecipeSeen, setLastRecipeSeen, user, setUser }}
+    >
       {children}
     </Context.Provider>
   );

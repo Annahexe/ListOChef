@@ -1,28 +1,56 @@
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
+import { useState, useEffect } from "react";
 
-const ItemInput = (props) => (
-  <View>
-    <Text style={styles.title}>{props.label}</Text>
-    <TextInput
-      style={[styles.textInput, props.multiline && styles.multilineInput]}
-      placeholder={props.placeholder}
-      placeholderTextColor="white"
-      value={props.value}
-      onChangeText={props.onChangeText}
-      keyboardType={props.keyboardType}
-      multiline={props.multiline}
-      numberOfLines={props.numberOfLines}
-      textAlignVertical={props.multiline ? "top" : "center"}
-    />
-  </View>
-);
+import AntDesign from "@expo/vector-icons/AntDesign";
+
+const ItemInput = (props) => {
+  const [showPassword, setShowPassword] = useState(!props.eye);
+
+  return (
+    <View>
+      <Text style={styles.title}>{props.label}</Text>
+
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={[styles.textInput, props.multiline && styles.multilineInput]}
+          placeholder={props.placeholder}
+          placeholderTextColor="white"
+          value={props.value}
+          onChangeText={props.onChangeText}
+          keyboardType={props.keyboardType}
+          multiline={props.multiline}
+          numberOfLines={props.numberOfLines}
+          textAlignVertical={props.multiline ? "top" : "center"}
+          secureTextEntry={props.eye && !showPassword}
+        />
+
+        {props.eye && (
+          <Pressable
+            onPress={() => setShowPassword(!showPassword)}
+            style={styles.eyeContainer}
+          >
+            <AntDesign
+              name={showPassword ? "eye-invisible" : "eye"}
+              size={26}
+              color="white"
+            />
+          </Pressable>
+        )}
+      </View>
+    </View>
+  );
+};
 const styles = StyleSheet.create({
+  inputContainer: {
+    position: "relative",
+    justifyContent: "center",
+  },
   textInput: {
     width: "100%",
     fontSize: 20,
     fontFamily: "InterMedium",
     backgroundColor: "#A5B19F",
-    textAlign: "Left",
+    textAlign: "left",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 10,
@@ -43,6 +71,11 @@ const styles = StyleSheet.create({
   multilineInput: {
     height: 140,
     paddingTop: 12,
+  },
+  eyeContainer: {
+    position: "absolute",
+    right: 15,
+    top: 8,
   },
 });
 export default ItemInput;
