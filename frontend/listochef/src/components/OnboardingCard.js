@@ -59,13 +59,19 @@ const styles = StyleSheet.create({
   appTitle: {
     fontFamily: "MontserratBold",
     fontSize: 50,
-      lineHeight: 60,
+    lineHeight: 60,
     color: "#173509",
+  textShadowColor: "rgba(0, 0, 0, 0.1)",
+  textShadowOffset: { width: 0, height: 5 },
+  textShadowRadius: 4,
   },
   pageTitle: {
     fontFamily: "MontserratBold",
     fontSize: 40,
     color: "#414141",
-    textAlign: "center"
+    textAlign: "center",
+  textShadowColor: "rgba(0, 0, 0, 0.1)",
+  textShadowOffset: { width: 0, height: 5 },
+  textShadowRadius: 4,
   },
 });
