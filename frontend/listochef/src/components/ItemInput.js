@@ -10,9 +10,15 @@ const ItemInput = (props) => {
     <View>
       <Text style={[styles.title, props.style]}>{props.label}</Text>
 
-      <View style={styles.inputContainer}>
+      <View
+        style={[
+          styles.inputContainer,
+          props.multiline && styles.multilineInput,
+          props.error && styles.inputError,
+        ]}
+      >
         <TextInput
-          style={[styles.textInput, props.multiline && styles.multilineInput, props.error && styles.inputError]}
+          style={styles.textInput}
           placeholder={props.placeholder}
           placeholderTextColor="white"
           value={props.value}
@@ -25,8 +31,15 @@ const ItemInput = (props) => {
         />
 
         {props.eye && (
-          <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeContainer}>
-            <AntDesign name={showPassword ? "eye-invisible" : "eye"} size={26} color="white" />
+          <Pressable
+            onPress={() => setShowPassword(!showPassword)}
+            style={styles.eyeContainer}
+          >
+            <AntDesign
+              name={showPassword ? "eye-invisible" : "eye"}
+              size={26}
+              color="white"
+            />
           </Pressable>
         )}
       </View>
@@ -38,14 +51,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     position: "relative",
     justifyContent: "center",
-  },
-  textInput: {
-    color: "#173509",
-    width: "100%",
-    fontSize: 20,
-    fontFamily: "InterMedium",
     backgroundColor: "#A5B19F",
-    textAlign: "left",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 10,
@@ -55,6 +61,15 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     marginBottom: 10,
     elevation: 5,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  textInput: {
+    color: "#173509",
+    width: "100%",
+    fontSize: 20,
+    fontFamily: "InterMedium",
+    textAlign: "left",
   },
   title: {
     fontSize: 23,
@@ -70,7 +85,6 @@ const styles = StyleSheet.create({
   eyeContainer: {
     position: "absolute",
     right: 15,
-    top: 8,
   },
   inputError: {
     borderWidth: 1,
