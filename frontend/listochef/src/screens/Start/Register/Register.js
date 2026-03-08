@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 
 import OnboardingCard from "../../../components/OnboardingCard";
 import ItemInput from "../../../components/ItemInput";
+import PrimaryButton from "../../../components/PrimaryButton";
 
 const Register = (props) => {
   const [registerData, setRegisterData] = useState({
@@ -62,9 +63,7 @@ const Register = (props) => {
           <Text style={[styles.smallText, { color: "#5A983D" }]}>Terms and Conditions</Text>
         </Pressable>
       </Text>
-      <Pressable style={styles.boton} onPress={() => props.navigation.navigate("Home")}>
-        <Text>Ir a Home</Text>
-      </Pressable>
+      <PrimaryButton buttonText={"Create account"} onPress={() => props.navigation.navigate("Home")}></PrimaryButton>
       <Text style={styles.smallText}>
         Do you already have an account?
         <Pressable onPress={() => props.navigation.navigate("Login")}>

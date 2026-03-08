@@ -1,50 +1,22 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  ImageBackground,
-  Image,
-} from "react-native";
+import { StyleSheet, Text, View, Pressable, ImageBackground, Image } from "react-native";
 
 import { LinearGradient } from "expo-linear-gradient";
+import PrimaryButton from "../../components/PrimaryButton";
 
 const Start = (props) => {
   return (
-    <ImageBackground
-      source={require("../../../assets/fondoApp.png")}
-      style={styles.background}
-      resizeMode="cover"
-    >
-      <LinearGradient
-        colors={["rgba(241, 255, 235, 0.39)", "rgba(49, 96, 29, 0.71)"]}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={styles.overlay}
-      >
+    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
+      <LinearGradient colors={["rgba(241, 255, 235, 0.39)", "rgba(49, 96, 29, 0.71)"]} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} style={styles.overlay}>
         <View style={styles.layout}>
-          <Image
-            source={require("../../../assets/icons/ListoChefLogo.png")}
-            style={styles.image}
-          />
+          <Image source={require("../../../assets/icons/ListoChefLogo.png")} style={styles.image} />
           <Text style={styles.title}>ListOChef</Text>
           <View style={styles.slogan}>
             <Text style={styles.textSlogan}>Plan your shopping.</Text>
             <Text style={styles.textSlogan}>Track your spending.</Text>
             <Text style={styles.textSlogan}>Cook like a chef.</Text>
           </View>
-          <Pressable
-            style={styles.button}
-            onPress={() => props.navigation.navigate("Login")}
-          >
-            <Text style={styles.textButton}>Login</Text>
-          </Pressable>
-          <Pressable
-            style={styles.button}
-            onPress={() => props.navigation.navigate("Register")}
-          >
-            <Text style={styles.textButton}>Register</Text>
-          </Pressable>
+          <PrimaryButton buttonText={"Login"} onPress={() => props.navigation.navigate("Login")} />
+          <PrimaryButton buttonText={"Register"} onPress={() => props.navigation.navigate("Register")} />
         </View>
       </LinearGradient>
     </ImageBackground>
