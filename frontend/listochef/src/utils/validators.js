@@ -4,7 +4,7 @@ export const isRequired = (value) => {
 
 export const isEmail = (value) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(value) ? "" : "Enter a valid email";
+  return emailRegex.test(value) ? "" : "Please enter a valid email";
 };
 
 export const minLength = (value, length) => {
