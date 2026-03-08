@@ -1,35 +1,64 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { useState } from "react";
+import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 
 import OnboardingCard from "../../../components/OnboardingCard";
+import ItemInput from "../../../components/ItemInput";
+import PrimaryButton from "../../../components/PrimaryButton";
 
 const ResetPassword = (props) => {
+    const [emailData, setEmailData] = useState({
+    email: "",
+  });
+
+    const onResetPassword = () => {
+    console.log(emailData); //TODO: here it sends petition to reset Password
+    // isSuccess = responseFromPost
+    let isSuccess = true;
+    if (isSuccess) {
+      props.navigation.navigate("Login");
+    }
+  };
+
   return (
-      <OnboardingCard pageTitle="Reset Password">
-      <Text style={styles.text}>We will email you a link to reset your password.</Text>
-      <Pressable
-        style={styles.boton}
-        onPress={() => props.navigation.navigate('Home')}>
-        <Text>Ir a Home</Text>
-      </Pressable>
+      <OnboardingCard pageTitle="Reset Password" titleStyle={{ fontSize: 36 }}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <Text style={styles.smallText}>We will email you a link to reset your password.</Text>
+              <ItemInput
+          label="E-MAIL:"
+          placeholder="E-Mail"
+          value={emailData.email}
+          onChangeText={(text) => setEmailData((prev) => ({ ...prev, email: text }))}
+          keyboardType="default"
+          style={{ fontSize: 16 }}
+        />
+        <View style={styles.buttonContainer}>
+          <PrimaryButton buttonText={"Send email"} onPress={onResetPassword}></PrimaryButton>
+        </View>
+
+          <Pressable onPress={() => props.navigation.navigate("Start")}>
+            <Text style={[styles.smallText, { color: "#5A983D" }]}>Return to home</Text>
+          </Pressable>
+
+                    <Pressable onPress={() => props.navigation.navigate("Login")}>
+            <Text style={[styles.smallText, { color: "#5A983D" }]}>Go to Login</Text>
+          </Pressable>
+      </ScrollView>
       </OnboardingCard>
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
+  scrollContent: {
+    flexGrow: 1,
   },
-  text: {
-    fontSize: 14,
-    textAlign: 'center',
-  },boton: {
-    alignSelf: 'center',
-    backgroundColor: 'green',
-    padding: 10,
-    borderRadius: 10,
-    marginVertical: 2,
+  smallText: {
+    marginVertical: "2%",
+    fontSize: 16,
+    fontFamily: "MontserratRegular",
+    textAlign: "center",
+  },
+  buttonContainer: {
+    marginTop: "auto",
+    marginBottom: "3%",
   },
 });
 export default ResetPassword;

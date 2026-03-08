@@ -16,7 +16,7 @@ export default function OnboardingCard(props) {
             <Feather style={styles.backBtn} name="chevron-left" size={55} color="rgba(75, 100, 63, 0.7)" onPress={() => navigation.goBack()} />
             <Image source={require("../../assets/icons/ListoChefLogo.png")} style={styles.image} />
             <Text style={styles.appTitle}>ListOChef</Text>
-            <Text style={styles.pageTitle}>{props.pageTitle}</Text>
+            <Text style={[styles.pageTitle, props.titleStyle]}>{props.pageTitle}</Text>
           </View>
           {props.children}
         </View>
