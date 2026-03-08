@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 import OnboardingCard from "../../../components/OnboardingCard";
 import ItemInput from "../../../components/ItemInput";
 import PrimaryButton from "../../../components/PrimaryButton";
+import { isRequired, isEmail, minLength } from "../../../utils/validators";
 
 const Login = (props) => {
   const [loginData, setLoginData] = useState({
@@ -12,7 +13,26 @@ const Login = (props) => {
   });
   const [showPassword, setShowPassword] = useState(false);
 
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  });
+
+  const validateForm = () => {
+    const newErrors = {
+      email: isRequired(loginData.email) || isEmail(loginData.email),
+      password: isRequired(loginData.password) || minLength(loginData.password, 6),
+    };
+
+    setErrors(newErrors);
+
+    return !newErrors.email && !newErrors.password;
+  };
+
   const onLogin = () => {
+    const isValid = validateForm();
+    if (!isValid) return;
+
     console.log(loginData); //TODO: here it sends petition to login
     // isSuccess = responseFromPost
     let isSuccess = true;
@@ -31,6 +51,7 @@ const Login = (props) => {
           onChangeText={(text) => setLoginData((prev) => ({ ...prev, email: text }))}
           keyboardType="default"
           style={{ fontSize: 16 }}
+          error={errors.email}
         />
         <ItemInput
           label="PASSWORD:"
@@ -42,6 +63,7 @@ const Login = (props) => {
           onChangeText={(text) => setLoginData((prev) => ({ ...prev, password: text }))}
           keyboardType="default"
           style={{ fontSize: 16 }}
+          error={errors.password}
         />
 
         <View style={styles.buttonContainer}>
