@@ -31,7 +31,7 @@ const Login = (props) => {
 
   const onLogin = () => {
     const isValid = validateForm();
-    if (!isValid) return;
+    if (!isValid) return; //COMMENT THIS FOR TESTING TO SKIP VALIDATION
 
     console.log(loginData); //TODO: here it sends petition to login
     // isSuccess = responseFromPost
