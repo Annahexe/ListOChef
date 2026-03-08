@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#A5B19F",
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    height: 50,
     borderRadius: 10,
     shadowColor: "#000",
     shadowOffset: { width: -1, height: 3 },
@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
   eyeContainer: {
     position: "absolute",
     right: 15,
+    padding: 10,
   },
   inputError: {
     borderWidth: 1,
