@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "listochef",
-    "slug": "listochef",
+    "name": "ListOChef",
+    "slug": "ListOChef",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icons/ListoChefLogo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/icons/ListoChefLogo.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/backgroundSplash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#BAE8A5"
     },
     "ios": {
       "supportsTablet": true

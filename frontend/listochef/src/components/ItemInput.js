@@ -8,11 +8,11 @@ const ItemInput = (props) => {
 
   return (
     <View>
-      <Text style={styles.title}>{props.label}</Text>
+      <Text style={[styles.title, props.style]}>{props.label}</Text>
 
       <View style={styles.inputContainer}>
         <TextInput
-          style={[styles.textInput, props.multiline && styles.multilineInput]}
+          style={[styles.textInput, props.multiline && styles.multilineInput, props.error && styles.inputError]}
           placeholder={props.placeholder}
           placeholderTextColor="white"
           value={props.value}
@@ -25,18 +25,12 @@ const ItemInput = (props) => {
         />
 
         {props.eye && (
-          <Pressable
-            onPress={() => setShowPassword(!showPassword)}
-            style={styles.eyeContainer}
-          >
-            <AntDesign
-              name={showPassword ? "eye-invisible" : "eye"}
-              size={26}
-              color="white"
-            />
+          <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeContainer}>
+            <AntDesign name={showPassword ? "eye-invisible" : "eye"} size={26} color="white" />
           </Pressable>
         )}
       </View>
+      {props.error ? <Text style={styles.errorText}>{props.error}</Text> : null}
     </View>
   );
 };
@@ -46,6 +40,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   textInput: {
+    color: "#173509",
     width: "100%",
     fontSize: 20,
     fontFamily: "InterMedium",
@@ -76,6 +71,18 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 15,
     top: 8,
+  },
+  inputError: {
+    borderWidth: 1,
+    borderColor: "#D9534F",
+  },
+  errorText: {
+    color: "#D9534F",
+    fontSize: 14,
+    marginTop: -5,
+    marginBottom: 8,
+    marginLeft: 4,
+    fontFamily: "InterMedium",
   },
 });
 export default ItemInput;
