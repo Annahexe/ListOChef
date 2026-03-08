@@ -23,6 +23,8 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import static com.mongodb.client.model.Filters.*;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 @RestController
 public class MainController {
 
@@ -229,9 +231,10 @@ public class MainController {
 		cursor = usersCollection.find(query).iterator();
 		try {
 			if (!cursor.hasNext()) {
+				String passHasheada = BCrypt.hashpw(password, BCrypt.gensalt());
 				Document doc = new Document();
 				doc.append("email", email);
-				doc.append("password", password);
+				doc.append("password", passHasheada);
 				doc.append("avatar", "");
 				doc.append("isSaved", recipes);
 				usersCollection.insertOne(doc);
@@ -257,10 +260,17 @@ public class MainController {
 		JSONObject jsondata = new JSONObject(data);
 		String email = jsondata.getString("email");
 		String password = jsondata.getString("password");
-		Bson query = and(eq("email", email), eq("password", password));
+		
+		Bson query = eq("email", email);
 		cursor = usersCollection.find(query).iterator();
 		if (cursor.hasNext()) {
-			return ResponseEntity.status(HttpStatus.OK).build();
+			Document usuario = cursor.next();
+			String passHasheada = usuario.getString("password");
+			if (BCrypt.checkpw(password, passHasheada)) {
+                return ResponseEntity.status(HttpStatus.OK).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
 		} else {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
