@@ -70,19 +70,15 @@ const Login = (props) => {
           <PrimaryButton buttonText={"Login"} onPress={onLogin}></PrimaryButton>
         </View>
 
-        <Text style={styles.smallText}>
-          Don't remember your password?
-          <Pressable onPress={() => props.navigation.navigate("ResetPassword")}>
-            <Text style={[styles.smallText, { color: "#5A983D" }]}>Click here</Text>
-          </Pressable>
-        </Text>
+        <Text style={styles.smallText}>Don't remember your password?</Text>
+        <Pressable onPress={() => props.navigation.navigate("ResetPassword")}>
+          <Text style={[styles.smallText, { color: "#5A983D" }]}>Click here</Text>
+        </Pressable>
 
-        <Text style={styles.smallText}>
-          You still haven't registered?
-          <Pressable onPress={() => props.navigation.navigate("Register")}>
-            <Text style={[styles.smallText, { color: "#5A983D" }]}>Register here</Text>
-          </Pressable>
-        </Text>
+        <Text style={styles.smallText}>You still haven't registered?</Text>
+        <Pressable onPress={() => props.navigation.navigate("Register")}>
+          <Text style={[styles.smallText, { color: "#5A983D" }]}>Register here</Text>
+        </Pressable>
       </ScrollView>
     </OnboardingCard>
   );

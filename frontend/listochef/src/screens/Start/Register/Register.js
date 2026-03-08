@@ -107,23 +107,19 @@ const Register = (props) => {
           error={errors.confirmPassword}
         />
 
-        <Text style={styles.smallText}>
-          By registering you agree to our
-          <Pressable onPress={() => props.navigation.navigate("TermsConditions")}>
-            <Text style={[styles.smallText, { color: "#5A983D" }]}>Terms and Conditions</Text>
-          </Pressable>
-        </Text>
+        <Text style={styles.smallText}>By registering you agree to our</Text>
+        <Pressable onPress={() => props.navigation.navigate("TermsConditions")}>
+          <Text style={[styles.smallText, { color: "#5A983D" }]}>Terms and Conditions</Text>
+        </Pressable>
 
         <View style={styles.buttonContainer}>
           <PrimaryButton buttonText={"Create account"} onPress={onCreateAccount}></PrimaryButton>
         </View>
 
-        <Text style={styles.smallText}>
-          Do you already have an account?
-          <Pressable onPress={() => props.navigation.navigate("Login")}>
-            <Text style={[styles.smallText, { color: "#5A983D" }]}>Login</Text>
-          </Pressable>
-        </Text>
+        <Text style={styles.smallText}>Do you already have an account?</Text>
+        <Pressable onPress={() => props.navigation.navigate("Login")}>
+          <Text style={[styles.smallText, { color: "#5A983D" }]}>Login</Text>
+        </Pressable>
       </ScrollView>
     </OnboardingCard>
   );
