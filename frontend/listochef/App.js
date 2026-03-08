@@ -33,7 +33,7 @@ export default function App() {
     <PaperProvider>
       <Provider>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ animation: "slide_from_right", headerShown: false }}>
+          <Stack.Navigator id="root-stack" screenOptions={{ animation: "slide_from_right", headerShown: false }}>
             <Stack.Screen name="Start" component={Start} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="ResetPassword" component={ResetPassword} />
