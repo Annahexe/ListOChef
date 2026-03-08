@@ -1,37 +1,82 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native';
+import { useState } from "react";
+import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 
 import OnboardingCard from "../../../components/OnboardingCard";
+import ItemInput from "../../../components/ItemInput";
+import PrimaryButton from "../../../components/PrimaryButton";
 
 const Login = (props) => {
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const onLogin = () => {
+    console.log(loginData); //TODO: here it sends petition to register
+    // isSuccess = responseFromPost
+    let isSuccess = true;
+    if (isSuccess) {
+      props.navigation.navigate("Home");
+    }
+  };
+
   return (
-      <OnboardingCard pageTitle="Login">
-      <Text style={styles.title}>Login</Text>
-      <Pressable
-        style={styles.boton}
-        onPress={() => props.navigation.navigate('Home')}>
-        <Text>Ir a Home</Text>
-      </Pressable>
-      </OnboardingCard>
+    <OnboardingCard pageTitle="Log in">
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <ItemInput
+          label="E-MAIL:"
+          placeholder="E-Mail"
+          value={loginData.email}
+          onChangeText={(text) => setLoginData((prev) => ({ ...prev, email: text }))}
+          keyboardType="default"
+          style={{ fontSize: 16 }}
+        />
+        <ItemInput
+          label="PASSWORD:"
+          placeholder="Password"
+          value={loginData.password}
+          eye={true}
+          onPressEye={() => setShowPassword(!showPassword)}
+          secureTextEntry={!showPassword}
+          onChangeText={(text) => setLoginData((prev) => ({ ...prev, password: text }))}
+          keyboardType="default"
+          style={{ fontSize: 16 }}
+        />
+
+        <View style={styles.buttonContainer}>
+          <PrimaryButton buttonText={"Login"} onPress={onLogin}></PrimaryButton>
+        </View>
+
+        <Text style={styles.smallText}>
+          Don't remember your password?
+          <Pressable onPress={() => props.navigaition.navigate("ResetPassword")}>
+            <Text style={[styles.smallText, { color: "#5A983D" }]}>Click here</Text>
+          </Pressable>
+        </Text>
+
+        <Text style={styles.smallText}>
+          You still haven't registered?
+          <Pressable onPress={() => props.navigation.navigate("Register")}>
+            <Text style={[styles.smallText, { color: "#5A983D" }]}>Register here</Text>
+          </Pressable>
+        </Text>
+      </ScrollView>
+    </OnboardingCard>
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
+  scrollContent: {
+    flexGrow: 1,
   },
-  title: {
-    margin: 24,
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },boton: {
-    alignSelf: 'center',
-    backgroundColor: 'green',
-    padding: 10,
-    borderRadius: 10,
-    marginVertical: 2,
+  smallText: {
+    fontSize: 16,
+    fontFamily: "MontserratRegular",
+    textAlign: "center",
+  },
+  buttonContainer: {
+    marginTop: "auto",
+    marginBottom: "3%",
   },
 });
 export default Login;
