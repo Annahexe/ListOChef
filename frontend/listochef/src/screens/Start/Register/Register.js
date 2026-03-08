@@ -82,7 +82,7 @@ const Register = (props) => {
         </Text>
 
         <View style={styles.buttonContainer}>
-          <PrimaryButton style={styles.buttonContainer} buttonText={"Create account"} onPress={onCreateAccount}></PrimaryButton>
+          <PrimaryButton buttonText={"Create account"} onPress={onCreateAccount}></PrimaryButton>
         </View>
 
         <Text style={styles.smallText}>
