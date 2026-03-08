@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
   appTitle: {
     fontFamily: "MontserratBold",
     fontSize: 50,
+      lineHeight: 60,
     color: "#173509",
   },
   pageTitle: {

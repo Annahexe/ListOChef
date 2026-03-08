@@ -13,91 +13,96 @@ const Register = (props) => {
     password: "",
     confirmPassword: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const onCreateAccount = () => {
+    console.log(registerData); //TODO: here it sends petition to register
+    // isSuccess = responseFromPost
+    let isSuccess = true;
+    if (isSuccess) {
+      props.navigation.navigate("Home");
+    }
+  };
 
   return (
     <OnboardingCard pageTitle="Register">
       <ScrollView showsVerticalScrollIndicator={false}>
-      <ItemInput
-        label="NAME:"
-        placeholder="Name/s"
-        value={registerData.name}
-        onChangeText={(text) => setRegisterData((prev) => ({ ...prev, name: text }))}
-        keyboardType="default"
-        style={{ fontSize: 16 }}
-      />
-      <ItemInput
-        label="SURNAME:"
-        placeholder="Surname/s"
-        value={registerData.surname}
-        onChangeText={(text) => setRegisterData((prev) => ({ ...prev, surname: text }))}
-        keyboardType="default"
-        style={{ fontSize: 16 }}
-      />
-      <ItemInput
-        label="E-MAIL:"
-        placeholder="E-Mail"
-        value={registerData.email}
-        onChangeText={(text) => setRegisterData((prev) => ({ ...prev, email: text }))}
-        keyboardType="default"
-        style={{ fontSize: 16 }}
-      />
-      <ItemInput
-        label="PASSWORD:"
-        placeholder="Password"
-        value={registerData.password}
-        onChangeText={(text) => setRegisterData((prev) => ({ ...prev, password: text }))}
-        keyboardType="default"
-        style={{ fontSize: 16 }}
-      />
-      <ItemInput
-        label="CONFIRM PASSWORD:"
-        placeholder="Confirm Password"
-        value={registerData.confirmPassword}
-        onChangeText={(text) => setRegisterData((prev) => ({ ...prev, confirmPassword: text }))}
-        keyboardType="default"
-        style={{ fontSize: 16 }}
-      />
-      <Text style={styles.smallText}>
-        By registering you agree to our
-        <Pressable onPress={() => props.navigation.navigate("TermsConditions")}>
-          <Text style={[styles.smallText, { color: "#5A983D" }]}>Terms and Conditions</Text>
-        </Pressable>
-      </Text>
-      <PrimaryButton buttonText={"Create account"} onPress={() => props.navigation.navigate("Home")}></PrimaryButton>
-      <Text style={styles.smallText}>
-        Do you already have an account?
-        <Pressable onPress={() => props.navigation.navigate("Login")}>
-          <Text style={[styles.smallText, { color: "#5A983D" }]}>Login</Text>
-        </Pressable>
-      </Text>
+        <ItemInput
+          label="NAME:"
+          placeholder="Name/s"
+          value={registerData.name}
+          onChangeText={(text) => setRegisterData((prev) => ({ ...prev, name: text }))}
+          keyboardType="default"
+          style={{ fontSize: 16 }}
+        />
+        <ItemInput
+          label="SURNAME:"
+          placeholder="Surname/s"
+          value={registerData.surname}
+          onChangeText={(text) => setRegisterData((prev) => ({ ...prev, surname: text }))}
+          keyboardType="default"
+          style={{ fontSize: 16 }}
+        />
+        <ItemInput
+          label="E-MAIL:"
+          placeholder="E-Mail"
+          value={registerData.email}
+          onChangeText={(text) => setRegisterData((prev) => ({ ...prev, email: text }))}
+          keyboardType="default"
+          style={{ fontSize: 16 }}
+        />
+        <ItemInput
+          label="PASSWORD:"
+          placeholder="Password"
+          value={registerData.password}
+          eye={true}
+          onPressEye={() => setShowPassword(!showPassword)}
+          secureTextEntry={!showPassword}
+          onChangeText={(text) => setRegisterData((prev) => ({ ...prev, password: text }))}
+          keyboardType="default"
+          style={{ fontSize: 16 }}
+        />
+        <ItemInput
+          label="CONFIRM PASSWORD:"
+          placeholder="Confirm Password"
+          value={registerData.confirmPassword}
+          eye={true}
+          onPressEye={() => setShowPassword(!showPassword)}
+          secureTextEntry={!showPassword}
+          onChangeText={(text) => setRegisterData((prev) => ({ ...prev, confirmPassword: text }))}
+          keyboardType="default"
+          style={{ fontSize: 16 }}
+        />
+
+        <Text style={styles.smallText}>
+          By registering you agree to our
+          <Pressable onPress={() => props.navigation.navigate("TermsConditions")}>
+            <Text style={[styles.smallText, { color: "#5A983D" }]}>Terms and Conditions</Text>
+          </Pressable>
+        </Text>
+
+        <View style={styles.buttonContainer}>
+          <PrimaryButton style={styles.buttonContainer} buttonText={"Create account"} onPress={onCreateAccount}></PrimaryButton>
+        </View>
+
+        <Text style={styles.smallText}>
+          Do you already have an account?
+          <Pressable onPress={() => props.navigation.navigate("Login")}>
+            <Text style={[styles.smallText, { color: "#5A983D" }]}>Login</Text>
+          </Pressable>
+        </Text>
       </ScrollView>
     </OnboardingCard>
   );
 };
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    margin: 24,
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
   smallText: {
     fontSize: 16,
     fontFamily: "MontserratRegular",
     textAlign: "center",
   },
-  boton: {
-    alignSelf: "center",
-    backgroundColor: "green",
-    padding: 10,
-    borderRadius: 10,
-    marginVertical: 2,
+  buttonContainer: {
+    marginBottom: "3%",
   },
 });
 export default Register;
