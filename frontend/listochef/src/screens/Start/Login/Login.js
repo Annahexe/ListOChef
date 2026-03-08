@@ -13,7 +13,7 @@ const Login = (props) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const onLogin = () => {
-    console.log(loginData); //TODO: here it sends petition to register
+    console.log(loginData); //TODO: here it sends petition to login
     // isSuccess = responseFromPost
     let isSuccess = true;
     if (isSuccess) {
@@ -50,7 +50,7 @@ const Login = (props) => {
 
         <Text style={styles.smallText}>
           Don't remember your password?
-          <Pressable onPress={() => props.navigaition.navigate("ResetPassword")}>
+          <Pressable onPress={() => props.navigation.navigate("ResetPassword")}>
             <Text style={[styles.smallText, { color: "#5A983D" }]}>Click here</Text>
           </Pressable>
         </Text>
