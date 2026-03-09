@@ -1,28 +1,57 @@
-import { Text, View, Image, StyleSheet } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Text, View, Image, StyleSheet, Pressable } from "react-native";
+import { useContext } from "react";
+import Context from "../context/Context";
 
-const RecipeCard = (props) => {
+import Heart from "./Heart";
+
+const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe, onToggleSaved }) => {
+  const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
+
+  const handlePress = () => {
+    setLastRecipeSeen(recipe);
+    onViewRecipe();
+  };
+
   return (
     <View style={styles.card}>
-      <View style={{borderTopLeftRadius: 15, borderTopRightRadius: 15, overflow: 'hidden',}}>
-      <Image
-        style={styles.mainImage}
-        source={{
-          uri: props.image,
-        }}
-      ></Image>
-      </View>
-      <View style={styles.infoContainer}>
-        <Text style={styles.title}>{props.name}</Text>
+      <Pressable onPress={handlePress}>
+        <View style={styles.imageWrapper}>
+          <Image
+            style={styles.mainImage}
+            source={{
+              uri: recipe.photo,
+            }}
+          />
 
-        {props.isSaved === true && (
-          <FontAwesome name="heart" size={30} color="red" />
-        )}
-
-        {props.isSaved === false && (
-          <FontAwesome name="heart-o" size={30} color="black" />
-        )}
-      </View>
+          {isDetailedBox && (
+            <Heart
+              colorHeart={recipe.isSaved ? "red" : "white"}
+              stiles={"onImage"}
+              onPress={() => onToggleSaved?.(recipe.id)}
+            />
+          )}
+        </View>
+        <View style={styles.container}>
+          <View style={styles.infoContainer}>
+            <Text style={[styles.title, isDetailedBox && styles.titleCentered]}>
+              {recipe.recipeName}
+            </Text>
+            {!isDetailedBox && (
+              <Heart
+                colorHeart={recipe.isSaved ? "red" : "white"}
+                onPress={() => onToggleSaved?.(recipe.id)}
+              />
+            )}
+          </View>
+          {isDetailedBox && (
+            <View style={styles.infoContainerLabels}>
+              <Text style={styles.infoLabel}>{recipe.type}</Text>
+              <Text style={styles.infoLabel}>{recipe.time}min</Text>
+              <Text style={styles.infoLabel}>{recipe.difficulty}</Text>
+            </View>
+          )}
+        </View>
+      </Pressable>
     </View>
   );
 };
@@ -38,7 +67,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 5 },
     shadowOpacity: 0.4,
     shadowRadius: 4,
-
     elevation: 5,
   },
   mainImage: {
@@ -48,13 +76,21 @@ const styles = StyleSheet.create({
     height: 150,
     resizeMode: "cover",
   },
-  infoContainer: {
-    justifyContent: "center",
-    paddingVertical: 10,
+  container: {
+    paddingVertical: "2%",
     paddingHorizontal: 18,
+  },
+  infoContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  infoContainerLabels: {
+    paddingTop: 5,
+    justifyContent: "center",
+    paddingHorizontal: 18,
+    flexDirection: "row",
+    alignItems: "center",
   },
   title: {
     flex: 1,
@@ -68,6 +104,24 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 5,
     resizeMode: "cover",
+  },
+  infoLabel: {
+    fontFamily: "MontserratSemiBold",
+    color: "white",
+    fontSize: 16,
+    padding: 8,
+    borderRadius: 10,
+    backgroundColor: "rgba(75, 100, 63, 0.5)",
+    marginHorizontal: "2%",
+  },
+  imageWrapper: {
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    overflow: "hidden",
+    position: "relative",
+  },
+  titleCentered: {
+    textAlign: "center",
   },
 });
 export default RecipeCard;

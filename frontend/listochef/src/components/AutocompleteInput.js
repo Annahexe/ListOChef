@@ -30,14 +30,14 @@ const AutocompleteInput = (props) => {
   // Cuando el input pierde foco
   const handleBlur = () => {
     const exists = props.options.some(
-      (item) => item.toLowerCase() === props.value.toLowerCase(),
+      (item) => item.toLowerCase() === (props.value || "").toLowerCase(),
     );
 
     if (!exists) {
       props.onSelect("");
     }
 
-    setShowList(false);
+    setShowList(false); //
   };
 
   return (
@@ -63,7 +63,10 @@ const AutocompleteInput = (props) => {
 
       {showList && filteredOptions.length > 0 && (
         <View style={styles.dropdown}>
-          <ScrollView keyboardShouldPersistTaps="handled">
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            nestedScrollEnabled={true}
+          >
             {filteredOptions.map((item, index) => (
               <Pressable
                 key={index}

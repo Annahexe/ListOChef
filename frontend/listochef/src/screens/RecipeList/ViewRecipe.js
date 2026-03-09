@@ -6,42 +6,22 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import { useState, useEffect } from "react";
-
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useState, useEffect, useContext } from "react";
 
 import ItemView from "../../components/ItemView";
 import TitleModalScreen from "../../components/TitleModalScreen";
+import Heart from "../../components/Heart";
+
+import Context from "../../context/Context";
 
 const ViewRecipe = ({ navigation }) => {
   const [recipe, setRecipe] = useState();
   const [isSaved, setIsSaved] = useState(recipe?.isSaved ?? false);
+  const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
 
   useEffect(() => {
     //llamada a la api con el id que tendremos. Actualmente ponemos nosotros el objeto
-    setRecipe({
-      id: "1",
-      recipeName: "Spaghetti Bolognese",
-      ingredients: [
-        "Pasta",
-        "Tomato Sauce",
-        "Minced meat",
-        "Oil",
-        "Spices",
-        "Onion",
-        "Cheese",
-      ],
-      tag: ["pasta", "meat"],
-      type: "Lunch",
-      time: 20,
-      difficulty: "easy",
-      steps:
-        "1. Heat water in a pot. \n2. Add oil to a frying pan. Medium heat.  \n3. Add salt and the ground meat. Stir with a spatula.  \n4. Add chopped onion to the frying pan. Stir.  \n5. When the water boils, add salt and your choice of pasta. Don't forget to stir the pasta with a spoon.  \n6. When the meat is cooked and the onion is golden brown, add tomato sauce. Add salt to balance the acidity and spices to taste.  \n7. When the pasta is al dente, drain it in a colander and add it to the frying pan. Stir.",
-      photo:
-        "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
-      creationDate: "17/02/2026",
-      isSaved: true,
-    });
+    setRecipe(lastRecipeSeen);
   }, []);
 
   const onAddGroceryList = () => {
@@ -49,6 +29,12 @@ const ViewRecipe = ({ navigation }) => {
   };
 
   if (!recipe) return null;
+
+  const onToggleSaved = () => {
+    setIsSaved((prev) => !prev);
+    setRecipe((prev) => ({ ...prev, isSaved: !prev.isSaved }));
+    setLastRecipeSeen((prev) => ({ ...prev, isSaved: !prev.isSaved }));
+  };
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
@@ -66,16 +52,11 @@ const ViewRecipe = ({ navigation }) => {
                 uri: recipe.photo,
               }}
             ></Image>
-            <Pressable
-              style={styles.saveButton}
-              onPress={() => setIsSaved(!isSaved)}
-            >
-              <FontAwesome
-                name={isSaved ? "heart" : "heart-o"}
-                size={40}
-                color={isSaved ? "red" : "white"}
-              />
-            </Pressable>
+            <Heart
+              colorHeart={isSaved ? "red" : "white"}
+              stiles={"onImage"}
+              onPress={() => onToggleSaved?.()}
+            />
           </View>
           <ItemView
             label={"Ingredients"}
@@ -109,12 +90,6 @@ const ViewRecipe = ({ navigation }) => {
 
           <ItemView label={"Steps to create"} info={recipe.steps}></ItemView>
         </ScrollView>
-
-        <View style={styles.buttonContainer}>
-          <Pressable onPress={() => navigation.goBack()} style={styles.button}>
-            <Text style={styles.textButton}>Cancel</Text>
-          </Pressable>
-        </View>
       </View>
     </View>
   );

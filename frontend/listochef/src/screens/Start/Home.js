@@ -3,8 +3,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import GroceryList from "../GroceryList/GroceryList";
 import Pantry from "../Pantry/Pantry";
 import Expenses from "../Expenses/Expenses";
-import Profile from "../Profile/Profile";
 import NavigationRecipeList from "../RecipeList/NavigationRecipeList";
+import NavigationProfile from "../Profile/NavigationProfile";
 
 import RecipeListIcon from "../../../assets/icons/recipeList_icon.svg";
 import RecipeListIconActive from "../../../assets/icons/recipeList_iconActive.svg";
@@ -27,7 +27,7 @@ const ICONS = {
   GroceryList: { active: GroceryListIconActive, inactive: GroceryListIcon },
   Pantry: { active: PantryIconActive, inactive: PantryIcon },
   Expenses: { active: ExpensesIconActive, inactive: ExpensesIcon },
-  Profile: { active: ProfileIconActive, inactive: ProfileIcon },
+  NavigationProfile: { active: ProfileIconActive, inactive: ProfileIcon },
 };
 
 const SCREENS = [
@@ -35,7 +35,7 @@ const SCREENS = [
   { name: "GroceryList", component: GroceryList },
   { name: "Pantry", component: Pantry },
   { name: "Expenses", component: Expenses },
-  { name: "Profile", component: Profile },
+  { name: "NavigationProfile", component: NavigationProfile },
 ];
 
 const Home = () => (

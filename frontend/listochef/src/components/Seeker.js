@@ -6,6 +6,12 @@ export const Seeker = (props) => {
   return (
     <View style={styles.container}>
       <TextInput
+        value={props.value}
+        onChangeText={props.onChangeText}
+        onFocus={props.onPress}
+        onSubmitEditing={props.onSubmit}
+        returnKeyType="search"
+        autoFocus={false}
         placeholder={props.placeholderText}
         contentStyle={{
           fontSize: 16,
