@@ -57,7 +57,7 @@ public class RecipeService {
         return repository.findByFilters(category, recipeName);
     }
     
- // 🔹 Obtener por ID
+ // 🔹 Obtener por usuario 
     public List<Recipe> findByUser(String userNickname) {
 
         if (userNickname == null || userNickname.isBlank()) {
@@ -65,5 +65,9 @@ public class RecipeService {
         }
         
 		return repository.findByUser(userNickname);
+    }
+    
+    public List<Recipe> getUserRecipesSaved(String email){
+    	return repository.getUserRecipesSaved(email);
     }
 }

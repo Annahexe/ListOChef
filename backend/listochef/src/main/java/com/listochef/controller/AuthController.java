@@ -1,6 +1,5 @@
 package com.listochef.controller;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.listochef.model.User;
@@ -10,20 +9,15 @@ import com.listochef.service.AuthService;
 @RequestMapping("/ListOChef")
 public class AuthController {
 
-	private final AuthService service;
+    private final AuthService authService;
 
-	public AuthController(AuthService service) {
-		this.service = service;
-	}
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
-	@GetMapping("/login")
-	public ResponseEntity<User> getRecipeById(@RequestBody User user) {
-		boolean loginSuccess = service.login(user);
-		if (loginSuccess) {
-			return ResponseEntity.status(200).build();
-		} else {
-			return ResponseEntity.status(401).build();
-		}
-	}
+    @PostMapping("/login")
+    public String login(@RequestBody User user) {
+        return authService.login(user);
+    }
 
 }
