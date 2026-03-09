@@ -83,6 +83,9 @@ release.properties
 .gradle/
 build/
 
+#Production config
+backend/listochef/src/main/resources/application-prod.properties
+
 ############################################################
 # ECLIPSE
 ############################################################
