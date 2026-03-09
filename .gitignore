@@ -84,8 +84,7 @@ release.properties
 build/
 
 #Production config
-src/main/resources/application-prod.properties
-
+backend/listochef/src/main/resources/application-prod.properties
 
 ############################################################
 # ECLIPSE
