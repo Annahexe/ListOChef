@@ -20,7 +20,7 @@ const ItemInput = (props) => {
         <TextInput
           style={styles.textInput}
           placeholder={props.placeholder}
-          placeholderTextColor="white"
+          placeholderTextColor="#ffffff83"
           value={props.value}
           onChangeText={props.onChangeText}
           keyboardType={props.keyboardType}

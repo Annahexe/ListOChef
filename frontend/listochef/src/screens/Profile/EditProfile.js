@@ -1,4 +1,11 @@
-import { View, StyleSheet, Keyboard, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Keyboard,
+  Alert,
+  Pressable,
+  Text,
+} from "react-native";
 
 import { useState, useContext, useEffect } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -7,10 +14,12 @@ import Context from "../../context/Context";
 import ItemInput from "../../components/ItemInput";
 import TitleModalScreen from "../../components/TitleModalScreen";
 import ModalButtons from "../../components/ModalButtons";
+import ItemView from "../../components/ItemView";
 
 const EditProfile = ({ navigation }) => {
   const { user, setUser } = useContext(Context);
   const [showPassword, setShowPassword] = useState(false);
+  const [changePwd, setChangePwd] = useState(false);
   const [form, setForm] = useState({
     name: "",
     surname: "",
@@ -29,7 +38,37 @@ const EditProfile = ({ navigation }) => {
   }, []);
 
   const onSaved = () => {
-    if (form.password === form.confirmPassword) {
+    if (changePwd) {
+      if (form.password === form.confirmPassword) {
+        const editUser = {
+          name: form.name,
+          surname: form.surname,
+          email: form.email,
+          password: form.password,
+        };
+
+        Alert.alert(
+          "Attention",
+          "Are you sure you want to save the data? The change will modify your login details",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "Save",
+              onPress: () => {
+                console.log(editUser);
+                Keyboard.dismiss();
+                navigation.goBack();
+              },
+            },
+          ],
+        );
+      } else {
+        alert("The passwords do not match");
+      }
+    } else {
       const editUser = {
         name: form.name,
         surname: form.surname,
@@ -37,29 +76,23 @@ const EditProfile = ({ navigation }) => {
         password: form.password,
       };
 
-      Alert.alert(
-        "Attention",
-        "Are you sure you want to save the data? The change will modify your login details",
-        [
-          {
-            text: "Cancel",
-            style: "cancel",
-          },
-          {
-            text: "Save",
-            onPress: () => {
-              console.log(editUser);
-              Keyboard.dismiss();
-              navigation.goBack();
-            },
-          },
-        ],
-      );
-    } else {
-      alert("The passwords do not match");
+      console.log(editUser);
+      Keyboard.dismiss();
+      navigation.goBack();
     }
   };
-  const isFormComplete = Object.values(form).every((value) => value);
+
+  const onChangePwd = () => {
+    setChangePwd(true);
+  };
+
+  const onCancelChangePwd = () => {
+    setChangePwd(false);
+  };
+
+  const isFormComplete = changePwd
+    ? Object.values(form).every((value) => value)
+    : form.name && form.surname;
 
   return (
     <View style={styles.backdrop}>
@@ -96,36 +129,42 @@ const EditProfile = ({ navigation }) => {
             }
             keyboardType="default"
           />
-          <ItemInput
-            label="Email:"
-            placeholder="user@gmail.com"
-            value={form.email}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, email: text }))
-            }
-            keyboardType="default"
-          />
-          <ItemInput
-            label="Password:"
-            value={form.password}
-            eye={true}
-            onPressEye={() => setShowPassword(!showPassword)}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, password: text }))
-            }
-            keyboardType="default"
-            secureTextEntry={!showPassword}
-          />
+          <ItemView label="Email:" info={form.email} />
 
-          <ItemInput
-            label="Confirm Password:"
-            value={form.confirmPassword}
-            eye={true}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, confirmPassword: text }))
-            }
-            keyboardType="default"
-          />
+          {!changePwd && (
+            <Pressable style={styles.button} onPress={onChangePwd}>
+              <Text style={styles.textButton}>Change Password</Text>
+            </Pressable>
+          )}
+
+          {changePwd && (
+            <>
+              <ItemInput
+                label="Password:"
+                value={form.password}
+                eye={true}
+                onPressEye={() => setShowPassword(!showPassword)}
+                onChangeText={(text) =>
+                  setForm((prev) => ({ ...prev, password: text }))
+                }
+                keyboardType="default"
+                secureTextEntry={!showPassword}
+              />
+
+              <ItemInput
+                label="Confirm Password:"
+                value={form.confirmPassword}
+                eye={true}
+                onChangeText={(text) =>
+                  setForm((prev) => ({ ...prev, confirmPassword: text }))
+                }
+                keyboardType="default"
+              />
+              <Pressable style={styles.button} onPress={onCancelChangePwd}>
+                <Text style={styles.textButton}>Cancel Change Password</Text>
+              </Pressable>
+            </>
+          )}
         </KeyboardAwareScrollView>
 
         <ModalButtons
@@ -157,6 +196,22 @@ const styles = StyleSheet.create({
     flex: 2,
     marginVertical: 15,
     paddingBottom: 50,
+  },
+  button: {
+    alignSelf: "center",
+    width: "80%",
+    backgroundColor: "#4B643F",
+    marginHorizontal: "1%",
+    marginTop: 20,
+    padding: 10,
+    borderRadius: 20,
+    textAlign: "center",
+  },
+  textButton: {
+    fontSize: 20,
+    fontFamily: "InterBold",
+    color: "white",
+    textAlign: "center",
   },
 });
 

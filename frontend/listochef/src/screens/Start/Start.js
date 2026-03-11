@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, Pressable, ImageBackground, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  ImageBackground,
+  Image,
+} from "react-native";
 
 import RecipeListIcon from "../../../assets/icons/recipeList_iconActive.svg";
 import PantryIcon from "../../../assets/icons/pantry_iconActive.svg";
@@ -34,18 +41,36 @@ const Start = (props) => {
   ];
 
   return (
-    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
-      <LinearGradient colors={["rgba(241, 255, 235, 0.39)", "rgba(49, 96, 29, 0.71)"]} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} style={styles.overlay}>
+    <ImageBackground
+      source={require("../../../assets/fondoApp.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <LinearGradient
+        colors={["rgba(241, 255, 235, 0.39)", "rgba(49, 96, 29, 0.71)"]}
+        start={{ x: 0.5, y: 0 }}
+        end={{ x: 0.5, y: 1 }}
+        style={styles.overlay}
+      >
         <View style={styles.layout}>
-          <Image source={require("../../../assets/icons/ListoChefLogo.png")} style={styles.image} />
+          <Image
+            source={require("../../../assets/icons/ListoChefLogo.png")}
+            style={styles.image}
+          />
           <Text style={styles.appTitle}>ListOChef</Text>
           <View style={styles.slogan}>
             <Text style={styles.textSlogan}>Plan your shopping.</Text>
             <Text style={styles.textSlogan}>Track your spending.</Text>
             <Text style={styles.textSlogan}>Cook like a chef.</Text>
           </View>
-          <PrimaryButton buttonText={"Login"} onPress={() => props.navigation.navigate("Login")} />
-          <PrimaryButton buttonText={"Register"} onPress={() => props.navigation.navigate("Register")} />
+          <PrimaryButton
+            buttonText={"Login"}
+            onPress={() => props.navigation.navigate("Login")}
+          />
+          <PrimaryButton
+            buttonText={"Register"}
+            onPress={() => props.navigation.navigate("Register")}
+          />
           <Carousel
             data={carouselItems}
             autoScroll={true}
@@ -75,7 +100,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignContent: "center",
-    padding: 8,
+    padding: "2%",
   },
   appTitle: {
     fontFamily: "MontserratBold",
@@ -86,6 +111,7 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0, 0, 0, 0.1)",
     textShadowOffset: { width: 0, height: 5 },
     textShadowRadius: 4,
+    paddingTop: "1%",
   },
   slogan: {
     alignItems: "center",
@@ -99,11 +125,12 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratBold",
   },
   image: {
-    width: 225,
+    paddingTop: "5%",
+    width: "50%",
     height: 180,
     resizeMode: "contain",
     alignSelf: "center",
-    marginBottom: "2%"
+    marginBottom: "2%",
   },
   itemCard: {
     marginTop: 12,
@@ -128,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "MontserratSemiBold",
     color: "black",
-    textAlign: "center"
+    textAlign: "center",
   },
 });
 export default Start;

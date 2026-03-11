@@ -3,8 +3,20 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const Heart = (props) => {
   return (
-    <Pressable onPress={props.onPress} style={[styles.heartDefault, props.stiles === "onImage" ? styles.heartOverlay : null]} hitSlop={10}>
-      <FontAwesome name={"heart"} size={30} color={props.colorHeart} style={styles.iconShadow} />
+    <Pressable
+      onPress={props.onPress}
+      style={[
+        styles.heartDefault,
+        props.stiles === "onImage" ? styles.heartOverlay : null,
+      ]}
+      hitSlop={10}
+    >
+      <FontAwesome
+        name={"heart"}
+        size={30}
+        color={props.colorHeart}
+        style={styles.iconShadow}
+      />
     </Pressable>
   );
 };
@@ -17,9 +29,10 @@ const styles = StyleSheet.create({
     zIndex: 10,
     padding: 6,
     borderRadius: 50,
+    padding: 3,
   },
   heartDefault: {
-    padding: 6,
+    padding: 8,
     borderRadius: 50,
   },
   iconShadow: {
