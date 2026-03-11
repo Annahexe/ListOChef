@@ -23,10 +23,11 @@ export const Provider = ({ children }) => {
     email: "user@gmail.com",
     password: "micontraseña",
   });
+  const [token, setToken] = useState("")
 
   return (
     <Context.Provider
-      value={{ lastRecipeSeen, setLastRecipeSeen, user, setUser }}
+      value={{ lastRecipeSeen, setLastRecipeSeen, user, setUser, token, setToken }}
     >
       {children}
     </Context.Provider>

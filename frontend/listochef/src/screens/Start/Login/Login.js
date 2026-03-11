@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 
+import Context from "../../../context/Context";
 import OnboardingCard from "../../../components/OnboardingCard";
 import ItemInput from "../../../components/ItemInput";
 import PrimaryButton from "../../../components/PrimaryButton";
 import { isRequired, isEmail, minLength } from "../../../utils/validators";
+import { postDataOnboarding } from "../../../services/services";
 
 const Login = (props) => {
+  const { token, setToken } = useContext(Context);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -17,11 +20,12 @@ const Login = (props) => {
     email: "",
     password: "",
   });
+  const [isLoginSuccess, setIsLoginSuccess] = useState(false);
 
   const validateForm = () => {
     const newErrors = {
       email: isRequired(loginData.email) || isEmail(loginData.email),
-      password: isRequired(loginData.password) || minLength(loginData.password, 6),
+      password: isRequired(loginData.password) || minLength(loginData.password, 4),
     };
 
     setErrors(newErrors);
@@ -29,16 +33,38 @@ const Login = (props) => {
     return !newErrors.email && !newErrors.password;
   };
 
-  const onLogin = () => {
+  const onLogin = async () => {
     const isValid = validateForm();
-    if (!isValid) return; //COMMENT THIS FOR TESTING TO SKIP VALIDATION
+    if (!isValid) return;
 
-    console.log(loginData); //TODO: here it sends petition to login
-    // isSuccess = responseFromPost
-    let isSuccess = true;
+    console.log(loginData);
+
+    const isSuccess = await sendLoginRequest();
+
     if (isSuccess) {
       props.navigation.navigate("Home");
+    } else {
+      alert("Failed login. :( Try again");
     }
+  };
+
+  const sendLoginRequest = async () => {
+    const response = await postDataOnboarding("http://98.84.207.18:8080/ListOChef/login", loginData);
+
+    if (!response) {
+      setIsLoginSuccess(false);
+      return false;
+    }
+
+    const [status, tokenValue] = response;
+
+    setToken(tokenValue);
+    console.log("token from response:", tokenValue);
+
+    const success = status === 200;
+
+    setIsLoginSuccess(success);
+    return success;
   };
 
   return (

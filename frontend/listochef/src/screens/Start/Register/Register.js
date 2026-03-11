@@ -29,10 +29,10 @@ const Register = (props) => {
       name: isRequired(registerData.name),
       surname: isRequired(registerData.surname),
       email: isRequired(registerData.email) || isEmail(registerData.email),
-      password: isRequired(registerData.password) || minLength(registerData.password, 6),
+      password: isRequired(registerData.password) || minLength(registerData.password, 4),
       confirmPassword:
         isRequired(registerData.confirmPassword) ||
-        minLength(registerData.confirmPassword, 6) ||
+        minLength(registerData.confirmPassword, 4) ||
         matches(registerData.password, registerData.confirmPassword, "passwords"),
     };
 
