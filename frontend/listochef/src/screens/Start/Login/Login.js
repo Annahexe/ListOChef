@@ -50,19 +50,14 @@ const Login = (props) => {
 
   const sendLoginRequest = async () => {
     const response = await postDataOnboarding("http://98.84.207.18:8080/ListOChef/login", loginData);
-
     if (!response) {
       setIsLoginSuccess(false);
       return false;
     }
-
     const [status, tokenValue] = response;
-
     setToken(tokenValue);
-    console.log("token from response:", tokenValue);
 
     const success = status === 200;
-
     setIsLoginSuccess(success);
     return success;
   };

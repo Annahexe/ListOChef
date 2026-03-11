@@ -72,8 +72,8 @@ const ViewRecipe = ({ navigation }) => {
 
           <View style={styles.multipleLines}>
             <ItemView
-              label={"Type"}
-              info={recipe.type}
+              label={"Category"}
+              info={recipe.category}
               style={{ flex: 1 }}
             ></ItemView>
             <ItemView

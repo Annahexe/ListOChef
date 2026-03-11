@@ -10,6 +10,7 @@ const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe, onToggleSaved }) => {
   const handlePress = () => {
     setLastRecipeSeen(recipe);
     onViewRecipe();
+    console.log(recipe.photo)
   };
 
   return (
@@ -45,7 +46,7 @@ const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe, onToggleSaved }) => {
           </View>
           {isDetailedBox && (
             <View style={styles.infoContainerLabels}>
-              <Text style={styles.infoLabel}>{recipe.type}</Text>
+              <Text style={styles.infoLabel}>{recipe.category}</Text>
               <Text style={styles.infoLabel}>{recipe.time}min</Text>
               <Text style={styles.infoLabel}>{recipe.difficulty}</Text>
             </View>

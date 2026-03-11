@@ -1,9 +1,18 @@
-export const getData = async (url) => {
+export const getData = async (url, token) => {
   try {
-    const response = await fetch(url);
-    if (response.ok) return await response.json();
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    return await response.json();
   } catch (error) {
-    return console.log(error);
+    console.log("getData error:", error);
   }
 };
 
@@ -21,6 +30,7 @@ export const postDataOnboarding = async (url, data) => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const text = await response.text();
+    console.log(text)
 
     return [response.status, text];
   } catch (error) {
