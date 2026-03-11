@@ -58,14 +58,14 @@ public class RecipeService {
     }
     
  // 🔹 Obtener por usuario 
-    public List<Recipe> findByUser(String userNickname) {
-
-        if (userNickname == null || userNickname.isBlank()) {
-            throw new IllegalArgumentException("Id cannot be empty");
-        }
-        
-		return repository.findByUser(userNickname);
-    }
+//    public List<Recipe> findByUser(String userNickname) {
+//
+//        if (userNickname == null || userNickname.isBlank()) {
+//            throw new IllegalArgumentException("Id cannot be empty");
+//        }
+//        
+//		return repository.findByUser(userNickname);
+//    }
     
     public List<Recipe> getUserRecipesSaved(String email){
     	return repository.getUserRecipesSaved(email);

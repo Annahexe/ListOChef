@@ -68,10 +68,6 @@ public class UserService {
 	// 🔹 Crear usuario
 	public void register(User user) {
 
-		// Validaciones básicas
-		if (user.getNickname() == null || user.getNickname().isBlank()) {
-			throw new IllegalArgumentException("User name cannot be empty");
-		}
 
 		if (user.getEmail() == null || user.getEmail().isBlank()) {
 			throw new IllegalArgumentException("User email cannot be empty");

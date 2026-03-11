@@ -7,7 +7,7 @@ import org.bson.types.ObjectId;
 public class User {
 
 	private String id;
-	private String nickname;
+	
 	private String email;
 	private String password;
 	private String avatar;
@@ -16,11 +16,10 @@ public class User {
 	public User() {
 	}
 
-	public User(String id, String nickname, String email, String password, String avatar,
+	public User(String id, String email, String password, String avatar,
 			List<String> isSaved) {
 		super();
 		this.id = id;
-		this.nickname = nickname;
 		this.email = email;
 		this.password = password;
 		this.avatar = avatar;
@@ -33,14 +32,6 @@ public class User {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
 	}
 
 	public String getEmail() {

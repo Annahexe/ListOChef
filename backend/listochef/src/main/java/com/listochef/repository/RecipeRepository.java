@@ -15,7 +15,7 @@ public interface RecipeRepository {
 	
 	List<Recipe> findByFilters(String category, String recipeName);
 	
-	List<Recipe> findByUser(String email);
+	//List<Recipe> findByUser(String email);
 	
 	List<Recipe> getUserRecipesSaved(String userEmail);
 }

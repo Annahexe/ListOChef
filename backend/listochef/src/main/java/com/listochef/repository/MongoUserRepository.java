@@ -22,7 +22,7 @@ public class MongoUserRepository implements UserRepository {
 	}
 
 	private User toUser(Document doc) {
-		return new User(doc.getObjectId("_id").toHexString(), doc.getString("nickname"), doc.getString("email"),
+		return new User(doc.getObjectId("_id").toHexString(), doc.getString("email"),
 				doc.getString("password"), doc.getString("avatar"), doc.getList("isSaved", String.class));
 	}
 
@@ -39,7 +39,7 @@ public class MongoUserRepository implements UserRepository {
 
 	@Override
 	public User register(User user) {
-		Document doc = new Document().append("nickname", user.getNickname()).append("email", user.getEmail())
+		Document doc = new Document().append("email", user.getEmail())
 				.append("password", user.getPassword()).append("avatar", user.getAvatar())
 				.append("isSaved", new ArrayList<>());
 

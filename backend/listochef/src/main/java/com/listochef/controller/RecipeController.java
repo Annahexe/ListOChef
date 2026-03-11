@@ -53,12 +53,12 @@ public class RecipeController {
         return ResponseEntity.ok(service.findByFilters(category, recipeName));
     }
     
-    @GetMapping("/userRecipes")
-    public ResponseEntity<List<Recipe>> getRecipesUser(
-    		@AuthenticationPrincipal String email) {
-
-        return ResponseEntity.ok(service.findByUser(email));
-    }
+//    @GetMapping("/userRecipes")
+//    public ResponseEntity<List<Recipe>> getRecipesUser(
+//    		@AuthenticationPrincipal String email) {
+//
+//        return ResponseEntity.ok(service.findByUser(email));
+//    }
     
     @GetMapping("/userRecipesSaved")
     public ResponseEntity<List<Recipe>> getUserRecipesSaved(

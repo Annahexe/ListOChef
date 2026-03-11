@@ -79,25 +79,25 @@ public class MongoRecipeRepository implements RecipeRepository {
 		}
 	}
 
-	@Override
-	public List<Recipe> findByUser(String email) {
-
-		List<Recipe> recipes = new ArrayList<>();
-
-		Optional<User> userOpt = mongoUserRepo.findByEmail(email);
-
-		if (userOpt.isEmpty()) {
-			return recipes; // Usuario no existe
-		}
-
-		String nickname = userOpt.get().getNickname();
-
-		for (Document doc : collection.find(eq("user", nickname))) {
-			recipes.add(toRecipe(doc));
-		}
-
-		return recipes;
-	}
+//	@Override
+//	public List<Recipe> findByUser(String email) {
+//
+//		List<Recipe> recipes = new ArrayList<>();
+//
+//		Optional<User> userOpt = mongoUserRepo.findByEmail(email);
+//
+//		if (userOpt.isEmpty()) {
+//			return recipes; // Usuario no existe
+//		}
+//
+//		String nickname = userOpt.get().getNickname();
+//
+//		for (Document doc : collection.find(eq("user", nickname))) {
+//			recipes.add(toRecipe(doc));
+//		}
+//
+//		return recipes;
+//	}
 
 	@Override
 	public List<Recipe> findByFilters(String category, String recipeName) {
