@@ -26,7 +26,10 @@ const AutocompleteInput = (props) => {
     setShowList(false);
     Keyboard.dismiss();
   };
-
+  const handleClear = () => {
+    props.onSelect("");
+    setShowList(true);
+  };
   // Cuando el input pierde foco
   const handleBlur = () => {
     const exists = props.options.some(
@@ -39,6 +42,7 @@ const AutocompleteInput = (props) => {
 
     setShowList(false); //
   };
+  const isDifficulty = props.label === "Difficulty";
 
   return (
     <View style={styles.container}>
@@ -48,18 +52,28 @@ const AutocompleteInput = (props) => {
         <Text style={styles.title}>{props.label}</Text>
       )}
 
-      <TextInput
-        style={styles.input}
-        value={props.value}
-        placeholder={props.placeholder}
-        placeholderTextColor="white"
-        onChangeText={(text) => {
-          props.onSelect(text);
-          setShowList(true);
-        }}
-        onFocus={() => setShowList(true)}
-        onBlur={handleBlur}
-      />
+      <View style={styles.inputWrapper}>
+        <TextInput
+          style={styles.input}
+          value={props.value}
+          placeholder={props.placeholder}
+          placeholderTextColor="#ffffff83"
+          editable={true} // permitimos borrar
+          showSoftInputOnFocus={!isDifficulty} // no abre teclado si difficulty
+          onFocus={() => setShowList(true)}
+          onBlur={handleBlur}
+          onChangeText={(text) => {
+            props.onSelect(text);
+            setShowList(true);
+          }}
+        />
+
+        {isDifficulty && props.value !== "" && (
+          <Pressable style={styles.clearButton} onPress={handleClear}>
+            <Text style={styles.clearText}>×</Text>
+          </Pressable>
+        )}
+      </View>
 
       {showList && filteredOptions.length > 0 && (
         <View style={styles.dropdown}>
@@ -100,6 +114,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 10,
+    paddingRight: 40,
   },
   dropdown: {
     backgroundColor: "#a5b19fa1",
@@ -115,6 +130,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#485641",
     fontFamily: "InterMedium",
+  },
+  inputWrapper: {
+    position: "relative",
+    width: "100%",
+  },
+  clearButton: {
+    position: "absolute",
+    right: 10, // separación del borde derecho
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  clearText: {
+    fontSize: 20,
+    color: "#000",
   },
 });
 

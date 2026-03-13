@@ -35,7 +35,7 @@ const AutocompleteList = (props) => {
       ))}
       <Pressable style={styles.addInput} onPress={addItem}>
         <Text style={styles.textAddInput}>
-          Añadir {props.label.toLowerCase().slice(0, -1)}
+          Add {props.label.toLowerCase().slice(0, -1)}
         </Text>
       </Pressable>
     </View>

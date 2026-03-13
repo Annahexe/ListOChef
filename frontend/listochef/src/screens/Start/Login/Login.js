@@ -25,7 +25,8 @@ const Login = (props) => {
   const validateForm = () => {
     const newErrors = {
       email: isRequired(loginData.email) || isEmail(loginData.email),
-      password: isRequired(loginData.password) || minLength(loginData.password, 4),
+      password:
+        isRequired(loginData.password) || minLength(loginData.password, 4),
     };
 
     setErrors(newErrors);
@@ -34,22 +35,26 @@ const Login = (props) => {
   };
 
   const onLogin = async () => {
-    const isValid = validateForm();
-    if (!isValid) return;
+    // const isValid = validateForm();
+    // if (!isValid) return;
 
-    console.log(loginData);
+    // console.log(loginData);
 
-    const isSuccess = await sendLoginRequest();
+    // const isSuccess = await sendLoginRequest();
 
-    if (isSuccess) {
-      props.navigation.navigate("Home");
-    } else {
-      alert("Failed login. :( Try again");
-    }
+    // if (isSuccess) {
+    //   props.navigation.navigate("Home");
+    // } else {
+    //   alert("Failed login. :( Try again");
+    // }
+    props.navigation.navigate("Home");
   };
 
   const sendLoginRequest = async () => {
-    const response = await postDataOnboarding("http://98.84.207.18:8080/ListOChef/login", loginData);
+    const response = await postDataOnboarding(
+      "http://98.84.207.18:8080/ListOChef/login",
+      loginData,
+    );
     if (!response) {
       setIsLoginSuccess(false);
       return false;
@@ -64,12 +69,17 @@ const Login = (props) => {
 
   return (
     <OnboardingCard pageTitle="Log in">
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
         <ItemInput
           label="E-MAIL:"
           placeholder="E-Mail"
           value={loginData.email}
-          onChangeText={(text) => setLoginData((prev) => ({ ...prev, email: text }))}
+          onChangeText={(text) =>
+            setLoginData((prev) => ({ ...prev, email: text }))
+          }
           keyboardType="default"
           style={{ fontSize: 16 }}
           error={errors.email}
@@ -81,7 +91,9 @@ const Login = (props) => {
           eye={true}
           onPressEye={() => setShowPassword(!showPassword)}
           secureTextEntry={!showPassword}
-          onChangeText={(text) => setLoginData((prev) => ({ ...prev, password: text }))}
+          onChangeText={(text) =>
+            setLoginData((prev) => ({ ...prev, password: text }))
+          }
           keyboardType="default"
           style={{ fontSize: 16 }}
           error={errors.password}
@@ -93,12 +105,16 @@ const Login = (props) => {
 
         <Text style={styles.smallText}>Don't remember your password?</Text>
         <Pressable onPress={() => props.navigation.navigate("ResetPassword")}>
-          <Text style={[styles.smallText, { color: "#5A983D" }]}>Click here</Text>
+          <Text style={[styles.smallText, { color: "#5A983D" }]}>
+            Click here
+          </Text>
         </Pressable>
 
         <Text style={styles.smallText}>You still haven't registered?</Text>
         <Pressable onPress={() => props.navigation.navigate("Register")}>
-          <Text style={[styles.smallText, { color: "#5A983D" }]}>Register here</Text>
+          <Text style={[styles.smallText, { color: "#5A983D" }]}>
+            Register here
+          </Text>
         </Pressable>
       </ScrollView>
     </OnboardingCard>

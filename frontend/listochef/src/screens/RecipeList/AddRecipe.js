@@ -1,4 +1,12 @@
-import { View, Text, Pressable, StyleSheet, Keyboard } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Keyboard,
+  Dimensions,
+  Platform,
+} from "react-native";
 import { useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -10,6 +18,8 @@ import TitleModalScreen from "../../components/TitleModalScreen";
 import AutocompleteInput from "../../components/AutocompleteInput";
 import AutocompleteList from "../../components/AutocompleteList";
 import ModalButtons from "../../components/ModalButtons";
+
+const { height, width } = Dimensions.get("window");
 
 const AddRecipe = ({ navigation }) => {
   const [form, setForm] = useState({
@@ -200,19 +210,21 @@ const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    padding: 20,
-    paddingVertical: 50,
+    justifyContent: "flex-end",
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === "ios" ? 50 : 0,
+    paddingBottom: Platform.OS === "ios" ? 50 : 20,
   },
   container: {
     backgroundColor: "white",
     borderRadius: 20,
-    flex: 2,
+    maxHeight: height * 0.87,
+    width: "100%",
+    alignSelf: "center",
+    paddingBottom: 20,
   },
   scrollContainer: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    flex: 2,
+    paddingHorizontal: 20,
     marginVertical: 15,
     paddingBottom: 50,
   },

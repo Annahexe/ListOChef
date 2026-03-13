@@ -1,4 +1,4 @@
-import { StyleSheet, Pressable } from "react-native";
+import { StyleSheet, Pressable, View } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const Heart = (props) => {
@@ -11,12 +11,15 @@ const Heart = (props) => {
       ]}
       hitSlop={10}
     >
-      <FontAwesome
-        name={"heart"}
-        size={30}
-        color={props.colorHeart}
-        style={styles.iconShadow}
-      />
+      <View style={styles.iconContainer}>
+        <FontAwesome
+          name="heart"
+          size={30}
+          color="black"
+          style={styles.shadowIcon}
+        />
+        <FontAwesome name="heart" size={30} color={props.colorHeart} />
+      </View>
     </Pressable>
   );
 };
@@ -27,20 +30,19 @@ const styles = StyleSheet.create({
     top: 10,
     right: 10,
     zIndex: 10,
-    padding: 6,
-    borderRadius: 50,
-    padding: 3,
   },
   heartDefault: {
-    padding: 8,
     borderRadius: 50,
   },
-  iconShadow: {
-    textShadowColor: "black",
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-    paddingRight: 2,
-    paddingBottom: 2,
+  iconContainer: {
+    position: "relative",
+  },
+
+  shadowIcon: {
+    position: "absolute",
+    left: 2,
+    top: 2,
+    opacity: 0.35,
   },
 });
 

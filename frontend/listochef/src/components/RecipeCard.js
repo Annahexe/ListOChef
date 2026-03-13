@@ -10,7 +10,7 @@ const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe, onToggleSaved }) => {
   const handlePress = () => {
     setLastRecipeSeen(recipe);
     onViewRecipe();
-    console.log(recipe.photo)
+    console.log(recipe.photo);
   };
 
   return (
@@ -26,7 +26,7 @@ const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe, onToggleSaved }) => {
 
           {isDetailedBox && (
             <Heart
-              colorHeart={recipe.isSaved ? "red" : "white"}
+              colorHeart={recipe.isSaved ? "red" : "#e8dfdf"}
               stiles={"onImage"}
               onPress={() => onToggleSaved?.(recipe.id)}
             />
@@ -39,7 +39,7 @@ const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe, onToggleSaved }) => {
             </Text>
             {!isDetailedBox && (
               <Heart
-                colorHeart={recipe.isSaved ? "red" : "white"}
+                colorHeart={recipe.isSaved ? "red" : "#e8dfdf"}
                 onPress={() => onToggleSaved?.(recipe.id)}
               />
             )}

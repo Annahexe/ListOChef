@@ -13,7 +13,13 @@ const NavigationRecipeList = () => (
       <Stack.Screen name="RecipesList" component={RecipesList} />
       <Stack.Screen name="SearchRecipes" component={SearchRecipes} />
     </Stack.Group>
-    <Stack.Group screenOptions={{ presentation: "transparentModal" }}>
+    <Stack.Group
+      screenOptions={{
+        presentation: "transparentModal",
+        animation: "slide_from_bottom",
+        headerShown: false,
+      }}
+    >
       <Stack.Screen
         name="AddRecipe"
         component={AddRecipe}

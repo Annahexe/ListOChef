@@ -14,7 +14,13 @@ const NavigationProfile = () => (
         options={{ animation: "none" }}
       />
     </Stack.Group>
-    <Stack.Group screenOptions={{ presentation: "transparentModal" }}>
+    <Stack.Group
+      screenOptions={{
+        presentation: "transparentModal",
+        animation: "slide_from_bottom",
+        headerShown: false,
+      }}
+    >
       <Stack.Screen
         name="EditProfile"
         component={EditProfile}

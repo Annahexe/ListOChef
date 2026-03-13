@@ -6,7 +6,7 @@ const TitleModalScreen = (props) => (
     <Text style={[styles.title, { fontSize: props.size ? props.size : 40 }]}>
       {props.title}
     </Text>
-    <Pressable onPress={props.onPress}>
+    <Pressable onPress={props.onPress} style={styles.closeButton}>
       <AntDesign name="close" size={35} color="black" />
     </Pressable>
   </View>
@@ -14,14 +14,20 @@ const TitleModalScreen = (props) => (
 const styles = StyleSheet.create({
   titlecontainer: {
     marginTop: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
     paddingHorizontal: 20,
+    position: "relative",
   },
   title: {
     fontSize: 40,
     fontFamily: "MontserratBold",
+    lineHeight: 45,
+    paddingRight: 45,
+  },
+  closeButton: {
+    position: "absolute",
+    right: 10,
+    top: 0,
+    padding: 5,
   },
 });
 export default TitleModalScreen;

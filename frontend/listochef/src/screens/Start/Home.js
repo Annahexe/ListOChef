@@ -1,4 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Platform } from "react-native";
 
 import GroceryList from "../GroceryList/GroceryList";
 import Pantry from "../Pantry/Pantry";
@@ -42,8 +43,13 @@ const Home = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       headerShown: false,
-      tabBarStyle: { backgroundColor: "#173509" },
-      tabBarItemStyle: { paddingTop: 17 },
+      tabBarStyle: {
+        backgroundColor: "#173509",
+        paddingTop: Platform.OS === "android" ? 12 : 17,
+        paddingBottom: Platform.OS === "android" ? 12 : 10,
+        height: Platform.OS === "android" ? 100 : 80,
+      },
+      tabBarItemStyle: { paddingTop: 0 },
       tabBarShowLabel: false,
       tabBarIcon: ({ focused, size }) => {
         const iconSize = size * 1.5;
