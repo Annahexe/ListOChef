@@ -26,17 +26,6 @@ const Profile = (props) => {
     setSubscription(false);
   }, []);
 
-  const ocultPwd = () => {
-    const pass = user.password;
-
-    if (!pass) return "";
-
-    const visible = pass.slice(-2);
-    const hidden = "*".repeat(Math.max(pass.length - 2, 0));
-
-    return hidden + visible;
-  };
-
   const onPressData = () => {
     !subscription ? null : setSubscription(false);
   };
@@ -89,7 +78,6 @@ const Profile = (props) => {
                   info={user.name + " " + user.surname}
                 ></ItemView>
                 <ItemView label={"E-mail:"} info={user.email}></ItemView>
-                <ItemView label={"Password:"} info={ocultPwd()}></ItemView>
               </ScrollView>
             </>
           )}
