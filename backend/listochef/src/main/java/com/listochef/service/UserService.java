@@ -9,11 +9,18 @@ import org.springframework.stereotype.Service;
 import com.listochef.model.User;
 import com.listochef.repository.UserRepository;
 
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
 @Service
 public class UserService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final JavaMailSender mailSender;
 	
 	private final List<String> avatars = List.of(
 	        "https://res.cloudinary.com/druphhiyv/image/upload/v1772983965/1_vlhqym.png",
@@ -55,15 +62,19 @@ public class UserService {
 	        "https://res.cloudinary.com/druphhiyv/image/upload/v1772983965/37_rrkluo.png"	        
 );
 	
+	private final Map<String, String> resetCodes = new HashMap<>();
+	
+	
 	private String getRandomAvatar() {
 		int randomIndex = (int) (Math.random() * avatars.size());
 		return avatars.get(randomIndex);
 	}
 
-	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-		this.userRepository = userRepository;
-		this.passwordEncoder = passwordEncoder;
-	}
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JavaMailSender mailSender) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.mailSender = mailSender;
+    }
 
 	// 🔹 Crear usuario
 	public void register(User user) {
@@ -92,6 +103,46 @@ public class UserService {
 	
 	public Optional<User> getUserByEmail(String email) {
 		return userRepository.findByEmail(email);
+	}
+	
+	public void forgotPassword(String email) {
+        if (userRepository.findByEmail(email).isEmpty()) return;
+
+        String codigo = String.format("%06d", new Random().nextInt(999999));
+        resetCodes.put(email, codigo);
+
+        SimpleMailMessage mensaje = new SimpleMailMessage();
+        mensaje.setTo(email);
+        mensaje.setSubject("ListoChef - Recuperación de contraseña");
+        mensaje.setText("Tu código de recuperación es: " + codigo);
+        mailSender.send(mensaje);
+    }
+	
+	public void resetPassword(String email, String codigo, String nuevaPassword) {
+        if (!resetCodes.containsKey(email) || !resetCodes.get(email).equals(codigo)) {
+            throw new RuntimeException("Código inválido o expirado");
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        user.setPassword(passwordEncoder.encode(nuevaPassword));
+        userRepository.save(user);
+
+        resetCodes.remove(email);
+    }
+	
+	
+	public void changePassword(String email, String passwordActual, String passwordNueva) {
+	    User user = userRepository.findByEmail(email)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    if (!passwordEncoder.matches(passwordActual, user.getPassword())) {
+	        throw new RuntimeException("La contraseña actual no es correcta");
+	    }
+
+	    user.setPassword(passwordEncoder.encode(passwordNueva));
+	    userRepository.save(user);
 	}
 	
 	

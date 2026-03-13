@@ -10,4 +10,6 @@ public interface UserRepository {
 		
 	User register(User user);
 	
+	User save(User user);
+	
 }
