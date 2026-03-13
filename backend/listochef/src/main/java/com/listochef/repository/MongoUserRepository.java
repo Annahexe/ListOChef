@@ -10,6 +10,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Updates.*;
 
 @Repository
 public class MongoUserRepository implements UserRepository {
@@ -48,6 +49,15 @@ public class MongoUserRepository implements UserRepository {
 		user.setId(doc.getObjectId("_id").toHexString());
 
 		return user;
+	}
+	
+	@Override
+	public User save(User user) {
+	    collection.updateOne(
+	        eq("email", user.getEmail()),
+	        set("password", user.getPassword())
+	    );
+	    return user;
 	}
 
 }
