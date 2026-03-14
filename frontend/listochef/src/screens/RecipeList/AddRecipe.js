@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  Keyboard,
-  Dimensions,
-  Platform,
-} from "react-native";
+import { View, Text, Pressable, StyleSheet, Keyboard, Dimensions, Platform } from "react-native";
 import { useState } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -19,6 +11,8 @@ import AutocompleteInput from "../../components/AutocompleteInput";
 import AutocompleteList from "../../components/AutocompleteList";
 import ModalButtons from "../../components/ModalButtons";
 
+import { isRequired, isRequiredArray } from "../../utils/validators";
+
 const { height, width } = Dimensions.get("window");
 
 const AddRecipe = ({ navigation }) => {
@@ -29,6 +23,16 @@ const AddRecipe = ({ navigation }) => {
     steps: "",
     time: "",
     difficulty: "",
+  });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    type: "",
+    steps: "",
+    time: "",
+    difficulty: "",
+    ingredients: "",
+    tags: "",
   });
 
   const [ingredientsList, setIngredientsList] = useState([
@@ -46,15 +50,7 @@ const AddRecipe = ({ navigation }) => {
     "Jam",
     "Egg",
   ]);
-  const [tagsList, setTagsList] = useState([
-    "Pasta",
-    "Fish",
-    "Vegetable",
-    "Pork",
-    "Beef",
-    "Chicken",
-    "Vegan",
-  ]);
+  const [tagsList, setTagsList] = useState(["Pasta", "Fish", "Vegetable", "Pork", "Beef", "Chicken", "Vegan"]);
   const [ingredients, setIngredients] = useState([""]);
   const [tags, setTags] = useState([""]);
 
@@ -69,36 +65,52 @@ const AddRecipe = ({ navigation }) => {
   };
 
   const onSaved = () => {
+    const isValid = validateForm();
+
+    if (!isValid) {
+      alert("Please fill in all fields before saving");
+      return;
+    }
+
     const today = new Date();
 
     const newRecipe = {
       recipeName: form.name,
-      ingredients: ingredients,
+      ingredients,
       type: form.type,
       time: form.time,
       steps: form.steps,
-      tags: tags,
+      tags,
       photo: form.photo,
       creationDate: today,
     };
 
     console.log(newRecipe);
     Keyboard.dismiss();
-    return navigation.goBack();
+    navigation.goBack();
   };
 
-  const isFormComplete =
-    Object.values(form).every((value) => value) &&
-    ingredients.every((value) => value) &&
-    tags.every((value) => value);
+  const isFormComplete = Object.values(form).every((value) => value) && ingredients.every((value) => value) && tags.every((value) => value);
+
+  const validateForm = () => {
+    const newErrors = {
+      name: isRequired(form.name),
+      type: isRequired(form.type),
+      steps: isRequired(form.steps),
+      time: isRequired(form.time),
+      difficulty: isRequired(form.difficulty),
+      ingredients: isRequiredArray(ingredients),
+      tags: isRequiredArray(tags),
+    };
+
+    setErrors(newErrors);
+    return !newErrors.name && !newErrors.type && !newErrors.steps && !newErrors.time && !newErrors.difficulty && !newErrors.ingredients && !newErrors.tags;
+  };
 
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-        <TitleModalScreen
-          title={"New Recipe"}
-          onPress={() => navigation.goBack()}
-        />
+        <TitleModalScreen title={"New Recipe"} onPress={() => navigation.goBack()} />
 
         <KeyboardAwareScrollView
           style={styles.scrollContainer}
@@ -114,10 +126,9 @@ const AddRecipe = ({ navigation }) => {
             label="Name"
             placeholder="Ex: Roast beef"
             value={form.name}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, name: text }))
-            }
+            onChangeText={(text) => setForm((prev) => ({ ...prev, name: text }))}
             keyboardType="default"
+            error={errors.name}
           />
 
           <AutocompleteList
@@ -126,40 +137,34 @@ const AddRecipe = ({ navigation }) => {
             setValues={setIngredients}
             options={ingredientsList}
             placeholder="Ex: Pasta"
+            error={errors.ingredients}
           />
 
           <AutocompleteInput
             label="Type"
             placeholder="Ex: Breakfast"
             value={form.type}
-            options={[
-              "Breakfast",
-              "Lunch",
-              "Dinner",
-              "Snack",
-              "Dessert",
-              "Brunch",
-            ]}
+            options={["Breakfast", "Lunch", "Dinner", "Snack", "Dessert", "Brunch"]}
             onSelect={(text) => setForm((prev) => ({ ...prev, type: text }))}
+            error={errors.type}
           />
 
           <ItemInput
             label="Steps to create:"
             placeholder="Step 1: ..."
             value={form.steps}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, steps: text }))
-            }
+            onChangeText={(text) => setForm((prev) => ({ ...prev, steps: text }))}
             keyboardType="default"
             multiline
             numberOfLines={6}
+            error={errors.steps}
           />
 
           <View
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
-              alignItems: "center",
+              alignItems: "flex-start",
             }}
           >
             <View style={{ width: "45%" }}>
@@ -167,10 +172,9 @@ const AddRecipe = ({ navigation }) => {
                 label="Time"
                 placeholder="Ex: 20 min"
                 value={form.time}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, time: text }))
-                }
+                onChangeText={(text) => setForm((prev) => ({ ...prev, time: text }))}
                 keyboardType="numeric"
+                error={errors.time}
               />
             </View>
 
@@ -180,27 +184,16 @@ const AddRecipe = ({ navigation }) => {
                 placeholder="Ex: Low "
                 value={form.difficulty}
                 options={["Low", "Medium", "Hard"]}
-                onSelect={(text) =>
-                  setForm((prev) => ({ ...prev, difficulty: text }))
-                }
+                onSelect={(text) => setForm((prev) => ({ ...prev, difficulty: text }))}
+                error={errors.difficulty}
               />
             </View>
           </View>
 
-          <AutocompleteList
-            label="Tags"
-            values={tags}
-            setValues={setTags}
-            options={tagsList}
-            placeholder="Ex: Pasta"
-          />
+          <AutocompleteList label="Tags" values={tags} setValues={setTags} options={tagsList} placeholder="Ex: Pasta" error={errors.tags} />
         </KeyboardAwareScrollView>
 
-        <ModalButtons
-          onCancel={() => navigation.goBack()}
-          onSave={onSaved}
-          isFormComplete={isFormComplete}
-        />
+        <ModalButtons onCancel={() => navigation.goBack()} onSave={onSaved} isFormComplete={isFormComplete} />
       </View>
     </View>
   );

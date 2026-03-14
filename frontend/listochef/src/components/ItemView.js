@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "InterMedium",
     backgroundColor: "#A5B19F",
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 10,
     shadowColor: "#000",

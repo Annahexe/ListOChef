@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  StyleSheet,
-  ScrollView,
-  Keyboard,
-} from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, Keyboard } from "react-native";
 import { useState } from "react";
 
 const AutocompleteInput = (props) => {
@@ -26,35 +18,31 @@ const AutocompleteInput = (props) => {
     setShowList(false);
     Keyboard.dismiss();
   };
+
   const handleClear = () => {
     props.onSelect("");
     setShowList(true);
   };
   // Cuando el input pierde foco
   const handleBlur = () => {
-    const exists = props.options.some(
-      (item) => item.toLowerCase() === (props.value || "").toLowerCase(),
-    );
+    const exists = props.options.some((item) => item.toLowerCase() === inputValue.toLowerCase());
 
     if (!exists) {
       props.onSelect("");
     }
 
-    setShowList(false); //
+    setShowList(false);
   };
+
   const isDifficulty = props.label === "Difficulty";
 
   return (
     <View style={styles.container}>
-      {props.label === "" ? (
-        <></>
-      ) : (
-        <Text style={styles.title}>{props.label}</Text>
-      )}
+      {props.label ? <Text style={styles.title}>{props.label}</Text> : null}
 
-      <View style={styles.inputWrapper}>
+      <View style={[styles.inputContainer, props.error && styles.inputError]}>
         <TextInput
-          style={styles.input}
+          style={styles.textInput}
           value={props.value}
           placeholder={props.placeholder}
           placeholderTextColor="#ffffff83"
@@ -68,25 +56,20 @@ const AutocompleteInput = (props) => {
           }}
         />
 
-        {isDifficulty && props.value !== "" && (
+        {props.value !== "" && (
           <Pressable style={styles.clearButton} onPress={handleClear}>
             <Text style={styles.clearText}>×</Text>
           </Pressable>
         )}
       </View>
 
+      {props.error ? <Text style={styles.errorText}>{props.error}</Text> : null}
+
       {showList && filteredOptions.length > 0 && (
         <View style={styles.dropdown}>
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            nestedScrollEnabled={true}
-          >
+          <ScrollView keyboardShouldPersistTaps="handled" nestedScrollEnabled={true}>
             {filteredOptions.map((item, index) => (
-              <Pressable
-                key={index}
-                style={styles.item}
-                onPress={() => handleSelect(item)}
-              >
+              <Pressable key={index} style={styles.item} onPress={() => handleSelect(item)}>
                 <Text style={styles.itemText}>{item}</Text>
               </Pressable>
             ))}
@@ -98,7 +81,11 @@ const AutocompleteInput = (props) => {
 };
 
 const styles = StyleSheet.create({
-  container: { marginBottom: 10, position: "relative", zIndex: 1000 },
+  container: {
+    marginBottom: 10,
+    position: "relative",
+    zIndex: 1000,
+  },
   title: {
     fontSize: 23,
     fontFamily: "InterBold",
@@ -106,15 +93,42 @@ const styles = StyleSheet.create({
     color: "#2C5818",
     marginTop: 10,
   },
-  input: {
+  inputContainer: {
+    position: "relative",
+    justifyContent: "center",
+    backgroundColor: "#A5B19F",
+    paddingHorizontal: 10,
+    height: 50,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: -1, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    marginBottom: 10,
+    elevation: 5,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  textInput: {
+    color: "#173509",
     width: "100%",
     fontSize: 20,
     fontFamily: "InterMedium",
-    backgroundColor: "#A5B19F",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 10,
-    paddingRight: 40,
+    textAlign: "left",
+    paddingRight: 35,
+  },
+  clearButton: {
+    position: "absolute",
+    right: 12,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  clearText: {
+    fontSize: 22,
+    color: "#173509",
+    fontFamily: "InterBold",
   },
   dropdown: {
     backgroundColor: "#a5b19fa1",
@@ -131,21 +145,17 @@ const styles = StyleSheet.create({
     color: "#485641",
     fontFamily: "InterMedium",
   },
-  inputWrapper: {
-    position: "relative",
-    width: "100%",
+  inputError: {
+    borderWidth: 1,
+    borderColor: "#D9534F",
   },
-  clearButton: {
-    position: "absolute",
-    right: 10, // separación del borde derecho
-    top: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  clearText: {
-    fontSize: 20,
-    color: "#000",
+  errorText: {
+    color: "#D9534F",
+    fontSize: 14,
+    marginTop: -5,
+    marginBottom: 8,
+    marginLeft: 4,
+    fontFamily: "InterMedium",
   },
 });
 
