@@ -1,12 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  Keyboard,
-  Alert,
-  Pressable,
-  Text,
-} from "react-native";
-
+import { View, StyleSheet, Keyboard, Alert, Pressable, Text } from "react-native";
 import { useState, useContext, useEffect } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -14,93 +6,191 @@ import Context from "../../context/Context";
 import ItemInput from "../../components/ItemInput";
 import TitleModalScreen from "../../components/TitleModalScreen";
 import ModalButtons from "../../components/ModalButtons";
-import ItemView from "../../components/ItemView";
+
+import { isRequired, minLength, matches } from "../../utils/validators";
 
 const EditProfile = ({ navigation }) => {
   const { user, setUser } = useContext(Context);
+
   const [showPassword, setShowPassword] = useState(false);
   const [changePwd, setChangePwd] = useState(false);
+
   const [form, setForm] = useState({
     name: "",
     surname: "",
-    email: "",
     password: "",
     confirmPassword: "",
   });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    surname: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   useEffect(() => {
-    setForm((prev) => ({
-      ...prev,
-      name: user.name,
-      surname: user.surname,
-      email: user.email,
-      password: user.password,
-    }));
-  }, []);
+    setForm({
+      name: user.name || "",
+      surname: user.surname || "",
+      password: "",
+      confirmPassword: "",
+    });
+  }, [user]);
+
+  const hasProfileChanges = form.name.trim() !== (user.name || "") || form.surname.trim() !== (user.surname || "");
+
+  const isPasswordFormComplete = form.password.trim() !== "" && form.confirmPassword.trim() !== "";
+
+  const isFormComplete = changePwd ? isPasswordFormComplete : hasProfileChanges;
+
+  const validateProfileForm = () => {
+    const newErrors = {
+      name: isRequired(form.name),
+      surname: isRequired(form.surname),
+      password: "",
+      confirmPassword: "",
+    };
+
+    setErrors(newErrors);
+
+    return !newErrors.name && !newErrors.surname;
+  };
+
+  const validatePasswordForm = () => {
+    const newErrors = {
+      name: "",
+      surname: "",
+      password: isRequired(form.password) || minLength(form.password, 6),
+      confirmPassword: isRequired(form.confirmPassword) || matches(form.confirmPassword, form.password, "passwords"),
+    };
+
+    setErrors(newErrors);
+
+    return !newErrors.password && !newErrors.confirmPassword;
+  };
+
+  const saveProfileChanges = () => {
+    const isValid = validateProfileForm();
+
+    if (!isValid) {
+      alert("Please fill in all required fields correctly");
+      return;
+    }
+
+    const profileChanges = {};
+
+    if (form.name.trim() !== user.name) {
+      profileChanges.name = form.name.trim();
+    }
+
+    if (form.surname.trim() !== user.surname) {
+      profileChanges.surname = form.surname.trim();
+    }
+
+    if (Object.keys(profileChanges).length === 0) {
+      alert("No changes to save");
+      return;
+    }
+
+    Alert.alert("Attention", "Are you sure you want to save these profile changes?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Save",
+        onPress: () => {
+          console.log("PROFILE REQUEST:", profileChanges);
+
+          setUser((prev) => ({
+            ...prev,
+            ...profileChanges,
+          }));
+
+          Keyboard.dismiss();
+          navigation.goBack();
+        },
+      },
+    ]);
+  };
+
+  const savePasswordChange = () => {
+    const isValid = validatePasswordForm();
+
+    if (!isValid) {
+      alert("Please check the password fields");
+      return;
+    }
+
+    const passwordPayload = {
+      password: form.password,
+    };
+
+    Alert.alert("Attention", "Are you sure you want to change your password? This will modify your login details.", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Save",
+        onPress: () => {
+          console.log("PASSWORD REQUEST:", passwordPayload);
+
+          setUser((prev) => ({
+            ...prev,
+            password: form.password,
+          }));
+
+          Keyboard.dismiss();
+          navigation.goBack();
+        },
+      },
+    ]);
+  };
 
   const onSaved = () => {
     if (changePwd) {
-      if (form.password === form.confirmPassword) {
-        const editUser = {
-          name: form.name,
-          surname: form.surname,
-          email: form.email,
-          password: form.password,
-        };
-
-        Alert.alert(
-          "Attention",
-          "Are you sure you want to save the data? The change will modify your login details",
-          [
-            {
-              text: "Cancel",
-              style: "cancel",
-            },
-            {
-              text: "Save",
-              onPress: () => {
-                console.log(editUser);
-                Keyboard.dismiss();
-                navigation.goBack();
-              },
-            },
-          ],
-        );
-      } else {
-        alert("The passwords do not match");
-      }
+      savePasswordChange();
     } else {
-      const editUser = {
-        name: form.name,
-        surname: form.surname,
-        email: form.email,
-        password: form.password,
-      };
-
-      console.log(editUser);
-      Keyboard.dismiss();
-      navigation.goBack();
+      saveProfileChanges();
     }
   };
 
   const onChangePwd = () => {
     setChangePwd(true);
+    setErrors({
+      name: "",
+      surname: "",
+      password: "",
+      confirmPassword: "",
+    });
+    setForm((prev) => ({
+      ...prev,
+      password: "",
+      confirmPassword: "",
+    }));
   };
 
   const onCancelChangePwd = () => {
     setChangePwd(false);
+    setErrors({
+      name: "",
+      surname: "",
+      password: "",
+      confirmPassword: "",
+    });
+    setForm((prev) => ({
+      ...prev,
+      password: "",
+      confirmPassword: "",
+    }));
   };
-
-  const isFormComplete = changePwd
-    ? Object.values(form).every((value) => value)
-    : form.name && form.surname;
 
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-        <TitleModalScreen
-          title={"Edit profile"}
-          onPress={() => navigation.goBack()}
-        />
+        <TitleModalScreen title={"Edit profile"} onPress={() => navigation.goBack()} />
 
         <KeyboardAwareScrollView
           style={styles.scrollContainer}
@@ -110,56 +200,56 @@ const EditProfile = ({ navigation }) => {
           enableOnAndroid={true}
           contentContainerStyle={{ paddingBottom: 20 }}
         >
-          <ItemInput
-            label="Name:"
-            placeholder="John"
-            value={form.name}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, name: text }))
-            }
-            keyboardType="default"
-          />
-
-          <ItemInput
-            label="Surname:"
-            placeholder="Doe"
-            value={form.surname}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, surname: text }))
-            }
-            keyboardType="default"
-          />
-          <ItemView label="Email:" info={form.email} />
-
           {!changePwd && (
-            <Pressable style={styles.button} onPress={onChangePwd}>
-              <Text style={styles.textButton}>Change Password</Text>
-            </Pressable>
+            <>
+              <ItemInput
+                label="Name:"
+                placeholder="John"
+                value={form.name}
+                onChangeText={(text) => setForm((prev) => ({ ...prev, name: text }))}
+                keyboardType="default"
+                error={errors.name}
+              />
+
+              <ItemInput
+                label="Surname:"
+                placeholder="Doe"
+                value={form.surname}
+                onChangeText={(text) => setForm((prev) => ({ ...prev, surname: text }))}
+                keyboardType="default"
+                error={errors.surname}
+              />
+
+              <Pressable style={styles.button} onPress={onChangePwd}>
+                <Text style={styles.textButton}>Change Password</Text>
+              </Pressable>
+            </>
           )}
 
           {changePwd && (
             <>
+              <Text style={styles.sectionText}>Enter your new password and confirm it below.</Text>
+
               <ItemInput
-                label="Password:"
+                label="New Password:"
+                placeholder="New password"
                 value={form.password}
                 eye={true}
-                onPressEye={() => setShowPassword(!showPassword)}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, password: text }))
-                }
+                onChangeText={(text) => setForm((prev) => ({ ...prev, password: text }))}
                 keyboardType="default"
-                secureTextEntry={!showPassword}
+                error={errors.password}
               />
 
               <ItemInput
-                label="Confirm Password:"
+                label="Confirm New Password:"
+                placeholder="Confirm new password"
                 value={form.confirmPassword}
                 eye={true}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, confirmPassword: text }))
-                }
+                onChangeText={(text) => setForm((prev) => ({ ...prev, confirmPassword: text }))}
                 keyboardType="default"
+                error={errors.confirmPassword}
               />
+
               <Pressable style={styles.button} onPress={onCancelChangePwd}>
                 <Text style={styles.textButton}>Cancel Change Password</Text>
               </Pressable>
@@ -167,11 +257,7 @@ const EditProfile = ({ navigation }) => {
           )}
         </KeyboardAwareScrollView>
 
-        <ModalButtons
-          onCancel={() => navigation.goBack()}
-          onSave={onSaved}
-          isFormComplete={isFormComplete}
-        />
+        <ModalButtons onCancel={() => navigation.goBack()} onSave={onSaved} isFormComplete={isFormComplete} />
       </View>
     </View>
   );
@@ -212,6 +298,11 @@ const styles = StyleSheet.create({
     fontFamily: "InterBold",
     color: "white",
     textAlign: "center",
+  },
+  sectionText: {
+    fontSize: 16,
+    fontFamily: "InterMedium",
+    color: "#4B643F",
   },
 });
 

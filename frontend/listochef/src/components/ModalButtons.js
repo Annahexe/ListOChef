@@ -15,11 +15,7 @@ const ModalButtons = (props) => {
           styles.button,
           { backgroundColor: props.isFormComplete ? "#4B643F" : "#85917F" },
         ]}
-        onPress={
-          props.isFormComplete
-            ? props.onSave
-            : () => alert("Please fill in all fields before saving")
-        }
+        onPress={props.onSave}
       >
         <Text style={styles.textButton}>Save</Text>
       </Pressable>
