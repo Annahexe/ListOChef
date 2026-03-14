@@ -78,7 +78,9 @@ const Register = (props) => {
           placeholder="E-Mail"
           value={registerData.email}
           onChangeText={(text) => setRegisterData((prev) => ({ ...prev, email: text }))}
-          keyboardType="default"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
           style={{ fontSize: 16 }}
           error={errors.email}
         />
