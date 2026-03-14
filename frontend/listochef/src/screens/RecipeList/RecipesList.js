@@ -53,7 +53,7 @@ const RecipesList = (props) => {
           "Cheese",
         ],
         tag: ["pasta", "meat"],
-        type: "Lunch",
+        category: "Lunch",
         time: 20,
         difficulty: "Low",
         steps:
@@ -80,7 +80,7 @@ const RecipesList = (props) => {
           "Stock",
         ],
         tag: ["rice", "seafood"],
-        type: "Lunch",
+        category: "Lunch",
         time: 45,
         difficulty: "Medium",
         steps:
@@ -104,7 +104,7 @@ const RecipesList = (props) => {
           "Spices",
         ],
         tag: ["sauce", "meat"],
-        type: "Lunch",
+        category: "Lunch",
         time: 40,
         difficulty: "Low",
         steps:
@@ -128,7 +128,7 @@ const RecipesList = (props) => {
           "Cheese",
         ],
         tag: ["pasta", "meat"],
-        type: "Lunch",
+        category: "Lunch",
         time: 25,
         difficulty: "Low",
         steps:
@@ -143,7 +143,7 @@ const RecipesList = (props) => {
         recipeName: "Potato Omelette",
         ingredients: ["Potatoes", "Eggs", "Onion", "Olive oil", "Salt"],
         tag: ["eggs", "potato"],
-        type: "Dinner",
+        category: "Dinner",
         time: 20,
         difficulty: "Low",
         steps:
