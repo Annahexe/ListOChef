@@ -60,7 +60,19 @@ const AddRecipe = ({ navigation }) => {
     });
 
     if (!result.canceled) {
-      setForm((prev) => ({ ...prev, photo: result.assets[0].uri }));
+      const asset = result.assets[0];
+
+      const fileName = asset.fileName;
+      const fileType = asset.mimeType;
+
+      setForm((prev) => ({
+        ...prev,
+        photo: {
+          uri: asset.uri,
+          name: fileName,
+          type: fileType, //This is for the MultipartFile
+        },
+      }));
     }
   };
 
@@ -120,7 +132,7 @@ const AddRecipe = ({ navigation }) => {
           enableOnAndroid={true}
           contentContainerStyle={{ paddingBottom: 20 }}
         >
-          <PhotoPicker photo={form.photo} choosePhoto={choosePhoto} />
+          <PhotoPicker photo={form.photo?.uri} choosePhoto={choosePhoto} />
 
           <ItemInput
             label="Name"
