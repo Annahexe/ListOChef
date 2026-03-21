@@ -1,5 +1,8 @@
 package com.listochef.controller;
 
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.listochef.model.User;
@@ -16,8 +19,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody User user) {
-        return authService.login(user);
+    public ResponseEntity<Map<String, Object>> login(@RequestBody User user) {
+        return ResponseEntity.ok(authService.login(user));
     }
 
 }

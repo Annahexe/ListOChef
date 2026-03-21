@@ -1,5 +1,7 @@
 package com.listochef.service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,20 +26,24 @@ public class AuthService {
         this.jwtService = jwtService;
     }
     
-	public String login(User user) {
-		
-		Optional<User> userOptional = repository.findByEmail(user.getEmail());
-
-	    if (userOptional.isEmpty()) {
+    public Map<String, Object> login(User user) {
+        Optional<User> userOptional = repository.findByEmail(user.getEmail());
+        if (userOptional.isEmpty()) {
             throw new RuntimeException("Invalid credentials");
-	    }
-	    
-	    User storedUser = userOptional.get();
-	    
+        }
+
+        User storedUser = userOptional.get();
+
         if (!passwordEncoder.matches(user.getPassword(), storedUser.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
-        return jwtService.generateToken(storedUser.getEmail());
-	}
+        String token = jwtService.generateToken(storedUser.getEmail());
+        storedUser.setPassword(null);
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("user", storedUser);
+        
+        return response;
+    }
 }
