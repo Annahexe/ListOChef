@@ -48,7 +48,7 @@ const Register = (props) => {
     // isSuccess = responseFromPost
     let isSuccess = true;
     if (isSuccess) {
-      props.navigation.navigate("Home");
+      props.navigation.navigate("Login");
     }
   };
 
