@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     width: "55%",
     margin: 20,
     fontFamily: "InterBold",
-    fontSize: 20,
+    fontSize: 19,
     textAlign: "Left",
   },
   button: {

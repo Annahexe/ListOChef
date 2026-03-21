@@ -200,8 +200,6 @@ const EditProfile = ({ navigation }) => {
           enableOnAndroid={true}
           contentContainerStyle={{ paddingBottom: 20 }}
         >
-          {!changePwd && (
-            <>
               <ItemInput
                 label="Name:"
                 placeholder="John"
@@ -220,11 +218,9 @@ const EditProfile = ({ navigation }) => {
                 error={errors.surname}
               />
 
-              <Pressable style={styles.button} onPress={onChangePwd}>
-                <Text style={styles.textButton}>Change Password</Text>
+              <Pressable style={styles.button} onPress={changePwd ? onCancelChangePwd : onChangePwd}>
+                <Text style={styles.textButton}>{changePwd ? "Cancel Change Password" : "Change Password"}</Text>
               </Pressable>
-            </>
-          )}
 
           {changePwd && (
             <>
@@ -249,10 +245,6 @@ const EditProfile = ({ navigation }) => {
                 keyboardType="default"
                 error={errors.confirmPassword}
               />
-
-              <Pressable style={styles.button} onPress={onCancelChangePwd}>
-                <Text style={styles.textButton}>Cancel Change Password</Text>
-              </Pressable>
             </>
           )}
         </KeyboardAwareScrollView>
@@ -288,7 +280,7 @@ const styles = StyleSheet.create({
     width: "80%",
     backgroundColor: "#4B643F",
     marginHorizontal: "1%",
-    marginTop: 20,
+    marginVertical: "3%",
     padding: 10,
     borderRadius: 20,
     textAlign: "center",

@@ -74,7 +74,6 @@ const Login = (props) => {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
-          style={{ fontSize: 16 }}
           error={errors.email}
         />
         <ItemInput
@@ -86,7 +85,6 @@ const Login = (props) => {
           secureTextEntry={!showPassword}
           onChangeText={(text) => setLoginData((prev) => ({ ...prev, password: text }))}
           keyboardType="default"
-          style={{ fontSize: 16 }}
           error={errors.password}
         />
 

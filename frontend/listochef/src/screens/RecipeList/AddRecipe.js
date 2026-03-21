@@ -135,7 +135,7 @@ const AddRecipe = ({ navigation }) => {
           <PhotoPicker photo={form.photo?.uri} choosePhoto={choosePhoto} />
 
           <ItemInput
-            label="Name"
+            label="Name:"
             placeholder="Ex: Roast beef"
             value={form.name}
             onChangeText={(text) => setForm((prev) => ({ ...prev, name: text }))}
@@ -144,7 +144,7 @@ const AddRecipe = ({ navigation }) => {
           />
 
           <AutocompleteList
-            label="Ingredients"
+            label="Ingredients:"
             values={ingredients}
             setValues={setIngredients}
             options={ingredientsList}
@@ -153,7 +153,7 @@ const AddRecipe = ({ navigation }) => {
           />
 
           <AutocompleteInput
-            label="Type"
+            label="Type:"
             placeholder="Ex: Breakfast"
             value={form.type}
             options={["Breakfast", "Lunch", "Dinner", "Snack", "Dessert", "Brunch"]}
@@ -162,7 +162,7 @@ const AddRecipe = ({ navigation }) => {
           />
 
           <ItemInput
-            label="Steps to create:"
+            label="Steps to make:"
             placeholder="Step 1: ..."
             value={form.steps}
             onChangeText={(text) => setForm((prev) => ({ ...prev, steps: text }))}
@@ -181,7 +181,7 @@ const AddRecipe = ({ navigation }) => {
           >
             <View style={{ width: "45%" }}>
               <ItemInput
-                label="Time"
+                label="Time:"
                 placeholder="Ex: 20 min"
                 value={form.time}
                 onChangeText={(text) => setForm((prev) => ({ ...prev, time: text }))}
@@ -192,7 +192,7 @@ const AddRecipe = ({ navigation }) => {
 
             <View style={{ width: "45%" }}>
               <AutocompleteInput
-                label="Difficulty"
+                label="Difficulty:"
                 placeholder="Ex: Low "
                 value={form.difficulty}
                 options={["Low", "Medium", "Hard"]}
