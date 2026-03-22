@@ -19,7 +19,7 @@ const AddRecipe = ({ navigation }) => {
   const [form, setForm] = useState({
     photo: null,
     name: "",
-    type: "",
+    category: "",
     steps: "",
     time: "",
     difficulty: "",
@@ -27,7 +27,7 @@ const AddRecipe = ({ navigation }) => {
 
   const [errors, setErrors] = useState({
     name: "",
-    type: "",
+    category: "",
     steps: "",
     time: "",
     difficulty: "",
@@ -89,7 +89,7 @@ const AddRecipe = ({ navigation }) => {
     const newRecipe = {
       recipeName: form.name,
       ingredients,
-      type: form.type,
+      category: form.category,
       time: form.time,
       steps: form.steps,
       tags,
@@ -107,7 +107,7 @@ const AddRecipe = ({ navigation }) => {
   const validateForm = () => {
     const newErrors = {
       name: isRequired(form.name),
-      type: isRequired(form.type),
+      category: isRequired(form.category),
       steps: isRequired(form.steps),
       time: isRequired(form.time),
       difficulty: isRequired(form.difficulty),
@@ -116,7 +116,7 @@ const AddRecipe = ({ navigation }) => {
     };
 
     setErrors(newErrors);
-    return !newErrors.name && !newErrors.type && !newErrors.steps && !newErrors.time && !newErrors.difficulty && !newErrors.ingredients && !newErrors.tags;
+    return !newErrors.name && !newErrors.category && !newErrors.steps && !newErrors.time && !newErrors.difficulty && !newErrors.ingredients && !newErrors.tags;
   };
 
   return (
@@ -153,12 +153,12 @@ const AddRecipe = ({ navigation }) => {
           />
 
           <AutocompleteInput
-            label="Type:"
+            label="Category:"
             placeholder="Ex: Breakfast"
-            value={form.type}
+            value={form.category}
             options={["Breakfast", "Lunch", "Dinner", "Snack", "Dessert", "Brunch"]}
-            onSelect={(text) => setForm((prev) => ({ ...prev, type: text }))}
-            error={errors.type}
+            onSelect={(text) => setForm((prev) => ({ ...prev, category: text }))}
+            error={errors.category}
           />
 
           <ItemInput

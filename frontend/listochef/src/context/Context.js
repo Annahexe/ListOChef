@@ -7,7 +7,7 @@ export const Provider = ({ children }) => {
     recipeName: "Potato Omelette",
     ingredients: ["Potatoes", "Eggs", "Onion", "Olive oil", "Salt"],
     tag: ["eggs", "potato"],
-    type: "Dinner",
+    category: "Dinner",
     time: 20,
     difficulty: "Low",
     steps:
