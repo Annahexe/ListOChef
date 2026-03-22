@@ -38,6 +38,7 @@
   },
   "private": true,
   "devDependencies": {
+    "jsdoc": "^4.0.5",
     "react-native-svg-transformer": "^1.5.3"
   }
 }
