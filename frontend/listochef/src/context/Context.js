@@ -2,7 +2,16 @@ import { createContext, useState } from "react";
 const Context = createContext();
 
 export const Provider = ({ children }) => {
+  const [route, setRoute] = useState("http://xxx/ListOChef");
   const [ingredientTags, setIngredientTags] = useState([
+    "All",
+    "Dairy",
+    "Fruit",
+    "Bakery",
+    "Vegetable",
+    "Meat",
+    "Canned",
+  ]);
   const [lastRecipeSeen, setLastRecipeSeen] = useState({
     id: "5",
     recipeName: "Potato Omelette",
@@ -24,6 +33,8 @@ export const Provider = ({ children }) => {
     email: "user@gmail.com",
     password: "micontraseña",
   });
+  const [token, setToken] = useState("");
+
   const [selectedIngredients, setSelectedIngredients] = useState([
     { name: "Potatoes", amount: 5 },
     { name: "Tomatoes", amount: 1 },
