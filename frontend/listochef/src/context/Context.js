@@ -2,12 +2,16 @@ import { createContext, useState } from "react";
 const Context = createContext();
 
 export const Provider = ({ children }) => {
+  const [route, setRoute] = useState("http://98.84.207.18:8080/ListOChef")
+  const [ingredientTags, setIngredientTags] = useState([
+    "All", "Dairy", "Fruit", "Bakery", "Vegetable", "Meat", "Canned"
+  ])
   const [lastRecipeSeen, setLastRecipeSeen] = useState({
     id: "5",
     recipeName: "Potato Omelette",
     ingredients: ["Potatoes", "Eggs", "Onion", "Olive oil", "Salt"],
     tag: ["eggs", "potato"],
-    type: "Dinner",
+    category: "Dinner",
     time: 20,
     difficulty: "Low",
     steps:
@@ -24,10 +28,11 @@ export const Provider = ({ children }) => {
     password: "micontraseña",
   });
   const [token, setToken] = useState("")
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
 
   return (
     <Context.Provider
-      value={{ lastRecipeSeen, setLastRecipeSeen, user, setUser, token, setToken }}
+      value={{ lastRecipeSeen, setLastRecipeSeen, user, setUser, token, setToken, route, setRoute, ingredientTags, setIngredientTags, selectedIngredients, setSelectedIngredients }}
     >
       {children}
     </Context.Provider>

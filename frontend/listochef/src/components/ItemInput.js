@@ -8,38 +8,25 @@ const ItemInput = (props) => {
 
   return (
     <View>
-      <Text style={[styles.title, props.style]}>{props.label}</Text>
+      <Text style={[styles.labelStyle, props.style]}>{props.label?.toUpperCase()}</Text>
 
-      <View
-        style={[
-          styles.inputContainer,
-          props.multiline && styles.multilineInput,
-          props.error && styles.inputError,
-        ]}
-      >
+      <View style={[styles.inputContainer, props.multiline && styles.multilineInput, props.error && styles.inputError]}>
         <TextInput
-          style={styles.textInput}
+          style={[styles.textInput, props.eye && styles.textInputWithEye]}
           placeholder={props.placeholder}
           placeholderTextColor="#ffffff83"
           value={props.value}
           onChangeText={props.onChangeText}
           keyboardType={props.keyboardType}
-          multiline={props.multiline}
-          numberOfLines={props.numberOfLines}
+          multiline={props.multiline || false}
+          numberOfLines={props.multiline ? props.numberOfLines || 4 : 1}
           textAlignVertical={props.multiline ? "top" : "center"}
           secureTextEntry={props.eye && !showPassword}
         />
 
         {props.eye && (
-          <Pressable
-            onPress={() => setShowPassword(!showPassword)}
-            style={styles.eyeContainer}
-          >
-            <AntDesign
-              name={showPassword ? "eye-invisible" : "eye"}
-              size={26}
-              color="white"
-            />
+          <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeContainer}>
+            <AntDesign name={showPassword ? "eye-invisible" : "eye"} size={26} color="white" />
           </Pressable>
         )}
       </View>
@@ -65,14 +52,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   textInput: {
+    flex: 1,
     color: "#173509",
-    width: "100%",
     fontSize: 20,
     fontFamily: "InterMedium",
     textAlign: "left",
   },
-  title: {
-    fontSize: 23,
+  textInputWithEye: {
+    paddingRight: 50,
+  },
+  labelStyle: {
+    fontSize: 16,
     fontFamily: "InterBold",
     marginVertical: 5,
     color: "#2C5818",

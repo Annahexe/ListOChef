@@ -2,7 +2,7 @@ import { View, Text, StyleSheet } from "react-native";
 
 const ItemView = (props) => (
   <View style={{ flex: 1, marginHorizontal: 5 }}>
-    <Text style={styles.title}>{props.label}</Text>
+    <Text style={styles.labelStyle} numberOfLines={1}>{props.label?.toUpperCase()}</Text>
     <View style={styles.textInfo}>
       {props.ingredients?.map((ingredient, index) => (
         <Text key={index} style={styles.text}>
@@ -30,8 +30,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     elevation: 5,
   },
-  title: {
-    fontSize: 20,
+  labelStyle: {
+    fontSize: 16,
     fontFamily: "InterBold",
     marginVertical: 5,
     color: "#2C5818",

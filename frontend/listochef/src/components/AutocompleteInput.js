@@ -38,7 +38,7 @@ const AutocompleteInput = (props) => {
 
   return (
     <View style={styles.container}>
-      {props.label ? <Text style={styles.title}>{props.label}</Text> : null}
+      {props.label ? <Text style={styles.labelStyle}>{props.label?.toUpperCase()}</Text> : null}
 
       <View style={[styles.inputContainer, props.error && styles.inputError]}>
         <TextInput
@@ -86,8 +86,8 @@ const styles = StyleSheet.create({
     position: "relative",
     zIndex: 1000,
   },
-  title: {
-    fontSize: 23,
+  labelStyle: {
+    fontSize: 16,
     fontFamily: "InterBold",
     marginVertical: 5,
     color: "#2C5818",

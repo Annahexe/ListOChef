@@ -48,7 +48,7 @@ const Register = (props) => {
     // isSuccess = responseFromPost
     let isSuccess = true;
     if (isSuccess) {
-      props.navigation.navigate("Home");
+      props.navigation.navigate("Login");
     }
   };
 
@@ -61,7 +61,6 @@ const Register = (props) => {
           value={registerData.name}
           onChangeText={(text) => setRegisterData((prev) => ({ ...prev, name: text }))}
           keyboardType="default"
-          style={{ fontSize: 16 }}
           error={errors.name}
         />
         <ItemInput
@@ -70,7 +69,6 @@ const Register = (props) => {
           value={registerData.surname}
           onChangeText={(text) => setRegisterData((prev) => ({ ...prev, surname: text }))}
           keyboardType="default"
-          style={{ fontSize: 16 }}
           error={errors.surname}
         />
         <ItemInput
@@ -81,7 +79,6 @@ const Register = (props) => {
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
-          style={{ fontSize: 16 }}
           error={errors.email}
         />
         <ItemInput
@@ -93,7 +90,6 @@ const Register = (props) => {
           secureTextEntry={!showPassword}
           onChangeText={(text) => setRegisterData((prev) => ({ ...prev, password: text }))}
           keyboardType="default"
-          style={{ fontSize: 16 }}
           error={errors.password}
         />
         <ItemInput
@@ -105,7 +101,6 @@ const Register = (props) => {
           secureTextEntry={!showPassword}
           onChangeText={(text) => setRegisterData((prev) => ({ ...prev, confirmPassword: text }))}
           keyboardType="default"
-          style={{ fontSize: 16 }}
           error={errors.confirmPassword}
         />
 
