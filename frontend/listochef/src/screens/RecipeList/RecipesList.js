@@ -25,6 +25,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const RecipesList = (props) => {
+  const { route } = useContext(Context);
   const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
   const { token, setToken } = useContext(Context);
 
@@ -204,7 +205,7 @@ const RecipesList = (props) => {
 
   const getRecipesPetition = async () => {
     const response = await getData(
-      "http://98.84.207.18:8080/ListOChef/recipes/userRecipes",
+      route + "/recipes/userRecipes",
       token,
     );
     return response;

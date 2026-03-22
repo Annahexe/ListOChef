@@ -2,6 +2,7 @@ import { createContext, useState } from "react";
 const Context = createContext();
 
 export const Provider = ({ children }) => {
+  const [route, setRoute] = useState("http://98.84.207.18:8080/ListOChef")
   const [lastRecipeSeen, setLastRecipeSeen] = useState({
     id: "5",
     recipeName: "Potato Omelette",
@@ -27,7 +28,7 @@ export const Provider = ({ children }) => {
 
   return (
     <Context.Provider
-      value={{ lastRecipeSeen, setLastRecipeSeen, user, setUser, token, setToken }}
+      value={{ lastRecipeSeen, setLastRecipeSeen, user, setUser, token, setToken, route, setRoute }}
     >
       {children}
     </Context.Provider>

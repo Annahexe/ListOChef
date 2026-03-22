@@ -9,6 +9,7 @@ import { isRequired, isEmail, minLength } from "../../../utils/validators";
 import { postDataOnboarding } from "../../../services/services";
 
 const Login = (props) => {
+  const { route } = useContext(Context);
   const { token, setToken } = useContext(Context);
   const [loginData, setLoginData] = useState({
     email: "",
@@ -50,7 +51,7 @@ const Login = (props) => {
   };
 
   const sendLoginRequest = async () => {
-    const response = await postDataOnboarding("http://98.84.207.18:8080/ListOChef/login", loginData);
+    const response = await postDataOnboarding(route + "/login", loginData);
     if (!response) {
       setIsLoginSuccess(false);
       return false;
