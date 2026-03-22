@@ -2,13 +2,30 @@ import { Text, Image, View, Pressable, StyleSheet } from "react-native";
 
 import { useState } from "react";
 
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Feather from "@expo/vector-icons/Feather";
 
 export const ListItem = (props) => {
   return (
     <View style={styles.container}>
-      <MaterialIcons name="add-circle-outline" size={28} color="#4B643F" />
-      <Text style={styles.text}>{props.ingredient}</Text>
+
+      <Pressable onPress={props.isSelected ? props.onUnselect : props.onSelect} style={styles.leftContainer}>
+        {props.isSelected ? (
+          <MaterialIcons name="check-circle" size={28} color="#4B643F" />
+        ) : (
+          <MaterialIcons name="add-circle-outline" size={28} color="#4B643F" />
+        )}
+        <Text style={styles.text}>{props.ingredient}</Text>
+      </Pressable>
+
+      {props.isSelected && (
+        <View style={styles.rightContainer}>
+          <Feather name="minus-square" size={28} color="#4B643F" onPress={props.onSubtractAmount} />
+          <Text style={styles.textAmount}>{props.amount}</Text>
+          <Feather name="plus-square" size={28} color="#4B643F" onPress={props.onAddAmount} />
+        </View>
+      )}
+      
     </View>
   );
 };
@@ -24,12 +41,26 @@ const styles = StyleSheet.create({
     borderColor: "rgba(75, 100, 63, 0.6)",
     borderRadius: 15,
     paddingVertical: "1%",
-    paddingHorizontal: "2%"
+    paddingHorizontal: "2%",
   },
   text: {
     paddingLeft: "1%",
     fontFamily: "InterSemiBold",
     color: "#2C5818",
     fontSize: 20,
+  },
+  leftContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  rightContainer: {
+    flexDirection: "row",
+    marginLeft: "auto",
+  },
+  textAmount: {
+    paddingHorizontal: "1.5%",
+    fontFamily: "InterSemiBold",
+    color: "#414141",
+    fontSize: 19,
   },
 });

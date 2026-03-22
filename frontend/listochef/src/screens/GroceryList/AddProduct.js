@@ -10,10 +10,11 @@ import Context from "../../context/Context";
 import Feather from "@expo/vector-icons/Feather";
 
 const AddProduct = (props) => {
-  const {ingredientTags, setIngredientTags} = useContext(Context);
+  const { ingredientTags, setIngredientTags } = useContext(Context);
   const [selectedTags, setSelectedTags] = useState(["All"]);
 
   const [ingredientsList, setIngredientsList] = useState([]);
+  const { selectedIngredients, setSelectedIngredients } = useContext(Context);
 
   const toggleTag = (selectedTag) => {
     setSelectedTags((previousSelectedTags) => {
@@ -27,6 +28,39 @@ const AddProduct = (props) => {
       }
       return [...tagsWithoutAll, selectedTag];
     });
+  };
+
+  const selectIngredient = (ingredientName) => {
+    setSelectedIngredients((prev) => {
+      const alreadyExists = prev.find((item) => item.name === ingredientName);
+
+      if (alreadyExists) return prev;
+
+      return [...prev, { name: ingredientName, amount: 1 }];
+    });
+  };
+
+  const unselectIngredient = (ingredientName) => {
+    setSelectedIngredients((prev) => prev.filter((item) => item.name !== ingredientName));
+  };
+
+  const addAmount = (ingredientName) => {
+    setSelectedIngredients((prev) => prev.map((item) => (item.name === ingredientName ? { ...item, amount: item.amount + 1 } : item)));
+  };
+
+  const subtractAmount = (ingredientName) => {
+    setSelectedIngredients((prev) =>
+      prev.map((item) => (item.name === ingredientName ? { ...item, amount: item.amount - 1 } : item)).filter((item) => item.amount > 0),
+    );
+  };
+
+  const isIngredientSelected = (ingredientName) => {
+    return selectedIngredients.some((item) => item.name === ingredientName);
+  };
+
+  const getIngredientAmount = (ingredientName) => {
+    const ingredient = selectedIngredients.find((item) => item.name === ingredientName);
+    return ingredient ? ingredient.amount : 0;
   };
 
   //demo data
@@ -63,8 +97,17 @@ const AddProduct = (props) => {
           </View>
           <TagsCarousel tagsList={ingredientTags} selectedTags={selectedTags} onToggleTag={toggleTag} />
           <ScrollView style={{ width: "100%", marginBottom: "12%" }} contentContainerStyle={{ paddingBottom: 20 }}>
-            {ingredientsList.map((ingredient, index) => (
-              <ListItem ingredient={ingredient}></ListItem>
+            {ingredientsList.map((ingredient) => (
+              <ListItem
+                key={ingredient}
+                ingredient={ingredient}
+                isSelected={isIngredientSelected(ingredient)}
+                amount={getIngredientAmount(ingredient)}
+                onSelect={() => selectIngredient(ingredient)}
+                onUnselect={() => unselectIngredient(ingredient)}
+                onAddAmount={() => addAmount(ingredient)}
+                onSubtractAmount={() => subtractAmount(ingredient)}
+              />
             ))}
           </ScrollView>
         </View>

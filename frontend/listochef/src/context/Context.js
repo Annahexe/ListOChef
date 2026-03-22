@@ -28,10 +28,11 @@ export const Provider = ({ children }) => {
     password: "micontraseña",
   });
   const [token, setToken] = useState("")
+  const [selectedIngredients, setSelectedIngredients] = useState([]);
 
   return (
     <Context.Provider
-      value={{ lastRecipeSeen, setLastRecipeSeen, user, setUser, token, setToken, route, setRoute, ingredientTags, setIngredientTags }}
+      value={{ lastRecipeSeen, setLastRecipeSeen, user, setUser, token, setToken, route, setRoute, ingredientTags, setIngredientTags, selectedIngredients, setSelectedIngredients }}
     >
       {children}
     </Context.Provider>
