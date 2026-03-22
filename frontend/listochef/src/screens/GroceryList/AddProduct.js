@@ -3,6 +3,7 @@ import { useEffect, useState, useContext } from "react";
 
 import { Seeker } from "../../components/Seeker";
 import { TagsCarousel } from "../../components/TagsCarousel";
+import { ListItem } from "../../components/ListItem";
 
 import Context from "../../context/Context";
 
@@ -63,7 +64,7 @@ const AddProduct = (props) => {
           <TagsCarousel tagsList={ingredientTags} selectedTags={selectedTags} onToggleTag={toggleTag} />
           <ScrollView style={{ width: "100%", marginBottom: "12%" }} contentContainerStyle={{ paddingBottom: 20 }}>
             {ingredientsList.map((ingredient, index) => (
-              <Text key={index}>{ingredient}</Text>
+              <ListItem ingredient={ingredient}></ListItem>
             ))}
           </ScrollView>
         </View>
