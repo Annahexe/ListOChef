@@ -6,10 +6,10 @@ import {
   Pressable,
   ScrollView,
   Keyboard,
+  Alert,
 } from "react-native";
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { Alert } from "react-native";
 
 import AddCircleButton from "../../components/AddCircleButton";
 import { GroceryListItem } from "../../components/GroceryListItem";
@@ -28,14 +28,14 @@ const GroceryList = (props) => {
   const tabBarHeight = useBottomTabBarHeight();
 
   //ingredientes seleccionados en mi lista para añadir a pantry
-  const [ingredientsSelected, setIngredientsSelected] = useState([]);
+  const [ingredientsToPantry, setIngredientsToPantry] = useState([]);
 
   //Ingredientes seleccionados y cantidad desde añadir producto
   const { selectedIngredients, setSelectedIngredients } = useContext(Context);
 
   //Ingredientes de pantry mediante context
   const { pantryItems, setPantryItems } = useContext(Context);
-  const isDisabled = ingredientsSelected.length === 0;
+  const isDisabled = ingredientsToPantry.length === 0;
 
   //Para la barra de tags
   const toggleTag = (selectedTag) => {
@@ -64,32 +64,32 @@ const GroceryList = (props) => {
 
   //añade ingrediente a la lista de seleccionados
   const onSelect = (item) => {
-    setIngredientsSelected((prev) => [...prev, item]);
+    setIngredientsToPantry((prev) => [...prev, item]);
   };
 
   //Quita ingrediente de la lista de seleccionados
   const unSelect = (item) => {
-    setIngredientsSelected((prev) => prev.filter((i) => i.name !== item.name));
+    setIngredientsToPantry((prev) => prev.filter((i) => i.name !== item.name));
   };
 
   //Comprueba si el ingrediente esta seleccionado
   const isItemSelected = (item) => {
-    return ingredientsSelected.some((i) => i.name === item.name);
+    return ingredientsToPantry.some((i) => i.name === item.name);
   };
 
   //Añade a la lista que tenemos en Context. Elimina el ingrediente de la lista de ingredientes y borra los ingredientes seleccionados.
   const addToPantry = () => {
     //Añade a la lista de Context
-    setPantryItems((prev) => [...prev, ...ingredientsSelected]);
+    setPantryItems((prev) => [...prev, ...ingredientsToPantry]);
 
     //Elimino de la lista el ingrediente
     setSelectedIngredients((prev) =>
       prev.filter(
-        (item) => !ingredientsSelected.some((i) => i.name === item.name),
+        (item) => !ingredientsToPantry.some((i) => i.name === item.name),
       ),
     );
     //vacia los seleccionados
-    setIngredientsSelected([]);
+    setIngredientsToPantry([]);
   };
 
   //Permite borrar ingredientes. Para ello los borra de la lista de los ingredientes y tambien de la lista si estuviese seleccionado. Salta alerta por si es un error.
@@ -103,7 +103,7 @@ const GroceryList = (props) => {
           setSelectedIngredients((prev) =>
             prev.filter((i) => i.name !== item.name),
           );
-          setIngredientsSelected((prev) =>
+          setIngredientsToPantry((prev) =>
             prev.filter((i) => i.name !== item.name),
           );
         },
@@ -132,7 +132,9 @@ const GroceryList = (props) => {
             onToggleTag={toggleTag}
           />
 
-          <Text style={styles.resumeText}>6 products</Text>
+          <Text style={styles.resumeText}>
+            {selectedIngredients.length} products
+          </Text>
           <View style={{ flex: 1, width: "100%", maxHeight: "55%" }}>
             <ScrollView>
               {selectedIngredients.map((item, index) => (
