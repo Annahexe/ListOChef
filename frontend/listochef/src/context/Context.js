@@ -2,10 +2,7 @@ import { createContext, useState } from "react";
 const Context = createContext();
 
 export const Provider = ({ children }) => {
-  const [route, setRoute] = useState("http://98.84.207.18:8080/ListOChef")
   const [ingredientTags, setIngredientTags] = useState([
-    "All", "Dairy", "Fruit", "Bakery", "Vegetable", "Meat", "Canned"
-  ])
   const [lastRecipeSeen, setLastRecipeSeen] = useState({
     id: "5",
     recipeName: "Potato Omelette",
@@ -27,12 +24,31 @@ export const Provider = ({ children }) => {
     email: "user@gmail.com",
     password: "micontraseña",
   });
-  const [token, setToken] = useState("")
-  const [selectedIngredients, setSelectedIngredients] = useState([]);
+  const [selectedIngredients, setSelectedIngredients] = useState([
+    { name: "Potatoes", amount: 5 },
+    { name: "Tomatoes", amount: 1 },
+    { name: "Water", amount: 3 },
+  ]);
+  const [pantryItems, setPantryItems] = useState([]);
 
   return (
     <Context.Provider
-      value={{ lastRecipeSeen, setLastRecipeSeen, user, setUser, token, setToken, route, setRoute, ingredientTags, setIngredientTags, selectedIngredients, setSelectedIngredients }}
+      value={{
+        lastRecipeSeen,
+        setLastRecipeSeen,
+        user,
+        setUser,
+        token,
+        setToken,
+        route,
+        setRoute,
+        ingredientTags,
+        setIngredientTags,
+        selectedIngredients,
+        setSelectedIngredients,
+        pantryItems,
+        setPantryItems,
+      }}
     >
       {children}
     </Context.Provider>
