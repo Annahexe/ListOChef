@@ -36,9 +36,9 @@ export const Provider = ({ children }) => {
   const [token, setToken] = useState("");
 
   const [selectedIngredients, setSelectedIngredients] = useState([
-    { name: "Potatoes", amount: 5 },
-    { name: "Tomatoes", amount: 1 },
-    { name: "Water", amount: 3 },
+    { name: "Potatoes", amount: 5, ingredientTag: "" },
+    { name: "Tomatoes", amount: 1, ingredientTag: "" },
+    { name: "Water", amount: 3, ingredientTag: "" },
   ]);
   const [pantryItems, setPantryItems] = useState([]);
 
