@@ -1,4 +1,32 @@
-import { StyleSheet, Text, View, ImageBackground, Image } from "react-native";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Start.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Start.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { StyleSheet, Text, View, ImageBackground, Image } from "react-native";
 
 import RecipeListIcon from "../../../assets/icons/recipeList_iconActive.svg";
 import PantryIcon from "../../../assets/icons/pantry_iconActive.svg";
@@ -37,7 +65,7 @@ const Start = (props) => {
    * Each item contains a title, short description, and icon representing
    * one of the main features of the ListOChef app.
    *
-   * @type {Array<Object>}
+   * @type {Array&lt;Object>}
    */
   const carouselItems = [
     {
@@ -73,49 +101,49 @@ const Start = (props) => {
    * - Feature carousel
    */
   return (
-    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
+    &lt;ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       {/* Gradient overlay for background */}
-      <LinearGradient colors={["rgba(241, 255, 235, 0.39)", "rgba(49, 96, 29, 0.71)"]} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} style={styles.overlay}>
-        <View style={styles.layout}>
+      &lt;LinearGradient colors={["rgba(241, 255, 235, 0.39)", "rgba(49, 96, 29, 0.71)"]} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} style={styles.overlay}>
+        &lt;View style={styles.layout}>
           {/* App logo */}
-          <Image source={require("../../../assets/icons/ListoChefLogo.png")} style={styles.image} />
+          &lt;Image source={require("../../../assets/icons/ListoChefLogo.png")} style={styles.image} />
 
           {/* App title */}
-          <Text style={styles.appTitle}>ListOChef</Text>
+          &lt;Text style={styles.appTitle}>ListOChef&lt;/Text>
 
           {/* Slogan section */}
-          <View style={styles.slogan}>
-            <Text style={styles.textSlogan}>Plan your shopping.</Text>
-            <Text style={styles.textSlogan}>Track your spending.</Text>
-            <Text style={styles.textSlogan}>Cook like a chef.</Text>
-          </View>
+          &lt;View style={styles.slogan}>
+            &lt;Text style={styles.textSlogan}>Plan your shopping.&lt;/Text>
+            &lt;Text style={styles.textSlogan}>Track your spending.&lt;/Text>
+            &lt;Text style={styles.textSlogan}>Cook like a chef.&lt;/Text>
+          &lt;/View>
 
           {/* Navigation buttons */}
-          <PrimaryButton buttonText={"Login"} onPress={() => props.navigation.navigate("Login")} />
+          &lt;PrimaryButton buttonText={"Login"} onPress={() => props.navigation.navigate("Login")} />
 
-          <PrimaryButton buttonText={"Register"} onPress={() => props.navigation.navigate("Register")} />
+          &lt;PrimaryButton buttonText={"Register"} onPress={() => props.navigation.navigate("Register")} />
 
           {/* Feature carousel showcasing app functionalities */}
-          <Carousel
+          &lt;Carousel
             data={carouselItems}
             autoScroll={true}
             autoScrollInterval={4000}
             renderItem={({ item }) => (
-              <View style={styles.itemCard}>
+              &lt;View style={styles.itemCard}>
                 {/* Feature icon */}
-                {item.icon && <item.icon width={40} height={40} />}
+                {item.icon &amp;&amp; &lt;item.icon width={40} height={40} />}
 
                 {/* Feature title */}
-                <Text style={styles.itemTitle}>{item.title}</Text>
+                &lt;Text style={styles.itemTitle}>{item.title}&lt;/Text>
 
                 {/* Feature description */}
-                <Text style={styles.itemDescription}>{item.description}</Text>
-              </View>
+                &lt;Text style={styles.itemDescription}>{item.description}&lt;/Text>
+              &lt;/View>
             )}
           />
-        </View>
-      </LinearGradient>
-    </ImageBackground>
+        &lt;/View>
+      &lt;/LinearGradient>
+    &lt;/ImageBackground>
   );
 };
 
@@ -233,3 +261,26 @@ const styles = StyleSheet.create({
 });
 
 export default Start;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Start.html">Start</a></li><li><a href="module-TermsConditions.html">TermsConditions</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sun Mar 22 2026 17:45:50 GMT+0100 (Central European Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
