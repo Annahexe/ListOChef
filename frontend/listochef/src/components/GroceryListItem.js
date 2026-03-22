@@ -1,67 +1,69 @@
-import { Text, View, Pressable, StyleSheet } from "react-native";
+import { createContext, useState } from "react";
+const Context = createContext();
 
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Feather from "@expo/vector-icons/Feather";
+export const Provider = ({ children }) => {
+  const [route, setRoute] = useState("http://xxx/ListOChef");
+  const [ingredientTags, setIngredientTags] = useState([
+    "All",
+    "Dairy",
+    "Fruit",
+    "Bakery",
+    "Vegetable",
+    "Meat",
+    "Canned",
+  ]);
+  const [lastRecipeSeen, setLastRecipeSeen] = useState({
+    id: "5",
+    recipeName: "Potato Omelette",
+    ingredients: ["Potatoes", "Eggs", "Onion", "Olive oil", "Salt"],
+    tag: ["eggs", "potato"],
+    category: "Dinner",
+    time: 20,
+    difficulty: "Low",
+    steps:
+      "1. Peel and slice the potatoes. \n2. Heat olive oil in a frying pan over medium heat.  \n3. Add the potatoes and onion and cook slowly until soft.  \n4. Beat the eggs in a bowl and add salt.  \n5. Drain the potatoes and mix them with the eggs.  \n6. Pour the mixture into the pan and cook until set on both sides.",
+    photo:
+      "https://mojo.generalmills.com/api/public/content/9xIHKwJDH0-1wbHPsVCCVQ_gmi_hi_res_jpeg.jpeg?v=2bfc22c6&t=16e3ce250f244648bef28c5949fb99ff",
+    creationDate: "17/02/2026",
+    isSaved: true,
+  });
+  const [user, setUser] = useState({
+    name: "John",
+    surname: "Doe",
+    email: "user@gmail.com",
+    password: "micontraseña",
+  });
+  const [token, setToken] = useState("");
 
-export const GroceryListItem = (props) => {
+  const [selectedIngredients, setSelectedIngredients] = useState([
+    { name: "Potatoes", amount: 5 },
+    { name: "Tomatoes", amount: 1 },
+    { name: "Water", amount: 3 },
+  ]);
+  const [pantryItems, setPantryItems] = useState([]);
+
   return (
-    <View style={styles.container}>
-      <Pressable
-        onPress={props.isSelected ? props.onUnselect : props.onSelect}
-        style={styles.leftContainer}
-      >
-        {props.isSelected ? (
-          <MaterialIcons name="check-circle" size={27} color="#4B643F" />
-        ) : (
-          <Feather name="circle" size={24} color="#4B643F" />
-        )}
-        <Text style={styles.text}>
-          {props.ingredient}
-          <Text style={styles.textAmount}> x {props.amount}</Text>
-        </Text>
-      </Pressable>
-
-      <Pressable onPress={props.onDelete}>
-        <MaterialIcons name="delete-outline" size={27} color="red" />
-      </Pressable>
-    </View>
+    <Context.Provider
+      value={{
+        lastRecipeSeen,
+        setLastRecipeSeen,
+        user,
+        setUser,
+        token,
+        setToken,
+        route,
+        setRoute,
+        ingredientTags,
+        setIngredientTags,
+        selectedIngredients,
+        setSelectedIngredients,
+        pantryItems,
+        setPantryItems,
+      }}
+    >
+      {children}
+    </Context.Provider>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: "95%",
-    marginHorizontal: "2%",
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
-    marginVertical: "1%",
-    borderWidth: 1,
-    borderColor: "rgba(75, 100, 63, 0.6)",
-    borderRadius: 15,
-    paddingVertical: "2%",
-    paddingHorizontal: "2%",
-  },
-  text: {
-    paddingLeft: "2%",
-    fontFamily: "InterSemiBold",
-    color: "#2C5818",
-    fontSize: 20,
-    alignItems: "center",
-  },
-  leftContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  rightContainer: {
-    flexDirection: "row",
-    marginLeft: "auto",
-  },
-  textAmount: {
-    paddingHorizontal: "1.5%",
-    fontFamily: "InterSemiBold",
-    color: "#414141",
-    fontSize: 15,
-  },
-});
+export default Context;
