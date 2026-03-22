@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Platform } from "react-native";
 
-import GroceryList from "../GroceryList/GroceryList";
+import NavigationGroceryList from "../GroceryList/NavigationGroceryList";
 import Pantry from "../Pantry/Pantry";
 import Expenses from "../Expenses/Expenses";
 import NavigationRecipeList from "../RecipeList/NavigationRecipeList";
@@ -25,7 +25,7 @@ const ICONS = {
     active: RecipeListIconActive,
     inactive: RecipeListIcon,
   },
-  GroceryList: { active: GroceryListIconActive, inactive: GroceryListIcon },
+  NavigationGroceryList: { active: GroceryListIconActive, inactive: GroceryListIcon },
   Pantry: { active: PantryIconActive, inactive: PantryIcon },
   Expenses: { active: ExpensesIconActive, inactive: ExpensesIcon },
   NavigationProfile: { active: ProfileIconActive, inactive: ProfileIcon },
@@ -33,7 +33,7 @@ const ICONS = {
 
 const SCREENS = [
   { name: "NavigationRecipeList", component: NavigationRecipeList },
-  { name: "GroceryList", component: GroceryList },
+  { name: "NavigationGroceryList", component: NavigationGroceryList },
   { name: "Pantry", component: Pantry },
   { name: "Expenses", component: Expenses },
   { name: "NavigationProfile", component: NavigationProfile },

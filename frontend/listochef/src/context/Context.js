@@ -3,6 +3,9 @@ const Context = createContext();
 
 export const Provider = ({ children }) => {
   const [route, setRoute] = useState("http://98.84.207.18:8080/ListOChef")
+  const [ingredientTags, setIngredientTags] = useState([
+    "All", "Dairy", "Fruit", "Bakery", "Vegetable", "Meat", "Canned"
+  ])
   const [lastRecipeSeen, setLastRecipeSeen] = useState({
     id: "5",
     recipeName: "Potato Omelette",
@@ -28,7 +31,7 @@ export const Provider = ({ children }) => {
 
   return (
     <Context.Provider
-      value={{ lastRecipeSeen, setLastRecipeSeen, user, setUser, token, setToken, route, setRoute }}
+      value={{ lastRecipeSeen, setLastRecipeSeen, user, setUser, token, setToken, route, setRoute, ingredientTags, setIngredientTags }}
     >
       {children}
     </Context.Provider>
