@@ -10,6 +10,7 @@ export const Seeker = (props) => {
         onChangeText={props.onChangeText}
         onFocus={props.onPress}
         onSubmitEditing={props.onSubmit}
+        showSoftInputOnFocus={props.editable ?? true}
         returnKeyType="search"
         autoFocus={false}
         placeholder={props.placeholderText}

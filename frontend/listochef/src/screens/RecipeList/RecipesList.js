@@ -224,6 +224,7 @@ const RecipesList = (props) => {
           <Seeker
             placeholderText="Search recipe..."
             onPress={goSearchRecipe}
+            editable={false}
           ></Seeker>
 
           <View style={styles.featuredRecipe}>
