@@ -19,7 +19,7 @@ public class RecipeService {
     }
 
     // 🔹 Crear receta
-    public void createRecipe(Recipe recipe) {
+    public void createRecipe(Recipe recipe, String email) {
     	
     	System.out.println(recipe.toString());
 
@@ -28,33 +28,29 @@ public class RecipeService {
             throw new IllegalArgumentException("Recipe name cannot be empty");
         }
 
-        if (recipe.getUser() == null || recipe.getUser().isBlank()) {
-            throw new IllegalArgumentException("User cannot be empty");
-        }
-
         // Fecha automática desde backend
         recipe.setCreationDate(Instant.now());
         
-        repository.save(recipe);
+        repository.save(recipe, email);
     }
 
     // 🔹 Obtener todas
-    public List<Recipe> findAll() {
-        return repository.findAll();
+    public List<Recipe> findAll(String email) {    	
+        return repository.findAll(email);
     }
 
     // 🔹 Obtener por ID
-    public Optional<Recipe> findById(String id) {
+    public Optional<Recipe> findById(String id, String email) {
 
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Id cannot be empty");
         }
 
-        return repository.findById(id);
+        return repository.findById(id, email);
     }
 
-    public List<Recipe> findByFilters(String category, String recipeName) {
-        return repository.findByFilters(category, recipeName);
+    public List<Recipe> findByFilters(String category, String recipeName, String email) {
+        return repository.findByFilters(category, recipeName, email);
     }
     
  // 🔹 Obtener por usuario 

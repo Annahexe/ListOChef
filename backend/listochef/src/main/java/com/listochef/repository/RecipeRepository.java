@@ -7,13 +7,13 @@ import com.listochef.model.Recipe;
 
 public interface RecipeRepository {
 
-	Recipe save(Recipe recipe);
+	Recipe save(Recipe recipe, String email);
 
-	Optional<Recipe> findById(String id);
+	Optional<Recipe> findById(String id,  String email);
 
-	List<Recipe> findAll();
+	List<Recipe> findAll(String email);
 	
-	List<Recipe> findByFilters(String category, String recipeName);
+	List<Recipe> findByFilters(String category, String recipeName,  String email);
 	
 	//List<Recipe> findByUser(String email);
 	

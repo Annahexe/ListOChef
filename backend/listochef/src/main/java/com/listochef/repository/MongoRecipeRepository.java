@@ -16,6 +16,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import static com.mongodb.client.model.Filters.*;
 
+
 @Repository
 public class MongoRecipeRepository implements RecipeRepository {
 
@@ -28,9 +29,9 @@ public class MongoRecipeRepository implements RecipeRepository {
 	}
 
 	@Override
-	public Recipe save(Recipe recipe) {
+	public Recipe save(Recipe recipe, String email) {
 
-		Document doc = new Document().append("user", recipe.getUser()).append("recipeName", recipe.getRecipeName())
+		Document doc = new Document().append("recipeName", recipe.getRecipeName())
 				.append("ingredients", recipe.getIngredients()).append("steps", recipe.getSteps())
 				.append("category", recipe.getCategory()).append("time", recipe.getTime())
 				.append("difficulty", recipe.getDifficulty()).append("photo", recipe.getPhoto())
@@ -39,24 +40,30 @@ public class MongoRecipeRepository implements RecipeRepository {
 		collection.insertOne(doc);
 
 		recipe.setId(doc.getObjectId("_id").toHexString());
-
+			    
+		mongoUserRepo.updateRecipesSaved(email, recipe.getId());
+	    
 		return recipe;
 	}
 
 	@Override
-	public List<Recipe> findAll() {
+	public List<Recipe> findAll(String email) {
 
-		List<Recipe> recipes = new ArrayList<>();
+	    List<Recipe> recipes = new ArrayList<>();
 
-		for (Document doc : collection.find()) {
-			recipes.add(toRecipe(doc));
-		}
+	    List<String> savedIds = getAllRecipesSavedIds(email);
 
-		return recipes;
+	    for (Document doc : collection.find()) {
+	        Recipe auxRecipe = toRecipe(doc);
+	        markAsSaved(auxRecipe, savedIds);
+	        recipes.add(auxRecipe);
+	    }
+
+	    return recipes;
 	}
 
 	@Override
-	public Optional<Recipe> findById(String id) {
+	public Optional<Recipe> findById(String id, String email) {
 
 		if (id == null || !ObjectId.isValid(id)) {
 			return Optional.empty();
@@ -70,7 +77,13 @@ public class MongoRecipeRepository implements RecipeRepository {
 				return Optional.empty();
 			}
 
-			return Optional.of(toRecipe(doc));
+		    List<String> savedIds = getAllRecipesSavedIds(email);
+
+
+	        Recipe auxRecipe = toRecipe(doc);
+	        markAsSaved(auxRecipe, savedIds);
+
+			return Optional.of(auxRecipe);
 
 		} catch (IllegalArgumentException e) {
 			// Por si acaso, capturar cualquier error de conversión
@@ -100,7 +113,7 @@ public class MongoRecipeRepository implements RecipeRepository {
 //	}
 
 	@Override
-	public List<Recipe> findByFilters(String category, String recipeName) {
+	public List<Recipe> findByFilters(String category, String recipeName,  String email) {
 
 		List<org.bson.conversions.Bson> filters = new ArrayList<>();
 
@@ -111,23 +124,26 @@ public class MongoRecipeRepository implements RecipeRepository {
 		if (recipeName != null && !recipeName.isBlank()) {
 			filters.add(regex("recipeName", recipeName, "i"));
 		}
+		
+	    List<String> savedIds = getAllRecipesSavedIds(email);
 
 		List<Recipe> results = new ArrayList<>();
+	    Iterable<Document> docs;
 
 		if (filters.isEmpty()) {
-			for (Document doc : collection.find()) {
-				results.add(toRecipe(doc));
-			}
+			docs = collection.find();
 		} else if (filters.size() == 1) {
-			for (Document doc : collection.find(filters.get(0))) {
-				results.add(toRecipe(doc));
-			}
+			docs = collection.find(filters.get(0));
 		} else {
-			for (Document doc : collection.find(and(filters))) {
-				results.add(toRecipe(doc));
-			}
+			docs = collection.find(and(filters));
 		}
 
+	    for (Document doc : docs) {
+	        Recipe auxRecipe = toRecipe(doc); 
+	        markAsSaved(auxRecipe, savedIds);
+	        results.add(auxRecipe);
+	    }
+	    
 		return results;
 	}
 
@@ -148,7 +164,7 @@ public class MongoRecipeRepository implements RecipeRepository {
 		}
 
 		for (String recipeId : userRecipesSaved) {
-			Optional<Recipe> recipeOpt = findById(recipeId);
+			Optional<Recipe> recipeOpt = findById(recipeId, email);
 
 			// Solo agregar si la receta existe
 			if (recipeOpt.isPresent()) {
@@ -160,10 +176,31 @@ public class MongoRecipeRepository implements RecipeRepository {
 	}
 
 	private Recipe toRecipe(Document doc) {
-		return new Recipe(doc.getObjectId("_id").toHexString(), doc.getString("user"), doc.getString("recipeName"),
+		return new Recipe(doc.getObjectId("_id").toHexString(), doc.getString("recipeName"),
 				doc.getList("ingredients", String.class), doc.getString("steps"), doc.getString("category"),
 				doc.getInteger("time"), doc.getString("difficulty"), doc.getString("photo"),
 				Instant.parse(doc.getString("creationDate")), doc.getList("tags", String.class));
+	}
+	
+	private Recipe markAsSaved(Recipe recipe, List<String> savedIds) {
+
+	    if (savedIds != null && savedIds.contains(recipe.getId())) {
+	        recipe.setSaved(true);
+	    }
+
+	    return recipe;
+	}
+	
+	private List<String> getAllRecipesSavedIds(String email){
+	    Optional<User> userOpt = mongoUserRepo.findByEmail(email);
+
+	    List<String> savedIds = new ArrayList<>();
+
+	    if (userOpt.isPresent() && userOpt.get().getRecipesSaved() != null) {
+	        savedIds = userOpt.get().getRecipesSaved();
+	    }
+	    
+	    return savedIds;
 	}
 
 }

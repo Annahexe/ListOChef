@@ -22,35 +22,31 @@ public class RecipeController {
 
     // 🔹 Crear receta
     @PostMapping("/createRecipe")
-    public ResponseEntity<Recipe> createRecipe(@AuthenticationPrincipal String email, @RequestBody Recipe recipe) {
-    	
-    	recipe.setUser(email);
-    	
-        service.createRecipe(recipe);
-        
-        
+    public ResponseEntity<Recipe> createRecipe(@AuthenticationPrincipal String email, @RequestBody Recipe recipe) {    	
+        service.createRecipe(recipe, email);
         return ResponseEntity.ok().build();
     }
 
     // 🔹 Obtener todas
     @GetMapping
-    public ResponseEntity<List<Recipe>> getAllRecipes() {        
-        return ResponseEntity.ok(service.findAll());
+    public ResponseEntity<List<Recipe>> getAllRecipes(@AuthenticationPrincipal String email) {        
+        return ResponseEntity.ok(service.findAll(email));
     }
 
     // 🔹 Obtener por ID
     @GetMapping("/{id}")
-    public ResponseEntity<Recipe> getRecipeById(@PathVariable String id) {
-        return service.findById(id)
+    public ResponseEntity<Recipe> getRecipeById(@AuthenticationPrincipal String email, @PathVariable String id) {
+        return service.findById(id, email)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     @GetMapping("/search")
     public ResponseEntity<List<Recipe>> getRecipes(
+    		@AuthenticationPrincipal String email,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String recipeName) {
 
-        return ResponseEntity.ok(service.findByFilters(category, recipeName));
+        return ResponseEntity.ok(service.findByFilters(category, recipeName, email));
     }
     
 //    @GetMapping("/userRecipes")

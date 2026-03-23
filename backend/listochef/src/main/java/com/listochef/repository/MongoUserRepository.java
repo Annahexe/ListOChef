@@ -23,8 +23,8 @@ public class MongoUserRepository implements UserRepository {
 	}
 
 	private User toUser(Document doc) {
-		return new User(doc.getObjectId("_id").toHexString(), doc.getString("email"),
-				doc.getString("password"), doc.getString("avatar"), doc.getList("isSaved", String.class));
+		return new User(doc.getObjectId("_id").toHexString(), doc.getString("name"), doc.getString("surname"), doc.getString("email"),
+				doc.getString("password"), doc.getString("avatar"), doc.getList("recipesSaved", String.class));
 	}
 
 	@Override
@@ -40,9 +40,9 @@ public class MongoUserRepository implements UserRepository {
 
 	@Override
 	public User register(User user) {
-		Document doc = new Document().append("email", user.getEmail())
+		Document doc = new Document().append("name", user.getEmail()).append("surname", user.getEmail()).append("email", user.getEmail())
 				.append("password", user.getPassword()).append("avatar", user.getAvatar())
-				.append("isSaved", new ArrayList<>());
+				.append("recipesSaved", new ArrayList<>());
 
 		collection.insertOne(doc);
 
@@ -60,4 +60,11 @@ public class MongoUserRepository implements UserRepository {
 	    return user;
 	}
 
+	@Override
+	public void updateRecipesSaved(String email, String recipeId) {
+	    collection.updateOne(
+	        eq("email", email),
+	        push("recipesSaved", recipeId)
+	    );
+	}
 }

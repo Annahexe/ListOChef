@@ -7,7 +7,6 @@ import java.time.Instant;
 public class Recipe {
 
 	private String id;
-	private String user;
 	private String recipeName;
 	private List<String> ingredients;
 	private String steps;
@@ -17,15 +16,15 @@ public class Recipe {
 	private String photo;
 	private Instant creationDate;
 	private List<String> tags;
+	private boolean saved;
 
 	public Recipe() {
 	}
 
-	public Recipe(String id, String user, String recipeName, List<String> ingredients, String steps, String category,
+	public Recipe(String id, String recipeName, List<String> ingredients, String steps, String category,
 			int time, String difficulty, String photo, Instant creationDate, List<String> tags) {
 		super();
 		this.id = id;
-		this.user = user;
 		this.recipeName = recipeName;
 		this.ingredients = ingredients;
 		this.steps = steps;
@@ -43,14 +42,6 @@ public class Recipe {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public void setUser(String user) {
-		this.user = user;
 	}
 
 	public String getRecipeName() {
@@ -125,5 +116,12 @@ public class Recipe {
 		this.tags = tags;
 	}
 
+	public boolean isSaved() {
+	    return saved;
+	}
+
+	public void setSaved(boolean saved) {
+	    this.saved = saved;
+	}
 	
 }

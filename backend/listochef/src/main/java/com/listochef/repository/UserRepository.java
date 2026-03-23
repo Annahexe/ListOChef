@@ -12,4 +12,6 @@ public interface UserRepository {
 	
 	User save(User user);
 	
+	void updateRecipesSaved(String email, String recipeId);
+	
 }
