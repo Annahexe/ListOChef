@@ -24,7 +24,7 @@ public class MongoUserRepository implements UserRepository {
 
 	private User toUser(Document doc) {
 		return new User(doc.getObjectId("_id").toHexString(), doc.getString("name"), doc.getString("surname"), doc.getString("email"),
-				doc.getString("password"), doc.getString("avatar"), doc.getList("recipesSaved", String.class));
+				doc.getString("password"), doc.getString("avatar"), doc.getList("recipesSaved", String.class),doc.getList("myGroceryList", String.class));
 	}
 
 	@Override

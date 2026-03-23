@@ -14,12 +14,13 @@ public class User {
 	private String password;
 	private String avatar;
 	private List<String> recipesSaved;
+	private List<String> myGroceryList;
 
 	public User() {
 	}
 
 	public User(String id, String name, String surname, String email, String password, String avatar,
-			List<String> recipesSaved) {
+			List<String> recipesSaved, List<String> myGroceryList) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -28,6 +29,7 @@ public class User {
 		this.password = password;
 		this.avatar = avatar;
 		this.recipesSaved = recipesSaved;
+		this.setMyGroceryList(myGroceryList);
 	}
 
 	public String getId() {
@@ -85,6 +87,14 @@ public class User {
 
 	public void setRecipesSaved(List<String> recipesSaved) {
 		this.recipesSaved = recipesSaved;
+	}
+
+	public List<String> getMyGroceryList() {
+		return myGroceryList;
+	}
+
+	public void setMyGroceryList(List<String> myGroceryList) {
+		this.myGroceryList = myGroceryList;
 	}
 
 }
