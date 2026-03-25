@@ -40,9 +40,9 @@ public class MongoUserRepository implements UserRepository {
 
 	@Override
 	public User register(User user) {
-		Document doc = new Document().append("name", user.getEmail()).append("surname", user.getEmail()).append("email", user.getEmail())
+		Document doc = new Document().append("name", user.getName()).append("surname", user.getSurname()).append("email", user.getEmail())
 				.append("password", user.getPassword()).append("avatar", user.getAvatar())
-				.append("recipesSaved", new ArrayList<>());
+				.append("recipesSaved", new ArrayList<>()).append("myGroceryList", new ArrayList<>());
 
 		collection.insertOne(doc);
 
@@ -52,7 +52,7 @@ public class MongoUserRepository implements UserRepository {
 	}
 	
 	@Override
-	public User save(User user) {
+	public User setPassword(User user) {
 	    collection.updateOne(
 	        eq("email", user.getEmail()),
 	        set("password", user.getPassword())

@@ -9,8 +9,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.listochef.model.Ingredient;
+import com.listochef.model.IngredientCategory;
 import com.listochef.model.Recipe;
 import com.listochef.model.User;
+import com.listochef.repository.MongoIngredientCategoryRepository;
 import com.listochef.repository.MongoIngredientRepository;
 import com.listochef.repository.MongoRecipeRepository;
 import com.listochef.repository.UserRepository;
@@ -23,15 +25,17 @@ public class AuthService {
     private final JWTService jwtService;
     private final MongoRecipeRepository recipeRepository;
     private final MongoIngredientRepository ingredientRepository;
+    private final MongoIngredientCategoryRepository ingredientCategoryRepository; 
 
     public AuthService(UserRepository repository, PasswordEncoder passwordEncoder,
                        JWTService jwtService, MongoRecipeRepository recipeRepository,
-                       MongoIngredientRepository ingredientRepository) {
+                       MongoIngredientRepository ingredientRepository, MongoIngredientCategoryRepository ingredientCategoryRepository) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.recipeRepository = recipeRepository;
         this.ingredientRepository = ingredientRepository;
+        this.ingredientCategoryRepository = ingredientCategoryRepository;
     }
 
     public Map<String, Object> login(User user) {
@@ -51,6 +55,7 @@ public class AuthService {
         // Lookup de objetos completos
         List<Recipe> recipesSaved = recipeRepository.getUserRecipesSaved(storedUser.getEmail());
         List<Ingredient> groceryList = ingredientRepository.findAllByIds(storedUser.getMyGroceryList());
+        List<IngredientCategory> ingredientsCategories = ingredientCategoryRepository.getAllIngredientsCategories();
 
         storedUser.setPassword(null);
 
@@ -59,6 +64,7 @@ public class AuthService {
         response.put("user", storedUser);
         response.put("recipesSaved", recipesSaved);
         response.put("groceryList", groceryList);
+        response.put("listIngredientsTags", ingredientsCategories);
 
         return response;
     }

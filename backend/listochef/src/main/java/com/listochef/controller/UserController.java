@@ -36,7 +36,7 @@ public class UserController {
     public ResponseEntity<Void> resetPassword(@RequestBody Map<String, String> body) {
         service.resetPassword(
             body.get("email"),
-            body.get("codigo"),
+            body.get("code"),
             body.get("newPassword")
         );
         return ResponseEntity.ok().build();

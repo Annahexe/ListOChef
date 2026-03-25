@@ -118,31 +118,31 @@ public class UserService {
         mailSender.send(mensaje);
     }
 	
-	public void resetPassword(String email, String codigo, String nuevaPassword) {
-        if (!resetCodes.containsKey(email) || !resetCodes.get(email).equals(codigo)) {
+	public void resetPassword(String email, String code, String newPassword) {
+        if (!resetCodes.containsKey(email) || !resetCodes.get(email).equals(code)) {
             throw new RuntimeException("Código inválido o expirado");
         }
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        user.setPassword(passwordEncoder.encode(nuevaPassword));
-        userRepository.save(user);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.setPassword(user);
 
         resetCodes.remove(email);
     }
 	
 	
-	public void changePassword(String email, String passwordActual, String passwordNueva) {
+	public void changePassword(String email, String currentPassword, String newPassword) {
 	    User user = userRepository.findByEmail(email)
 	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	    if (!passwordEncoder.matches(passwordActual, user.getPassword())) {
+	    if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
 	        throw new RuntimeException("La contraseña actual no es correcta");
 	    }
 
-	    user.setPassword(passwordEncoder.encode(passwordNueva));
-	    userRepository.save(user);
+	    user.setPassword(passwordEncoder.encode(newPassword));
+	    userRepository.setPassword(user);
 	}
 	
 	

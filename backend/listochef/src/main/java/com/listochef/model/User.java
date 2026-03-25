@@ -6,7 +6,6 @@ import org.bson.types.ObjectId;
 
 public class User {
 
-	//establecer bien esta wea
 	private String id;
 	private String name;
 	private String surname;
@@ -29,7 +28,7 @@ public class User {
 		this.password = password;
 		this.avatar = avatar;
 		this.recipesSaved = recipesSaved;
-		this.setMyGroceryList(myGroceryList);
+		this.myGroceryList = myGroceryList;
 	}
 
 	public String getId() {
