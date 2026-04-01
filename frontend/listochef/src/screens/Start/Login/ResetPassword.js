@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 
+import Context from "../../../context/Context";
 import OnboardingCard from "../../../components/OnboardingCard";
 import ItemInput from "../../../components/ItemInput";
 import PrimaryButton from "../../../components/PrimaryButton";
 import { isRequired, isEmail, minLength, matches } from "../../../utils/validators";
+import { postDataOnboarding } from "../../../services/services";
 
 const ResetPassword = (props) => {
+  const { route } = useContext(Context);
   const [showPassword, setShowPassword] = useState(false);
   const [emailData, setEmailData] = useState({
     email: "",
@@ -48,12 +51,12 @@ const ResetPassword = (props) => {
     return !newErrors.code && !newErrors.newPassword && !newErrors.confirmNewPassword;
   };
 
-  const onSendEmail = () => {
-    const isValid = validateFormFirstStep();
+  const onSendEmail = async () => {
+    let isValid = validateFormFirstStep();
     if (!isValid) return;
-    console.log(emailData); //TODO: here it sends petition to reset Password
-    // isSuccess = responseFromPost
-    let isSuccess = true;
+    console.log(emailData);
+    let isSuccess = await sendEmailForgotPassword();
+
     if (isSuccess) {
       setIsSecondStep(true);
     } else {
@@ -61,12 +64,33 @@ const ResetPassword = (props) => {
     }
   };
 
-  const onConfirmResetPassword = () => {
+  const sendEmailForgotPassword = async () => {
+    const response = await postDataOnboarding(route + "/forgotPassword", emailData);
+    if (!response) return false;
+    console.log("RESPONSE: " + response);
+
+    const [status] = response;
+
+    if (status === 200) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const onConfirmResetPassword = async () => {
     const isValid = validateFormSecondStep();
     if (!isValid) return;
-    console.log(resetPasswordData); //TODO: here it sends petition to reset Password
-    // isSuccess = responseFromPost
-    let isSuccess = true;
+
+    const { confirmNewPassword, ...resetPasswordWithoutConfirm } = resetPasswordData;
+    const dataToSendResetPassword = {
+      ...emailData,
+      ...resetPasswordWithoutConfirm,
+    };
+    console.log(dataToSendResetPassword);
+
+    let isSuccess = await sendResetPasswordPetition(dataToSendResetPassword);
+
     if (isSuccess) {
       setResetPasswordData({
         code: "",
@@ -83,7 +107,23 @@ const ResetPassword = (props) => {
 
       props.navigation.navigate("Login");
       alert("Password reset successfully!");
+    } else {
+      alert("There was an error resetting your password.");
     }
+  };
+
+  const sendResetPasswordPetition = async (dataToSendResetPassword) => {
+    const response = await postDataOnboarding(route + "/resetPassword", dataToSendResetPassword);
+    if (!response) return false;
+    console.log("RESPONSE: " + response);
+
+    const [status] = response;
+
+    if (status === 200) {
+      return true;
+    }
+
+    return false;
   };
 
   return (

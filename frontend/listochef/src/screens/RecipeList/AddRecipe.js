@@ -123,7 +123,7 @@ const AddRecipe = ({ navigation }) => {
   };
 
   const createRecipeRequest = async (formData) => {
-    console.log("ENVIO PETICION");
+    console.log("SENDING PETITION CREATERECIPEREQUEST");
 
     const response = await postDataToken(route + "/recipes/createRecipe", formData, token);
 

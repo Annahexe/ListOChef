@@ -37,12 +37,12 @@ const Login = (props) => {
   };
 
   const onLogin = async () => {
-    const isValid = validateForm();
+    let isValid = validateForm();
     if (!isValid) return;
 
     console.log(loginData);
 
-    const isSuccess = await sendLoginRequest();
+    let isSuccess = await sendLoginRequest();
 
     if (isSuccess) {
       props.navigation.navigate("Home");
