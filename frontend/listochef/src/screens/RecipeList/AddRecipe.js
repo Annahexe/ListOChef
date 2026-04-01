@@ -1,9 +1,10 @@
 import { View, Text, Pressable, StyleSheet, Keyboard, Dimensions, Platform } from "react-native";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import * as ImagePicker from "expo-image-picker";
 
+import Context from "../../context/Context";
 import PhotoPicker from "../../components/PhotoPicker";
 import ItemInput from "../../components/ItemInput";
 import TitleModalScreen from "../../components/TitleModalScreen";
@@ -12,10 +13,12 @@ import AutocompleteList from "../../components/AutocompleteList";
 import ModalButtons from "../../components/ModalButtons";
 
 import { isRequired, isRequiredArray } from "../../utils/validators";
+import { postDataToken } from "../../services/services";
 
 const { height, width } = Dimensions.get("window");
 
 const AddRecipe = ({ navigation }) => {
+  const { token, route } = useContext(Context);
   const [form, setForm] = useState({
     photo: null,
     name: "",
@@ -56,6 +59,7 @@ const AddRecipe = ({ navigation }) => {
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
     });
 
@@ -76,7 +80,7 @@ const AddRecipe = ({ navigation }) => {
     }
   };
 
-  const onSaved = () => {
+  const onSaved = async () => {
     const isValid = validateForm();
 
     if (!isValid) {
@@ -84,22 +88,54 @@ const AddRecipe = ({ navigation }) => {
       return;
     }
 
-    const today = new Date();
-
     const newRecipe = {
       recipeName: form.name,
       ingredients,
       category: form.category,
-      time: form.time,
+      time: Number(form.time),
       steps: form.steps,
+      difficulty: form.difficulty,
       tags,
-      photo: form.photo,
-      creationDate: today,
     };
+    console.log("SENDING NEW RECIPE: " + newRecipe)
 
-    console.log(newRecipe);
+    const formData = new FormData();
+    formData.append("recipe", JSON.stringify(newRecipe));
+
+    if (form.photo) {
+      formData.append("photo", {
+        uri: form.photo.uri,
+        name: form.photo.name,
+        type: form.photo.type,
+      });
+    }
+
+    const isSuccess = await createRecipeRequest(formData);
+
+    if (isSuccess) {
+      console.log("SAVED CORRECTLY");
+      navigation.goBack();
+    } else {
+      alert("Failed :(");
+    }
+
     Keyboard.dismiss();
-    navigation.goBack();
+  };
+
+  const createRecipeRequest = async (formData) => {
+    console.log("ENVIO PETICION");
+
+    const response = await postDataToken(route + "/recipes/createRecipe", formData, token);
+
+    if (!response) {
+      console.log("NO RESPONSE");
+      return false;
+    }
+
+    const [status] = response;
+    console.log("STATUS:", status);
+
+    return status === 200 || status === 201;
   };
 
   const isFormComplete = Object.values(form).every((value) => value) && ingredients.every((value) => value) && tags.every((value) => value);
