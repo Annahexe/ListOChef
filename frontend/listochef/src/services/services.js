@@ -30,8 +30,8 @@ export const postDataOnboarding = async (url, data) => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const text = await response.text();
-    console.log(text)
-
+    console.log("Contenido response text: " + text)
+    console.log("Status: " + response.status)
     return [response.status, text];
   } catch (error) {
     console.log("postData error:", error);
