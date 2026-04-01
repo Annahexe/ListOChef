@@ -11,6 +11,8 @@ import { postDataOnboarding } from "../../../services/services";
 const Login = (props) => {
   const { route } = useContext(Context);
   const { token, setToken } = useContext(Context);
+  const { ingredientTags, setIngredientTags } = useContext(Context);
+  const { user, setUser } = useContext(Context);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -53,10 +55,16 @@ const Login = (props) => {
   const sendLoginRequest = async () => {
     const response = await postDataOnboarding(route + "/login", loginData);
     if (!response) return false;
+    console.log("RESPONSE: " + response)
 
-    const [status, tokenValue] = response;
+    const [status, jsonResponse] = response;
+    console.log("STATUS: " + status)
+    console.log("TOKEN: " + jsonResponse.listIngredientsTags[0].name)
     if (status === 200) {
-      setToken(tokenValue);
+      jsonResponse.listIngredientsTags.map((ingredient) => setIngredientTags((prev) =>[...prev, ingredient.name]))
+      setUser(jsonResponse.user)
+      console.log(jsonResponse.token)
+      setToken(jsonResponse.token);
       return true;
     }
 

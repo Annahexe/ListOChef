@@ -29,11 +29,43 @@ export const postDataOnboarding = async (url, data) => {
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-    const text = await response.text();
-    console.log("Contenido response text: " + text)
-    console.log("Status: " + response.status)
-    return [response.status, text];
+    const jsonReceived = await response.json();
+    console.log("Contenido response text: " + jsonReceived);
+    console.log("Status: " + response.status);
+    return [response.status, jsonReceived];
   } catch (error) {
     console.log("postData error:", error);
+  }
+};
+
+export const postDataToken = async (url, data, token) => {
+  try {
+    const isFormData = data instanceof FormData;
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
+      },
+      body: isFormData ? data : JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const contentType = response.headers.get("content-type");
+    const result =
+      contentType && contentType.includes("application/json")
+        ? await response.json()
+        : await response.text();
+
+    console.log("Response:", result);
+    console.log("Status:", response.status);
+
+    return [response.status, result];
+  } catch (error) {
+    console.log("postDataToken error:", error);
   }
 };

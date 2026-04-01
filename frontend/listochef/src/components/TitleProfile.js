@@ -18,7 +18,7 @@ export const TitleProfile = (props) => {
 
         <View style={styles.photo}>
           <Image
-            source={require("../../assets/21.png")}
+            source={{uri: props.avatar}}
             style={styles.image}
             resizeMode="cover"
           />
