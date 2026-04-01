@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 
+import Context from "../../../context/Context";
 import OnboardingCard from "../../../components/OnboardingCard";
 import ItemInput from "../../../components/ItemInput";
 import PrimaryButton from "../../../components/PrimaryButton";
 import { isRequired, isEmail, minLength, matches } from "../../../utils/validators";
+import { postDataOnboarding } from "../../../services/services";
 
 const Register = (props) => {
+  const { route } = useContext(Context);
   const [registerData, setRegisterData] = useState({
     name: "",
     surname: "",
@@ -40,16 +43,33 @@ const Register = (props) => {
     return !newErrors.name && !newErrors.surname && !newErrors.email && !newErrors.password && !newErrors.confirmPassword;
   };
 
-  const onCreateAccount = () => {
+  const onCreateAccount = async () => {
     const isValid = validateForm();
-    if (!isValid) return; //COMMENT THIS FOR TESTING TO SKIP VALIDATION
+    if (!isValid) return;
 
-    console.log(registerData); //TODO: here it sends petition to register
-    // isSuccess = responseFromPost
-    let isSuccess = true;
+    const isSuccess = await sendRegisterRequest();
+
     if (isSuccess) {
       props.navigation.navigate("Login");
+    } else {
+      alert("Failed Register.");
     }
+  };
+
+  const sendRegisterRequest = async () => {
+    const { confirmPassword, ...dataToSend } = registerData;
+    console.log(dataToSend);
+
+    const response = await postDataOnboarding(route + "/register", dataToSend);
+    if (!response) return false;
+
+    const [status] = response;
+    if (status === 200) {
+      console.log("return true")
+      return true;
+    }
+
+    return false;
   };
 
   return (

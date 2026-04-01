@@ -35,33 +35,32 @@ const Login = (props) => {
   };
 
   const onLogin = async () => {
-    // const isValid = validateForm();
-    // if (!isValid) return;
+    const isValid = validateForm();
+    if (!isValid) return;
 
-    // console.log(loginData);
+    console.log(loginData);
 
-    // const isSuccess = await sendLoginRequest();
+    const isSuccess = await sendLoginRequest();
 
-    // if (isSuccess) {
-    //   props.navigation.navigate("Home");
-    // } else {
-    //   alert("Failed login. :( Try again");
-    // }
-    props.navigation.navigate("Home");
+    if (isSuccess) {
+      props.navigation.navigate("Home");
+    } else {
+      alert("Failed login. :( Try again");
+    }
+    //props.navigation.navigate("Home");
   };
 
   const sendLoginRequest = async () => {
     const response = await postDataOnboarding(route + "/login", loginData);
-    if (!response) {
-      setIsLoginSuccess(false);
-      return false;
-    }
-    const [status, tokenValue] = response;
-    setToken(tokenValue);
+    if (!response) return false;
 
-    const success = status === 200;
-    setIsLoginSuccess(success);
-    return success;
+    const [status, tokenValue] = response;
+    if (status === 200) {
+      setToken(tokenValue);
+      return true;
+    }
+
+    return false;
   };
 
   return (
