@@ -46,6 +46,7 @@ const Profile = (props) => {
         <View style={styles.container}>
           <TitleProfile
             name={user.name}
+            avatar={user.avatar}
             surname={user.surname}
             email={user.email}
             type={subscription ? "subscription" : "data"}

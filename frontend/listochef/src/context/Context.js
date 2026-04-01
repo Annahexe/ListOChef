@@ -4,13 +4,7 @@ const Context = createContext();
 export const Provider = ({ children }) => {
   const [route, setRoute] = useState("http://18.204.200.165:8080/ListOChef");
   const [ingredientTags, setIngredientTags] = useState([
-    "All",
-    "Dairy",
-    "Fruit",
-    "Bakery",
-    "Vegetable",
-    "Meat",
-    "Canned",
+    "All"
   ]);
   const [lastRecipeSeen, setLastRecipeSeen] = useState({
     id: "5",
