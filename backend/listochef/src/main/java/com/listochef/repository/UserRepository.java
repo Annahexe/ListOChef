@@ -14,4 +14,6 @@ public interface UserRepository {
 	
 	void updateRecipesSaved(String email, String recipeId);
 	
+	User editProfile(User user);
+	
 }

@@ -145,5 +145,26 @@ public class UserService {
 	    userRepository.setPassword(user);
 	}
 	
+	public void editProfile(String email, Map<String, String> body) {
+	    User user = userRepository.findByEmail(email)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    if (body.get("name") != null && !body.get("name").isBlank()) {
+	        user.setName(body.get("name"));
+	    }
+
+	    if (body.get("surname") != null && !body.get("surname").isBlank()) {
+	        user.setSurname(body.get("surname"));
+	    }
+
+	    if (body.get("newPassword") != null && !body.get("newPassword").isBlank()) {
+	        user.setPassword(passwordEncoder.encode(body.get("newPassword")));
+	    }
+
+	    userRepository.editProfile(user);
+	}
+	
+	
+	
 	
 }

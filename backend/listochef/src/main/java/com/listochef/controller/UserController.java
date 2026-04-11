@@ -55,4 +55,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
     
+    @PostMapping("/editProfile")
+    public ResponseEntity<Void> editProfile(
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal String email) {
+        service.editProfile(email, body);
+        return ResponseEntity.ok().build();
+    }
+    
+    
+    
 }

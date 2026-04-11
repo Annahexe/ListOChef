@@ -67,4 +67,17 @@ public class MongoUserRepository implements UserRepository {
 	        push("recipesSaved", recipeId)
 	    );
 	}
+	
+	@Override
+	public User editProfile(User user) {
+	    collection.updateOne(
+	        eq("email", user.getEmail()),
+	        combine(
+	            set("name", user.getName()),
+	            set("surname", user.getSurname()),
+	            set("password", user.getPassword())
+	        )
+	    );
+	    return user;
+	}
 }

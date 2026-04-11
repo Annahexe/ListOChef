@@ -25,6 +25,8 @@ public class SecurityConfig {
             .authorizeRequests()
                 .antMatchers("/ListOChef/login").permitAll()
                 .antMatchers("/ListOChef/register").permitAll()
+                .antMatchers("/ListOChef/forgotPassword").permitAll()
+                .antMatchers("/ListOChef/resetPassword").permitAll()
                 .anyRequest().authenticated()
             .and()
             .sessionManagement()
