@@ -1,4 +1,4 @@
-package listochef;
+package com.listochef.service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.listochef.model.UploadResult;
 
 @Service
 public class CloudinaryImageStorageService {
@@ -21,15 +22,18 @@ public class CloudinaryImageStorageService {
       @Value("${cloudinary.apiKey:}") String apiKey,
       @Value("${cloudinary.apiSecret:}") String apiSecret
   ) {
+	 
 	  
 	  //si cloudName esta vacio no lo inicia
-    if (cloudName != null && !cloudName.isBlank()) {
-      Map<String, String> config = new HashMap<>();
-      config.put("cloud_name", cloudName);
-      config.put("api_key", apiKey);
-      config.put("api_secret", apiSecret);
-      this.cloudinary = new Cloudinary(config);
-    }
+	    if (cloudName.isBlank() || apiKey.isBlank() || apiSecret.isBlank()) {
+	        throw new IllegalStateException("Cloudinary credentials missing");
+	    }
+
+	    this.cloudinary = new Cloudinary(ObjectUtils.asMap(
+	        "cloud_name", cloudName,
+	        "api_key", apiKey,
+	        "api_secret", apiSecret
+	    ));
   }
 
   public UploadResult upload(MultipartFile file, String ownerId) {

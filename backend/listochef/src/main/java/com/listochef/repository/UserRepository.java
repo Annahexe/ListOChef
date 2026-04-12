@@ -3,6 +3,7 @@ package com.listochef.repository;
 import java.util.Optional;
 
 import com.listochef.model.User;
+import com.mongodb.client.result.UpdateResult;
 
 public interface UserRepository {
 
@@ -11,9 +12,10 @@ public interface UserRepository {
 	User register(User user);
 	
 	User setPassword(User user);
-	
-	void updateRecipesSaved(String email, String recipeId);
-	
+		
 	User editProfile(User user);
 	
-}
+	void addToRecipesSaved(String email, String recipeId);
+	
+	UpdateResult deleteFromRecipesSaved(String email, String recipeId);
+	}

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.listochef.model.User;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.UpdateResult;
 
 import static com.mongodb.client.model.Filters.*;
 import static com.mongodb.client.model.Updates.*;
@@ -61,12 +62,21 @@ public class MongoUserRepository implements UserRepository {
 	}
 
 	@Override
-	public void updateRecipesSaved(String email, String recipeId) {
+	public void addToRecipesSaved(String email, String recipeId) {
 	    collection.updateOne(
 	        eq("email", email),
-	        push("recipesSaved", recipeId)
+	        addToSet("recipesSaved", recipeId)
 	    );
 	}
+	
+	@Override
+	public UpdateResult deleteFromRecipesSaved(String email, String recipeId) {
+		 return collection.updateOne(
+			    eq("email", email),
+			    pull("recipesSaved", recipeId)
+			);
+	}
+
 	
 	@Override
 	public User editProfile(User user) {

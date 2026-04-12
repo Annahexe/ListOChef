@@ -1,8 +1,10 @@
 package com.listochef.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.listochef.model.Recipe;
+import com.listochef.model.UploadResult;
 import com.listochef.repository.RecipeRepository;
 
 import java.time.Instant;
@@ -13,19 +15,27 @@ import java.util.Optional;
 public class RecipeService {
 
     private final RecipeRepository repository;
+    private final CloudinaryImageStorageService cloudinaryService;
 
-    public RecipeService(RecipeRepository repository) {
+    public RecipeService(RecipeRepository repository, CloudinaryImageStorageService cloudinaryService) {
         this.repository = repository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     // 🔹 Crear receta
-    public void createRecipe(Recipe recipe, String email) {
+    public void createRecipe(Recipe recipe, String email, MultipartFile photo) {
     	
     	System.out.println(recipe.toString());
 
         // Validaciones básicas
         if (recipe.getRecipeName() == null || recipe.getRecipeName().isBlank()) {
             throw new IllegalArgumentException("Recipe name cannot be empty");
+        }
+        
+        // Si tiene foto, la sube
+        if (photo != null && !photo.isEmpty()) {
+            UploadResult res = cloudinaryService.upload(photo, email);
+            recipe.setPhoto(res.getImageUrl());
         }
 
         // Fecha automática desde backend

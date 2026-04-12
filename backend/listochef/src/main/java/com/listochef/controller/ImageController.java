@@ -1,8 +1,11 @@
-package listochef;
+package com.listochef.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.listochef.model.UploadResult;
+import com.listochef.service.CloudinaryImageStorageService;
 
 @RestController
 public class ImageController {

@@ -22,8 +22,8 @@ public class UserController {
     
     @PostMapping("/register")
     public ResponseEntity<User> createUser(@RequestBody User user) {
-    	service.register(user);
-        return ResponseEntity.ok().build();
+    	service.register(user); 
+        return ResponseEntity.ok().build();  
     }
     
     @PostMapping("/forgotPassword")
@@ -63,6 +63,11 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
     
-    
-    
+    @PostMapping("/toggleSaved")
+    public ResponseEntity<String> toggleRecipeSaved(
+            @RequestBody String recipeId,
+            @AuthenticationPrincipal String email) {
+        boolean saved = service.toggleRecipeSaved(email, recipeId);
+        return ResponseEntity.ok().body("saved:" + saved);
+    }
 }

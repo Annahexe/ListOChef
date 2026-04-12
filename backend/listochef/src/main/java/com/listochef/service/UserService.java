@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.listochef.model.User;
 import com.listochef.repository.UserRepository;
+import com.mongodb.client.result.UpdateResult;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -164,7 +165,17 @@ public class UserService {
 	    userRepository.editProfile(user);
 	}
 	
-	
+	public boolean toggleRecipeSaved(String email, String recipeId) {
+
+	    UpdateResult result = userRepository.deleteFromRecipesSaved(email, recipeId);
+
+	    if (result.getModifiedCount() == 0) {
+	    	userRepository.addToRecipesSaved(email, recipeId);
+	        return true;
+	    }
+
+	    return false;
+	}
 	
 	
 }

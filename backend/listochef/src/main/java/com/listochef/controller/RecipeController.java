@@ -1,12 +1,14 @@
 package com.listochef.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.listochef.model.Recipe;
 import com.listochef.service.RecipeService;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,11 +23,22 @@ public class RecipeController {
     }
 
     // 🔹 Crear receta
-    @PostMapping("/createRecipe")
-    public ResponseEntity<Recipe> createRecipe(@AuthenticationPrincipal String email, @RequestBody Recipe recipe) {    	
-        service.createRecipe(recipe, email);
+    @PostMapping(value = "/createRecipe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createRecipe(
+        @AuthenticationPrincipal String email,
+        @RequestPart("recipe") String recipeJson,
+        @RequestPart(value = "photo", required = false) MultipartFile photo
+    ) throws Exception {
+
+        ObjectMapper mapper = new ObjectMapper();
+        Recipe recipe = mapper.readValue(recipeJson, Recipe.class);
+
+        service.createRecipe(recipe, email, photo);
+
         return ResponseEntity.ok().build();
     }
+    
+
 
     // 🔹 Obtener todas
     @GetMapping

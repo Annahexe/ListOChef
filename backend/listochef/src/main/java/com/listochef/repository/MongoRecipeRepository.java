@@ -41,7 +41,7 @@ public class MongoRecipeRepository implements RecipeRepository {
 
 		recipe.setId(doc.getObjectId("_id").toHexString());
 			    
-		mongoUserRepo.updateRecipesSaved(email, recipe.getId());
+		mongoUserRepo.addToRecipesSaved(email, recipe.getId());
 	    
 		return recipe;
 	}

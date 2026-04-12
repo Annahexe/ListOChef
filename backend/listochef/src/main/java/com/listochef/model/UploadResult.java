@@ -1,4 +1,4 @@
-package listochef;
+package com.listochef.model;
 
 public class UploadResult {
 	  private String imageUrl;
