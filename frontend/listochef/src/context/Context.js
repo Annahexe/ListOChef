@@ -3,9 +3,7 @@ const Context = createContext();
 
 export const Provider = ({ children }) => {
   const [route, setRoute] = useState("http://18.204.200.165:8080/ListOChef");
-  const [ingredientTags, setIngredientTags] = useState([
-    "All"
-  ]);
+  const [ingredientTags, setIngredientTags] = useState(["All"]);
   const [lastRecipeSeen, setLastRecipeSeen] = useState({
     id: "5",
     recipeName: "Potato Omelette",
@@ -34,7 +32,11 @@ export const Provider = ({ children }) => {
     { name: "Tomatoes", amount: 1, ingredientTag: "" },
     { name: "Water", amount: 3, ingredientTag: "" },
   ]);
-  const [pantryItems, setPantryItems] = useState([]);
+  const [pantryItems, setPantryItems] = useState([
+    { name: "Potatoes", amount: 5, ingredientTag: "vegetable" },
+    { name: "Tomatoes", amount: 2, ingredientTag: "vegetable" },
+    { name: "Whole Milk", amount: 4, ingredientTag: "Dairy" },
+  ]);
 
   return (
     <Context.Provider
