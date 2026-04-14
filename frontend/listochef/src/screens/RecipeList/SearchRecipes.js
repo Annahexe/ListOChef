@@ -30,9 +30,11 @@ const SearchRecipes = (props) => {
       return [...tagsWithoutAll, selectedTag];
     });
   };
+
   const toggleSaved = (id) => {
     setRecipeList((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, isSaved: !recipe.isSaved } : recipe)));
   };
+  
   //demo data
   useEffect(() => {
     //const recipesData = await getRecipes();
