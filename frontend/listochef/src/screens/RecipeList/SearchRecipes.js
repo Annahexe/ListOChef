@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView } from "react-native";
+import { StyleSheet, View, ImageBackground, FlatList, Text } from "react-native";
 import { useEffect, useState } from "react";
 
 import { Seeker } from "../../components/Seeker";
@@ -9,7 +9,10 @@ import Feather from "@expo/vector-icons/Feather";
 
 const SearchRecipes = (props) => {
   const [recipeList, setRecipeList] = useState([]);
+  const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
+  //THESE TAGS SHOULD BE FROM BACKEND, FOR EXAMPLE const TAGS = ["All", ...listRecipesTags];
   const TAGS = ["All", "Pasta", "Fish", "Pork", "Beef", "Chicken", "Meat"];
 
   const [selectedTags, setSelectedTags] = useState(["All"]);
@@ -19,123 +22,76 @@ const SearchRecipes = (props) => {
       if (selectedTag == "All") {
         return ["All"];
       }
-      const tagsWithoutAll = previousSelectedTags.filter(
-        (element) => element !== "All",
-      );
+      const tagsWithoutAll = previousSelectedTags.filter((element) => element !== "All");
       if (tagsWithoutAll.includes(selectedTag)) {
-        const selectedTagsList = tagsWithoutAll.filter(
-          (element) => element !== selectedTag,
-        );
+        const selectedTagsList = tagsWithoutAll.filter((element) => element !== selectedTag);
         return selectedTagsList.length === 0 ? ["All"] : selectedTagsList;
       }
       return [...tagsWithoutAll, selectedTag];
     });
   };
+
   const toggleSaved = (id) => {
-    setRecipeList((prev) =>
-      prev.map((recipe) =>
-        recipe.id === id ? { ...recipe, isSaved: !recipe.isSaved } : recipe,
-      ),
-    );
+    setRecipeList((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, isSaved: !recipe.isSaved } : recipe)));
   };
+  
   //demo data
   useEffect(() => {
-    setRecipeList([
+    //const recipesData = await getRecipes();
+    const recipesData = [
       {
         id: "1",
         recipeName: "Spaghetti Bolognese",
-        ingredients: [
-          "Pasta",
-          "Tomato Sauce",
-          "Minced meat",
-          "Oil",
-          "Spices",
-          "Onion",
-          "Cheese",
-        ],
+        ingredients: ["Pasta", "Tomato Sauce", "Minced meat", "Oil", "Spices", "Onion", "Cheese"],
         tag: ["pasta", "meat"],
         category: "Lunch",
         time: 20,
         difficulty: "Low",
         steps:
           "1. Heat water in a pot. \n2. Add oil to a frying pan. Medium heat.  \n3. Add salt and the ground meat. Stir with a spatula.  \n4. Add chopped onion to the frying pan. Stir.  \n5. When the water boils, add salt and your choice of pasta. Don't forget to stir the pasta with a spoon.  \n6. When the meat is cooked and the onion is golden brown, add tomato sauce. Add salt to balance the acidity and spices to taste.  \n7. When the pasta is al dente, drain it in a colander and add it to the frying pan. Stir.",
-        photo:
-          "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
+        photo: "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
         creationDate: "17/02/2026",
         isSaved: true,
       },
       {
         id: "2",
         recipeName: "Paella",
-        ingredients: [
-          "Rice",
-          "Chicken",
-          "Seafood",
-          "Bell pepper",
-          "Onion",
-          "Garlic",
-          "Olive oil",
-          "Paprika",
-          "Saffron",
-          "Salt",
-          "Stock",
-        ],
+        ingredients: ["Rice", "Chicken", "Seafood", "Bell pepper", "Onion", "Garlic", "Olive oil", "Paprika", "Saffron", "Salt", "Stock"],
         tag: ["rice", "seafood"],
         category: "Lunch",
         time: 45,
         difficulty: "Medium",
         steps:
           "1. Heat olive oil in a wide pan over medium heat. \n2. Add chopped onion, garlic and bell pepper. Stir until soft.  \n3. Add the chicken and cook until lightly browned.  \n4. Add the rice and stir for one minute.  \n5. Add paprika, saffron, salt and hot stock. Stir gently.  \n6. Cook without stirring for about 15 minutes.  \n7. Add the seafood and cook for another 10 minutes until everything is done.",
-        photo:
-          "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
+        photo: "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
         creationDate: "17/02/2026",
         isSaved: false,
       },
       {
         id: "3",
         recipeName: "Bolognese Sauce",
-        ingredients: [
-          "Minced meat",
-          "Tomato sauce",
-          "Onion",
-          "Garlic",
-          "Olive oil",
-          "Salt",
-          "Pepper",
-          "Spices",
-        ],
+        ingredients: ["Minced meat", "Tomato sauce", "Onion", "Garlic", "Olive oil", "Salt", "Pepper", "Spices"],
         tag: ["sauce", "meat"],
         category: "Lunch",
         time: 40,
         difficulty: "Low",
         steps:
           "1. Heat olive oil in a frying pan over medium heat. \n2. Add chopped onion and garlic. Stir until soft.  \n3. Add the minced meat and cook until browned.  \n4. Add salt, pepper and spices to taste.  \n5. Pour in the tomato sauce and stir well.  \n6. Reduce heat and let it simmer for about 20 minutes, stirring occasionally.",
-        photo:
-          "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
+        photo: "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
         creationDate: "17/02/2026",
         isSaved: false,
       },
       {
         id: "4",
         recipeName: "Gnocchi Bolognese",
-        ingredients: [
-          "Gnocchi",
-          "Minced meat",
-          "Tomato sauce",
-          "Onion",
-          "Olive oil",
-          "Salt",
-          "Spices",
-          "Cheese",
-        ],
+        ingredients: ["Gnocchi", "Minced meat", "Tomato sauce", "Onion", "Olive oil", "Salt", "Spices", "Cheese"],
         tag: ["pasta", "meat"],
         category: "Lunch",
         time: 25,
         difficulty: "Low",
         steps:
           "1. Heat olive oil in a frying pan over medium heat. \n2. Add chopped onion and cook until soft.  \n3. Add the minced meat and cook until browned.  \n4. Add tomato sauce, salt and spices. Stir and let it cook for 10 minutes.  \n5. Boil water in a pot and cook the gnocchi according to the package instructions.  \n6. Drain the gnocchi and add them to the frying pan.  \n7. Mix well and serve with cheese on top.",
-        photo:
-          "https://www.eatclub.de/wp-content/uploads/2024/01/gnocchi-bolognese.jpg",
+        photo: "https://www.eatclub.de/wp-content/uploads/2024/01/gnocchi-bolognese.jpg",
         creationDate: "17/02/2026",
         isSaved: true,
       },
@@ -149,53 +105,64 @@ const SearchRecipes = (props) => {
         difficulty: "Low",
         steps:
           "1. Peel and slice the potatoes. \n2. Heat olive oil in a frying pan over medium heat.  \n3. Add the potatoes and onion and cook slowly until soft.  \n4. Beat the eggs in a bowl and add salt.  \n5. Drain the potatoes and mix them with the eggs.  \n6. Pour the mixture into the pan and cook until set on both sides.",
-        photo:
-          "https://mojo.generalmills.com/api/public/content/9xIHKwJDH0-1wbHPsVCCVQ_gmi_hi_res_jpeg.jpeg?v=2bfc22c6&t=16e3ce250f244648bef28c5949fb99ff",
+        photo: "https://mojo.generalmills.com/api/public/content/9xIHKwJDH0-1wbHPsVCCVQ_gmi_hi_res_jpeg.jpeg?v=2bfc22c6&t=16e3ce250f244648bef28c5949fb99ff",
         creationDate: "17/02/2026",
         isSaved: true,
       },
-    ]);
+    ];
+
+    setRecipeList(recipesData);
+    setFilteredRecipes(recipesData);
   }, []);
 
+  useEffect(() => {
+    let result = [...recipeList];
+
+    const normalizedSearch = searchText.trim().toLowerCase();
+
+    // Filter by text
+    if (normalizedSearch !== "") {
+      result = result.filter((recipe) => {
+        const matchesName = recipe.recipeName.toLowerCase().includes(normalizedSearch);
+
+        const matchesCategory = recipe.category.toLowerCase().includes(normalizedSearch);
+
+        const matchesIngredients = recipe.ingredients.some((ingredient) => ingredient.toLowerCase().includes(normalizedSearch));
+
+        return matchesName || matchesCategory || matchesIngredients;
+      });
+    }
+
+    // Filter by tags
+    if (!selectedTags.includes("All")) {
+      result = result.filter((recipe) => recipe.tag.some((recipeTag) => selectedTags.map((tag) => tag.toLowerCase()).includes(recipeTag.toLowerCase())));
+    }
+
+    setFilteredRecipes(result);
+  }, [searchText, selectedTags, recipeList]);
+
   return (
-    <ImageBackground
-      source={require("../../../assets/fondoApp.png")}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <View style={styles.container}>
           <View style={styles.searchBarContainer}>
-            <Feather
-              name="chevron-left"
-              size={60}
-              color="rgba(75, 100, 63, 0.7)"
-              onPress={() => props.navigation.goBack()}
-            />
-            <Seeker
-              placeholderText="Search recipe..."
-              onPress={() => console.log("searching")}
-            ></Seeker>
+            <Feather name="chevron-left" size={60} color="rgba(75, 100, 63, 0.7)" onPress={() => props.navigation.goBack()} />
+            <Seeker placeholderText="Search recipe..." value={searchText} onChangeText={setSearchText}></Seeker>
           </View>
-          <TagsCarousel
-            tagsList={TAGS}
-            selectedTags={selectedTags}
-            onToggleTag={toggleTag}
-          />
-          <ScrollView
+          <TagsCarousel tagsList={TAGS} selectedTags={selectedTags} onToggleTag={toggleTag} />
+          <FlatList
+            data={filteredRecipes}
+            keyExtractor={(item) => item.id}
+            initialNumToRender={8}
+            maxToRenderPerBatch={8}
+            windowSize={5}
             style={{ width: "100%", marginBottom: "12%" }}
             contentContainerStyle={{ paddingBottom: 20 }}
-          >
-            {recipeList.map((recipe, index) => (
-              <RecipeCard
-                key={index}
-                recipe={recipe}
-                isDetailedBox={true}
-                onViewRecipe={() => props.navigation.navigate("ViewRecipe")}
-                onToggleSaved={toggleSaved}
-              ></RecipeCard>
-            ))}
-          </ScrollView>
+            renderItem={({ item }) => (
+              <RecipeCard recipe={item} isDetailedBox={true} onViewRecipe={() => props.navigation.navigate("ViewRecipe")} onToggleSaved={toggleSaved} />
+            )}
+            ListEmptyComponent={<Text style={styles.emptyText}>No recipes found :c</Text>}
+          />
         </View>
       </View>
     </ImageBackground>
@@ -221,6 +188,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingRight: 10,
+  },
+  emptyText: {
+    textAlign: "center",
+    fontSize: 18,
+    marginTop: 30,
+    color: "#4B643F",
+    fontFamily: "MontserratSemiBold",
   },
 });
 export default SearchRecipes;

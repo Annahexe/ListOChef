@@ -1,4 +1,4 @@
-import { StyleSheet, View, ImageBackground, ScrollView, Text } from "react-native";
+import { StyleSheet, View, ImageBackground, FlatList, Text } from "react-native";
 import { useEffect, useState, useContext } from "react";
 
 import { Seeker } from "../../components/Seeker";
@@ -15,6 +15,9 @@ const AddProduct = (props) => {
 
   const [ingredientsList, setIngredientsList] = useState([]);
   const { selectedIngredients, setSelectedIngredients } = useContext(Context);
+
+  const [filteredIngredientsList, setFilteredIngredientsList] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
   const toggleTag = (selectedTag) => {
     setSelectedTags((previousSelectedTags) => {
@@ -65,27 +68,52 @@ const AddProduct = (props) => {
 
   //demo data
   useEffect(() => {
-    setIngredientsList([
-      "Whole Milk",
-      "Eggs",
-      "Wheat Bread",
-      "Pasta",
-      "Tomatoes",
-      "Cereals",
-      "Mayonnaise",
-      "Maple syrup",
-      "Macaroni",
-      "Mango",
-      "Marshmallow",
-      "Macadamia",
-      "Manchego",
-      "Margarine",
-      "Mascarpone",
-      "Mackerel",
-      "Macaroons",
-      "Mandarin",
-    ]);
+    //const ingredientsData = await getIngredients();
+    const ingredientsData = [
+      { ingredientName: "Whole Milk", ingredientTag: "dairy" },
+      { ingredientName: "Eggs", ingredientTag: "protein" },
+      { ingredientName: "Wheat Bread", ingredientTag: "bakery" },
+      { ingredientName: "Pasta", ingredientTag: "grain" },
+      { ingredientName: "Tomatoes", ingredientTag: "vegetable" },
+      { ingredientName: "Cereals", ingredientTag: "grain" },
+      { ingredientName: "Mayonnaise", ingredientTag: "sauce" },
+      { ingredientName: "Maple syrup", ingredientTag: "sweet" },
+      { ingredientName: "Macaroni", ingredientTag: "grain" },
+      { ingredientName: "Mango", ingredientTag: "fruit" },
+      { ingredientName: "Marshmallow", ingredientTag: "sweet" },
+      { ingredientName: "Macadamia", ingredientTag: "nuts" },
+      { ingredientName: "Manchego", ingredientTag: "dairy" },
+      { ingredientName: "Margarine", ingredientTag: "dairy" },
+      { ingredientName: "Mascarpone", ingredientTag: "dairy" },
+      { ingredientName: "Mackerel", ingredientTag: "fish" },
+      { ingredientName: "Macaroons", ingredientTag: "dessert" },
+      { ingredientName: "Mandarin", ingredientTag: "fruit" },
+    ];
+
+    setIngredientsList(ingredientsData);
+    setFilteredIngredientsList(ingredientsData);
   }, []);
+
+  //SEARCH USE EFFECT
+  useEffect(() => {
+    let result = [...ingredientsList];
+
+    const normalizedSearch = searchText.trim().toLowerCase();
+
+    // Filter by text
+    if (normalizedSearch !== "") {
+      result = result.filter((ingredient) => {
+        return ingredient.ingredientName.toLowerCase().includes(normalizedSearch);
+      });
+    }
+
+    // Filter by tags
+    if (!selectedTags.includes("All")) {
+      result = result.filter((ingredient) => selectedTags.map((tag) => tag.toLowerCase()).includes(ingredient.ingredientTag.toLowerCase()));
+    }
+
+    setFilteredIngredientsList(result);
+  }, [searchText, selectedTags, ingredientsList]);
 
   return (
     <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
@@ -93,23 +121,27 @@ const AddProduct = (props) => {
         <View style={styles.container}>
           <View style={styles.searchBarContainer}>
             <Feather name="chevron-left" size={60} color="rgba(75, 100, 63, 0.7)" onPress={() => props.navigation.goBack()} />
-            <Seeker placeholderText="Search new products..." onPress={() => console.log("searching")}></Seeker>
+            <Seeker placeholderText="Search new products..." value={searchText} onChangeText={setSearchText}></Seeker>
           </View>
           <TagsCarousel tagsList={ingredientTags} selectedTags={selectedTags} onToggleTag={toggleTag} />
-          <ScrollView style={{ width: "100%", marginBottom: "12%" }} contentContainerStyle={{ paddingBottom: 20 }}>
-            {ingredientsList.map((ingredient) => (
+          <FlatList
+            data={filteredIngredientsList}
+            keyExtractor={(item) => item.ingredientName}
+            style={{ width: "100%", marginBottom: "12%" }}
+            contentContainerStyle={{ paddingBottom: 20 }}
+            renderItem={({ item }) => (
               <ListItem
-                key={ingredient}
-                ingredient={ingredient}
-                isSelected={isIngredientSelected(ingredient)}
-                amount={getIngredientAmount(ingredient)}
-                onSelect={() => selectIngredient(ingredient)}
-                onUnselect={() => unselectIngredient(ingredient)}
-                onAddAmount={() => addAmount(ingredient)}
-                onSubtractAmount={() => subtractAmount(ingredient)}
+                ingredient={item.ingredientName}
+                isSelected={isIngredientSelected(item.ingredientName)}
+                amount={getIngredientAmount(item.ingredientName)}
+                onSelect={() => selectIngredient(item.ingredientName)}
+                onUnselect={() => unselectIngredient(item.ingredientName)}
+                onAddAmount={() => addAmount(item.ingredientName)}
+                onSubtractAmount={() => subtractAmount(item.ingredientName)}
               />
-            ))}
-          </ScrollView>
+            )}
+            ListEmptyComponent={<Text style={styles.emptyText}>No ingredients found :c</Text>}
+          />
         </View>
       </View>
     </ImageBackground>
@@ -135,6 +167,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingRight: 10,
+  },
+  emptyText: {
+    textAlign: "center",
+    fontSize: 18,
+    marginTop: 30,
+    color: "#4B643F",
+    fontFamily: "MontserratSemiBold",
   },
 });
 export default AddProduct;

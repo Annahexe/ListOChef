@@ -1,6 +1,5 @@
-import { Text, Image, View, Pressable, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { TextInput } from "react-native-paper";
-import { useState, useEffect } from "react";
 
 export const Seeker = (props) => {
   return (
@@ -17,7 +16,7 @@ export const Seeker = (props) => {
         contentStyle={{
           fontSize: 16,
           fontFamily: "MontserratSemiBold",
-          transform:[{ translateY: 1 }]
+          transform: [{ translateY: 1 }],
         }}
         mode="outlined"
         left={<TextInput.Icon icon="magnify" color="#4B643F" size={30} />}
