@@ -66,22 +66,19 @@ const AddRecipe = ({ navigation }) => {
     if (!result.canceled) {
       const asset = result.assets[0];
 
-      const fileName = asset.fileName;
-      const fileType = asset.mimeType;
-
       setForm((prev) => ({
         ...prev,
         photo: {
           uri: asset.uri,
-          name: fileName,
-          type: fileType, //This is for the MultipartFile
+          name: asset.fileName || `photo-${Date.now()}.jpg`,
+          type: asset.mimeType || "image/jpeg",
         },
       }));
     }
   };
 
   const onSaved = async () => {
-    console.log("ON SAVED PRESSED")
+    console.log("ON SAVED PRESSED");
     const isValid = validateForm();
 
     if (!isValid) {
@@ -98,7 +95,7 @@ const AddRecipe = ({ navigation }) => {
       difficulty: form.difficulty,
       tags,
     };
-    console.log("SENDING NEW RECIPE: " + newRecipe)
+    console.log("SENDING NEW RECIPE: " + newRecipe);
 
     const formData = new FormData();
     formData.append("recipe", JSON.stringify(newRecipe));
