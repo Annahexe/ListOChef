@@ -38,6 +38,27 @@ export const postDataOnboarding = async (url, data) => {
   }
 };
 
+export const postData = async (url, data) => {
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const received = await response.status;
+    console.log("Contenido response text: " + received);
+    return [received];
+  } catch (error) {
+    console.log("postData error:", error);
+  }
+};
+
 export const postDataToken = async (url, data, token) => {
   try {
     const isFormData = data instanceof FormData;
