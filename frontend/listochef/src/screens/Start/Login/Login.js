@@ -9,10 +9,9 @@ import { isRequired, isEmail, minLength } from "../../../utils/validators";
 import { postDataOnboarding } from "../../../services/services";
 
 const Login = (props) => {
-  const { route } = useContext(Context);
-  const { token, setToken } = useContext(Context);
+  const { route, token, setToken } = useContext(Context);
   const { ingredientTags, setIngredientTags } = useContext(Context);
-  const { user, setUser } = useContext(Context);
+  const { user, setUser, recipesSaved, setRecipesSaved } = useContext(Context);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -64,6 +63,7 @@ const Login = (props) => {
       setUser(jsonResponse.user)
       console.log("TOKEN:" + jsonResponse.token)
       setToken(jsonResponse.token);
+      setRecipesSaved(jsonResponse.recipesSaved);
       return true;
     }
 

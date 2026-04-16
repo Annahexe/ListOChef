@@ -37,7 +37,7 @@ const SearchRecipes = (props) => {
   };
 
   const toggleSaved = (id) => {
-    setRecipeList((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, isSaved: !recipe.isSaved } : recipe)));
+    setRecipeList((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
   };
 
   //demo data

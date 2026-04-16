@@ -38,6 +38,8 @@ export const Provider = ({ children }) => {
     { name: "Whole Milk", amount: 4, ingredientTag: "Dairy" },
   ]);
 
+  const [recipesSaved, setRecipesSaved] = useState([]);
+
   return (
     <Context.Provider
       value={{
@@ -55,6 +57,8 @@ export const Provider = ({ children }) => {
         setSelectedIngredients,
         pantryItems,
         setPantryItems,
+        recipesSaved, 
+        setRecipesSaved
       }}
     >
       {children}
