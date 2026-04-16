@@ -59,11 +59,10 @@ const Login = (props) => {
 
     const [status, jsonResponse] = response;
     console.log("STATUS: " + status)
-    console.log("TOKEN: " + jsonResponse.listIngredientsTags[0].name)
     if (status === 200) {
       jsonResponse.listIngredientsTags.map((ingredient) => setIngredientTags((prev) =>[...prev, ingredient.name]))
       setUser(jsonResponse.user)
-      console.log(jsonResponse.token)
+      console.log("TOKEN:" + jsonResponse.token)
       setToken(jsonResponse.token);
       return true;
     }

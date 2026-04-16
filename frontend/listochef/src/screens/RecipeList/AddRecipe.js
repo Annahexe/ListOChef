@@ -81,6 +81,7 @@ const AddRecipe = ({ navigation }) => {
   };
 
   const onSaved = async () => {
+    console.log("ON SAVED PRESSED")
     const isValid = validateForm();
 
     if (!isValid) {
