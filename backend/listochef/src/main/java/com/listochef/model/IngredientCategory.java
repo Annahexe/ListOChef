@@ -3,16 +3,16 @@ package com.listochef.model;
 public class IngredientCategory {
 
 	private String id;
-	private String name;
+	private String ingredientCategoryName;
 	private String icon;
 
 	public IngredientCategory() {
 	}
 
-	public IngredientCategory(String id, String name, String icon) {
+	public IngredientCategory(String id, String ingredientCategoryName, String icon) {
 		super();
 		this.id = id;
-		this.name = name;
+		this.ingredientCategoryName = ingredientCategoryName;
 		this.icon = icon;
 	}
 
@@ -24,12 +24,12 @@ public class IngredientCategory {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getIngredientCategoryName() {
+		return ingredientCategoryName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setIngredientCategoryName(String name) {
+		this.ingredientCategoryName = name;
 	}
 
 	public String getIcon() {

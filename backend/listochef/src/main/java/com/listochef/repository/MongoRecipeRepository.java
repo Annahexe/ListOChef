@@ -157,7 +157,7 @@ public class MongoRecipeRepository implements RecipeRepository {
 			return userRecipesSavedList; // Usuario no existe
 		}
 
-		List<String> userRecipesSaved = userOpt.get().getRecipesSaved();
+		List<String> userRecipesSaved = userOpt.get().getRecipesSavedIds();
 
 		if (userRecipesSaved == null || userRecipesSaved.isEmpty()) {
 			return userRecipesSavedList;
@@ -196,8 +196,8 @@ public class MongoRecipeRepository implements RecipeRepository {
 
 	    List<String> savedIds = new ArrayList<>();
 
-	    if (userOpt.isPresent() && userOpt.get().getRecipesSaved() != null) {
-	        savedIds = userOpt.get().getRecipesSaved();
+	    if (userOpt.isPresent() && userOpt.get().getRecipesSavedIds() != null) {
+	        savedIds = userOpt.get().getRecipesSavedIds();
 	    }
 	    
 	    return savedIds;

@@ -53,7 +53,7 @@ public class AuthService {
         String token = jwtService.generateToken(storedUser.getEmail());
 
         // Lookup de objetos completos
-        List<Recipe> recipesSaved = recipeRepository.getUserRecipesSaved(storedUser.getEmail());
+        List<Recipe> recipesSavedList = recipeRepository.getUserRecipesSaved(storedUser.getEmail());
         List<Ingredient> groceryList = ingredientRepository.findAllByIds(storedUser.getMyGroceryList());
         List<IngredientCategory> ingredientsCategories = ingredientCategoryRepository.getAllIngredientsCategories();
 
@@ -62,7 +62,7 @@ public class AuthService {
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
         response.put("user", storedUser);
-        response.put("recipesSaved", recipesSaved);
+        response.put("recipesSavedList", recipesSavedList);
         response.put("groceryList", groceryList);
         response.put("listIngredientsTags", ingredientsCategories);
 

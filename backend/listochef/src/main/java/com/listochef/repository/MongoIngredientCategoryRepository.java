@@ -33,7 +33,7 @@ public class MongoIngredientCategoryRepository implements IngredientCategoryRepo
 	
 	private IngredientCategory toIngredientCategory(Document doc) {
 		return new IngredientCategory(doc.getObjectId("_id").toHexString(), 
-										doc.getString("name"),
+										doc.getString("ingredientCategoryName"),
 										doc.getString("icon"));
 	}
 

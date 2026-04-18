@@ -25,7 +25,9 @@ public class MongoUserRepository implements UserRepository {
 
 	private User toUser(Document doc) {
 		return new User(doc.getObjectId("_id").toHexString(), doc.getString("name"), doc.getString("surname"), doc.getString("email"),
-				doc.getString("password"), doc.getString("avatar"), doc.getList("recipesSaved", String.class),doc.getList("myGroceryList", String.class));
+				doc.getString("password"), doc.getString("avatar"), doc.getList("recipesSavedIds", String.class),
+				doc.getList("myGroceryList", String.class),doc.getList("myPantryList", String.class));
+		
 	}
 
 	@Override
@@ -43,7 +45,9 @@ public class MongoUserRepository implements UserRepository {
 	public User register(User user) {
 		Document doc = new Document().append("name", user.getName()).append("surname", user.getSurname()).append("email", user.getEmail())
 				.append("password", user.getPassword()).append("avatar", user.getAvatar())
-				.append("recipesSaved", new ArrayList<>()).append("myGroceryList", new ArrayList<>());
+				.append("recipesSavedIds", new ArrayList<>())
+				.append("myGroceryList", new ArrayList<>()).
+				append("myPantryList", new ArrayList<>());
 
 		collection.insertOne(doc);
 
@@ -65,7 +69,7 @@ public class MongoUserRepository implements UserRepository {
 	public void addToRecipesSaved(String email, String recipeId) {
 	    collection.updateOne(
 	        eq("email", email),
-	        addToSet("recipesSaved", recipeId)
+	        addToSet("recipesSavedIds", recipeId)
 	    );
 	}
 	
@@ -73,7 +77,7 @@ public class MongoUserRepository implements UserRepository {
 	public UpdateResult deleteFromRecipesSaved(String email, String recipeId) {
 		 return collection.updateOne(
 			    eq("email", email),
-			    pull("recipesSaved", recipeId)
+			    pull("recipesSavedIds", recipeId)
 			);
 	}
 

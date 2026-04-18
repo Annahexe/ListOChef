@@ -12,14 +12,15 @@ public class User {
 	private String email;
 	private String password;
 	private String avatar;
-	private List<String> recipesSaved;
+	private List<String> recipesSavedIds;
 	private List<String> myGroceryList;
+	private List<String> myPantryList;
 
 	public User() {
 	}
 
 	public User(String id, String name, String surname, String email, String password, String avatar,
-			List<String> recipesSaved, List<String> myGroceryList) {
+			List<String> recipesSavedIds, List<String> myGroceryList, List<String> myPantryList) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -27,8 +28,9 @@ public class User {
 		this.email = email;
 		this.password = password;
 		this.avatar = avatar;
-		this.recipesSaved = recipesSaved;
+		this.recipesSavedIds = recipesSavedIds;
 		this.myGroceryList = myGroceryList;
+		this.myPantryList = myPantryList;
 	}
 
 	public String getId() {
@@ -80,12 +82,12 @@ public class User {
 		this.avatar = avatar;
 	}
 
-	public List<String> getRecipesSaved() {
-		return recipesSaved;
+	public List<String> getRecipesSavedIds() {
+		return recipesSavedIds;
 	}
 
-	public void setRecipesSaved(List<String> recipesSaved) {
-		this.recipesSaved = recipesSaved;
+	public void setRecipesSavedIds(List<String> recipesSavedIds) {
+		this.recipesSavedIds = recipesSavedIds;
 	}
 
 	public List<String> getMyGroceryList() {
@@ -95,5 +97,12 @@ public class User {
 	public void setMyGroceryList(List<String> myGroceryList) {
 		this.myGroceryList = myGroceryList;
 	}
+	
+	public List<String> getMyPantryList() {
+		return myGroceryList;
+	}
 
+	public void setMyPantryList(List<String> myGroceryList) {
+		this.myGroceryList = myGroceryList;
+	}
 }
