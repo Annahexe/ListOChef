@@ -80,8 +80,28 @@ const GroceryList = (props) => {
   //Añade a la lista que tenemos en Context. Elimina el ingrediente de la lista de ingredientes y borra los ingredientes seleccionados.
   const addToPantry = () => {
     //Añade a la lista de Context
-    setPantryItems((prev) => [...prev, ...ingredientsToPantry]);
+    setPantryItems((prev) => {
+      const updated = [...prev];
 
+      ingredientsToPantry.forEach((newItem) => {
+        const existingIndex = updated.findIndex(
+          (item) => item.name === newItem.name,
+        );
+
+        if (existingIndex !== -1) {
+          // Si existe, sumamos cantidad
+          updated[existingIndex] = {
+            ...updated[existingIndex],
+            amount:
+              (updated[existingIndex].amount || 0) + (newItem.amount || 0),
+          };
+        } else {
+          // Si no existe, lo añadimos
+          updated.push(newItem);
+        }
+      });
+      return updated;
+    });
     //Elimino de la lista el ingrediente
     setSelectedIngredients((prev) =>
       prev.filter(
