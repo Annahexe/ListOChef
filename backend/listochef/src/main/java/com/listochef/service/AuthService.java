@@ -31,7 +31,8 @@ public class AuthService {
     private final MongoIngredientCategoryRepository ingredientCategoryRepository; 
     private final RecipeTagRepository recipeTagRepository;           
     private final RecipeCategoryRepository recipeCategoryRepository;
-    private final MongoIngredientRepository ingredientRepository;
+	private final MongoIngredientRepository ingredientRepository;
+    
 
     public AuthService(UserRepository repository, PasswordEncoder passwordEncoder,
                        JWTService jwtService, MongoRecipeRepository recipeRepository,
@@ -63,7 +64,7 @@ public class AuthService {
 
         // Lookup de objetos completos
         List<Recipe> recipesSavedList = recipeRepository.getUserRecipesSaved(storedUser.getEmail());
-        // List<Ingredient> groceryList = ingredientRepository.findAllByIds(storedUser.getMyGroceryList());
+       // List<Ingredient> groceryList = ingredientRepository.findAllByIds(storedUser.getMyGroceryList());
         List<IngredientCategory> ingredientsCategories = ingredientCategoryRepository.getAllIngredientsCategories();
         List<RecipeTag> listRecipesTags = recipeTagRepository.findAll();
         List<RecipeCategory> listRecipesCategories = recipeCategoryRepository.findAll();
