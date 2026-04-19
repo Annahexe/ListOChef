@@ -56,8 +56,8 @@ public class MongoIngredientRepository implements IngredientRepository {
     private Ingredient toIngredient(Document doc) {
         return new Ingredient(
             doc.getObjectId("_id").toHexString(),
-            doc.getString("name"),
-            doc.getString("category")
+            doc.getString("ingredientName"),
+            doc.getString("ingredientTag")
         );
     }
 }

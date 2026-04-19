@@ -8,13 +8,14 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
+import com.listochef.model.Ingredient;
 import com.listochef.model.IngredientCategory;
 import com.listochef.model.Recipe;
 import com.listochef.model.RecipeCategory;
 import com.listochef.model.RecipeTag;
 import com.listochef.model.User;
 import com.listochef.repository.MongoIngredientCategoryRepository;
+import com.listochef.repository.MongoIngredientRepository;
 import com.listochef.repository.MongoRecipeRepository;
 import com.listochef.repository.RecipeCategoryRepository;
 import com.listochef.repository.RecipeTagRepository;
@@ -30,6 +31,7 @@ public class AuthService {
     private final MongoIngredientCategoryRepository ingredientCategoryRepository; 
     private final RecipeTagRepository recipeTagRepository;           
     private final RecipeCategoryRepository recipeCategoryRepository;
+    private final MongoIngredientRepository ingredientRepository;
 
     public AuthService(UserRepository repository, PasswordEncoder passwordEncoder,
                        JWTService jwtService, MongoRecipeRepository recipeRepository,
@@ -42,6 +44,7 @@ public class AuthService {
         this.ingredientCategoryRepository = ingredientCategoryRepository;
         this.recipeTagRepository = recipeTagRepository;
         this.recipeCategoryRepository = recipeCategoryRepository;
+        this.ingredientRepository = ingredientRepository;
     }
 
     public Map<String, Object> login(User user) {
@@ -60,7 +63,7 @@ public class AuthService {
 
         // Lookup de objetos completos
         List<Recipe> recipesSavedList = recipeRepository.getUserRecipesSaved(storedUser.getEmail());
-        List<Ingredient> groceryList = ingredientRepository.findAllByIds(storedUser.getMyGroceryList());
+        // List<Ingredient> groceryList = ingredientRepository.findAllByIds(storedUser.getMyGroceryList());
         List<IngredientCategory> ingredientsCategories = ingredientCategoryRepository.getAllIngredientsCategories();
         List<RecipeTag> listRecipesTags = recipeTagRepository.findAll();
         List<RecipeCategory> listRecipesCategories = recipeCategoryRepository.findAll();
