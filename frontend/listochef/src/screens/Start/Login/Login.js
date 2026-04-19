@@ -63,7 +63,7 @@ const Login = (props) => {
       setUser(jsonResponse.user)
       console.log("TOKEN:" + jsonResponse.token)
       setToken(jsonResponse.token);
-      setRecipesSaved(jsonResponse.recipesSaved);
+      setRecipesSaved(jsonResponse.recipesSavedList);
       return true;
     }
 
