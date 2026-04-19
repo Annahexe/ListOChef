@@ -33,9 +33,23 @@ public class MongoIngredientRepository implements IngredientRepository {
     public List<Ingredient> findAllByIds(List<String> ids) {
         List<Ingredient> result = new ArrayList<>();
         if (ids == null || ids.isEmpty()) return result;
+
         for (String id : ids) {
             findById(id).ifPresent(result::add);
         }
+
+        return result;
+    }
+
+    @Override
+    public List<Ingredient> findAll() {
+        List<Ingredient> result = new ArrayList<>();
+        List<Document> docs = collection.find().into(new ArrayList<>());
+
+        for (Document doc : docs) {
+            result.add(toIngredient(doc));
+        }
+
         return result;
     }
 

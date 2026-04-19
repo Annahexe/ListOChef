@@ -9,4 +9,6 @@ public interface IngredientRepository {
     Optional<Ingredient> findById(String id);
     
     List<Ingredient> findAllByIds(List<String> ids);
+
+    List<Ingredient> findAll();
 }
