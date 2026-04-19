@@ -11,10 +11,14 @@ import org.springframework.stereotype.Service;
 import com.listochef.model.Ingredient;
 import com.listochef.model.IngredientCategory;
 import com.listochef.model.Recipe;
+import com.listochef.model.RecipeCategory;
+import com.listochef.model.RecipeTag;
 import com.listochef.model.User;
 import com.listochef.repository.MongoIngredientCategoryRepository;
 import com.listochef.repository.MongoIngredientRepository;
 import com.listochef.repository.MongoRecipeRepository;
+import com.listochef.repository.RecipeCategoryRepository;
+import com.listochef.repository.RecipeTagRepository;
 import com.listochef.repository.UserRepository;
 import com.listochef.security.JWTService;
 
@@ -26,16 +30,21 @@ public class AuthService {
     private final MongoRecipeRepository recipeRepository;
     private final MongoIngredientRepository ingredientRepository;
     private final MongoIngredientCategoryRepository ingredientCategoryRepository; 
+    private final RecipeTagRepository recipeTagRepository;           
+    private final RecipeCategoryRepository recipeCategoryRepository;
 
     public AuthService(UserRepository repository, PasswordEncoder passwordEncoder,
                        JWTService jwtService, MongoRecipeRepository recipeRepository,
-                       MongoIngredientRepository ingredientRepository, MongoIngredientCategoryRepository ingredientCategoryRepository) {
+                       MongoIngredientRepository ingredientRepository, MongoIngredientCategoryRepository ingredientCategoryRepository, RecipeTagRepository recipeTagRepository,
+                       RecipeCategoryRepository recipeCategoryRepository) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.recipeRepository = recipeRepository;
         this.ingredientRepository = ingredientRepository;
         this.ingredientCategoryRepository = ingredientCategoryRepository;
+        this.recipeTagRepository = recipeTagRepository;
+        this.recipeCategoryRepository = recipeCategoryRepository;
     }
 
     public Map<String, Object> login(User user) {
@@ -56,6 +65,9 @@ public class AuthService {
         List<Recipe> recipesSavedList = recipeRepository.getUserRecipesSaved(storedUser.getEmail());
         List<Ingredient> groceryList = ingredientRepository.findAllByIds(storedUser.getMyGroceryList());
         List<IngredientCategory> ingredientsCategories = ingredientCategoryRepository.getAllIngredientsCategories();
+        List<RecipeTag> listRecipesTags = recipeTagRepository.findAll();
+        List<RecipeCategory> listRecipesCategories = recipeCategoryRepository.findAll();
+
 
         storedUser.setPassword(null);
 
@@ -65,6 +77,8 @@ public class AuthService {
         response.put("recipesSavedList", recipesSavedList);
         response.put("groceryList", groceryList);
         response.put("listIngredientsTags", ingredientsCategories);
+        response.put("listRecipesTags", listRecipesTags); 
+        response.put("listRecipesCategories", listRecipesCategories);
 
         return response;
     }
