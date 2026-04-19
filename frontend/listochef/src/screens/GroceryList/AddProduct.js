@@ -35,7 +35,7 @@ const AddProduct = (props) => {
     ) {
       return;
     }
-    console.log("Sending addProductPetition" + changes)
+    console.log("Sending addProductPetition", changes)
 
     // const response = await addProductPetition(changes);   //body: JSON.stringify(changes),
   }, []);

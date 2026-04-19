@@ -1,16 +1,17 @@
 import { StyleSheet, View, ImageBackground, FlatList, Text } from "react-native";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { Seeker } from "../../components/Seeker";
 import { TagsCarousel } from "../../components/TagsCarousel";
 import { ListItem } from "../../components/ListItem";
+import { buildIngredientsDiff } from "../../utils/buildIngredientsDiff";
 
 import Context from "../../context/Context";
-
 import Feather from "@expo/vector-icons/Feather";
 
 const AddPantry = (props) => {
-  const { ingredientTags, setIngredientTags } = useContext(Context);
+  const { ingredientTags } = useContext(Context);
   const [selectedTags, setSelectedTags] = useState(["All"]);
 
   const [ingredientsList, setIngredientsList] = useState([]);
@@ -18,6 +19,50 @@ const AddPantry = (props) => {
 
   const [filteredPantryItemsList, setFilteredPantryItemsList] = useState([]);
   const [searchText, setSearchText] = useState("");
+
+  const initialPantryRef = useRef([]);
+  const latestPantryRef = useRef(pantryItems);
+
+  useEffect(() => {
+    latestPantryRef.current = pantryItems;
+  }, [pantryItems]);
+
+  const syncPantryItems = useCallback(async (changes) => {
+    if (
+      changes.addedOrUpdated.length === 0 &&
+      changes.removed.length === 0
+    ) {
+      return;
+    }
+
+    try {
+      console.log("Sending addPantryPetition", changes);
+
+      // const response = await addPantryPetition(changes);
+      // console.log("addPantryPetition response:", response);
+    } catch (error) {
+      console.error("Error syncing pantry items:", error);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      initialPantryRef.current = [...latestPantryRef.current];
+    }, [])
+  );
+
+  useEffect(() => {
+    const unsubscribe = props.navigation.addListener("blur", () => {
+      const changes = buildIngredientsDiff(
+        initialPantryRef.current,
+        latestPantryRef.current
+      );
+
+      syncPantryItems(changes);
+    });
+
+    return unsubscribe;
+  }, [props.navigation, syncPantryItems]);
 
   const toggleTag = (selectedTag) => {
     setSelectedTags((previousSelectedTags) => {
@@ -102,9 +147,9 @@ const AddPantry = (props) => {
 
     // Filter by text
     if (normalizedSearch !== "") {
-      result = result.filter((ingredient) => {
-        return ingredient.ingredientName.toLowerCase().includes(normalizedSearch);
-      });
+      result = result.filter((ingredient) =>
+        ingredient.ingredientName.toLowerCase().includes(normalizedSearch)
+      );
     }
 
     // Filter by tags
@@ -147,6 +192,7 @@ const AddPantry = (props) => {
     </ImageBackground>
   );
 };
+
 const styles = StyleSheet.create({
   background: {
     flex: 1,
@@ -176,4 +222,5 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratSemiBold",
   },
 });
+
 export default AddPantry;
