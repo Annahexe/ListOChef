@@ -2,7 +2,6 @@ package com.listochef.model;
 
 import java.util.List;
 
-import org.bson.types.ObjectId;
 
 public class User {
 
@@ -13,13 +12,14 @@ public class User {
 	private String password;
 	private String avatar;
 	private List<String> recipesSaved;
-	private List<String> myGroceryList;
-
+	private List<UserIngredient> myGroceryList;
+	private List<UserIngredient> myPantryList;
+	
 	public User() {
 	}
 
 	public User(String id, String name, String surname, String email, String password, String avatar,
-			List<String> recipesSaved, List<String> myGroceryList) {
+			List<String> recipesSaved, List<UserIngredient> myGroceryList, List<UserIngredient> myPantryList) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -29,6 +29,7 @@ public class User {
 		this.avatar = avatar;
 		this.recipesSaved = recipesSaved;
 		this.myGroceryList = myGroceryList;
+		this.myPantryList = myPantryList;
 	}
 
 	public String getId() {
@@ -88,12 +89,20 @@ public class User {
 		this.recipesSaved = recipesSaved;
 	}
 
-	public List<String> getMyGroceryList() {
+	public List<UserIngredient> getMyGroceryList() {
 		return myGroceryList;
 	}
 
-	public void setMyGroceryList(List<String> myGroceryList) {
+	public void setMyGroceryList(List<UserIngredient> myGroceryList) {
 		this.myGroceryList = myGroceryList;
+	}
+
+	public List<UserIngredient> getMyPantryList() {
+		return myPantryList;
+	}
+
+	public void setMyPantryList(List<UserIngredient> myPantryList) {
+		this.myPantryList = myPantryList;
 	}
 
 }
