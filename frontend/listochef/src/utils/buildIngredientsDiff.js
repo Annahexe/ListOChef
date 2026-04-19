@@ -1,4 +1,4 @@
-const buildIngredientsDiff = (initialList, currentList) => {
+export const buildIngredientsDiff = (initialList, currentList) => {
   const addedOrUpdated = [];
   const removed = [];
 

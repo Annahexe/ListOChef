@@ -1,16 +1,18 @@
 import { StyleSheet, View, ImageBackground, FlatList, Text } from "react-native";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { Seeker } from "../../components/Seeker";
 import { TagsCarousel } from "../../components/TagsCarousel";
 import { ListItem } from "../../components/ListItem";
+import { buildIngredientsDiff } from "../../utils/buildIngredientsDiff";
 
 import Context from "../../context/Context";
 
 import Feather from "@expo/vector-icons/Feather";
 
 const AddProduct = (props) => {
-  const { ingredientTags, setIngredientTags } = useContext(Context);
+  const { ingredientTags } = useContext(Context);
   const [selectedTags, setSelectedTags] = useState(["All"]);
 
   const [ingredientsList, setIngredientsList] = useState([]);
@@ -18,6 +20,42 @@ const AddProduct = (props) => {
 
   const [filteredIngredientsList, setFilteredIngredientsList] = useState([]);
   const [searchText, setSearchText] = useState("");
+
+  const initialSelectedRef = useRef([]);
+  const latestSelectedRef = useRef(selectedIngredients);
+
+  useEffect(() => {
+    latestSelectedRef.current = selectedIngredients;
+  }, [selectedIngredients]);
+
+  const syncSelectedIngredients = useCallback(async (changes) => {
+    if (
+      changes.addedOrUpdated.length === 0 &&
+      changes.removed.length === 0
+    ) {
+      return;
+    }
+    console.log("Sending addProductPetition" + changes)
+
+    // const response = await addProductPetition(changes);   //body: JSON.stringify(changes),
+  }, []);
+
+    useFocusEffect(
+    useCallback(() => {
+      // snapshot when entering / focusing the screen
+      initialSelectedRef.current = [...latestSelectedRef.current];
+
+      return () => {
+        // compare when leaving the screen
+        const changes = buildIngredientsDiff(
+          initialSelectedRef.current,
+          latestSelectedRef.current
+        );
+
+        syncSelectedIngredients(changes);
+      };
+    }, [syncSelectedIngredients])
+  );
 
   const toggleTag = (selectedTag) => {
     setSelectedTags((previousSelectedTags) => {
