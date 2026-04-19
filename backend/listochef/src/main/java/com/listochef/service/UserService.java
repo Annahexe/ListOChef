@@ -12,6 +12,8 @@ import com.mongodb.client.result.UpdateResult;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -98,6 +100,10 @@ public class UserService {
         user.setPassword(hashedPassword);
         
         user.setAvatar(getRandomAvatar());
+        
+        user.setMyGroceryList(new ArrayList<>());
+        
+        user.setMyPantryList(new ArrayList<>());
 
 		userRepository.register(user);
 	}

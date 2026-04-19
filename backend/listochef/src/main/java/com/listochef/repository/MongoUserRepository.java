@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.bson.Document;
 import org.springframework.stereotype.Repository;
 import com.listochef.model.User;
+import com.listochef.model.UserIngredient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.UpdateResult;
@@ -24,10 +25,42 @@ public class MongoUserRepository implements UserRepository {
 	}
 
 	private User toUser(Document doc) {
-		return new User(doc.getObjectId("_id").toHexString(), doc.getString("name"), doc.getString("surname"), doc.getString("email"),
-				doc.getString("password"), doc.getString("avatar"), doc.getList("recipesSavedIds", String.class),
-				doc.getList("myGroceryList", String.class),doc.getList("myPantryList", String.class));
-		
+		ArrayList<UserIngredient> myGroceryList = new ArrayList<>();
+		ArrayList<UserIngredient> myPantryList = new ArrayList<>();
+
+		ArrayList<Document> groceryDocs = (ArrayList<Document>) doc.get("myGroceryList");
+		if (groceryDocs != null) {
+			for (Document ingredientDoc : groceryDocs) {
+				UserIngredient ingredient = new UserIngredient();
+				ingredient.setIngredientName(ingredientDoc.getString("ingredientName"));
+				ingredient.setIngredientTag(ingredientDoc.getString("ingredientTag"));
+				ingredient.setIngredientAmount(ingredientDoc.getString("ingredientAmount"));
+				myGroceryList.add(ingredient);
+			}
+		}
+
+		ArrayList<Document> pantryDocs = (ArrayList<Document>) doc.get("myPantryList");
+		if (pantryDocs != null) {
+			for (Document ingredientDoc : pantryDocs) {
+				UserIngredient ingredient = new UserIngredient();
+				ingredient.setIngredientName(ingredientDoc.getString("ingredientName"));
+				ingredient.setIngredientTag(ingredientDoc.getString("ingredientTag"));
+				ingredient.setIngredientAmount(ingredientDoc.getString("ingredientAmount"));
+				myPantryList.add(ingredient);
+			}
+		}
+
+		return new User(
+			doc.getObjectId("_id").toHexString(),
+			doc.getString("name"),
+			doc.getString("surname"),
+			doc.getString("email"),
+			doc.getString("password"),
+			doc.getString("avatar"),
+			doc.getList("recipesSavedIds", String.class),
+			myGroceryList,
+			myPantryList
+		);
 	}
 
 	@Override
@@ -43,11 +76,15 @@ public class MongoUserRepository implements UserRepository {
 
 	@Override
 	public User register(User user) {
-		Document doc = new Document().append("name", user.getName()).append("surname", user.getSurname()).append("email", user.getEmail())
-				.append("password", user.getPassword()).append("avatar", user.getAvatar())
+		Document doc = new Document()
+				.append("name", user.getName())
+				.append("surname", user.getSurname())
+				.append("email", user.getEmail())
+				.append("password", user.getPassword())
+				.append("avatar", user.getAvatar())
 				.append("recipesSavedIds", new ArrayList<>())
-				.append("myGroceryList", new ArrayList<>()).
-				append("myPantryList", new ArrayList<>());
+				.append("myGroceryList", new ArrayList<>())
+				.append("myPantryList", new ArrayList<>());
 
 		collection.insertOne(doc);
 

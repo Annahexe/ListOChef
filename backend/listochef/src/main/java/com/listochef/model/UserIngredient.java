@@ -1,27 +1,18 @@
 package com.listochef.model;
 
-public class Ingredient {
+public class UserIngredient {
 
-	private String id;
 	private String ingredientName;
 	private String ingredientTag;
+	private String ingredientAmount;
 
-	public Ingredient() {
+	public UserIngredient() {
 	}
 
-	public Ingredient(String id, String ingredientName, String ingredientTag) {
-		super();
-		this.id = id;
+	public UserIngredient(String ingredientName, String ingredientTag, String ingredientAmount) {
 		this.ingredientName = ingredientName;
 		this.ingredientTag = ingredientTag;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
+		this.ingredientAmount = ingredientAmount;
 	}
 
 	public String getIngredientName() {
@@ -38,5 +29,13 @@ public class Ingredient {
 
 	public void setIngredientTag(String ingredientTag) {
 		this.ingredientTag = ingredientTag;
+	}
+
+	public String getIngredientAmount() {
+		return ingredientAmount;
+	}
+
+	public void setIngredientAmount(String ingredientAmount) {
+		this.ingredientAmount = ingredientAmount;
 	}
 }

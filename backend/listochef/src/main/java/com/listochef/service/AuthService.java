@@ -8,14 +8,13 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.listochef.model.Ingredient;
+
 import com.listochef.model.IngredientCategory;
 import com.listochef.model.Recipe;
 import com.listochef.model.RecipeCategory;
 import com.listochef.model.RecipeTag;
 import com.listochef.model.User;
 import com.listochef.repository.MongoIngredientCategoryRepository;
-import com.listochef.repository.MongoIngredientRepository;
 import com.listochef.repository.MongoRecipeRepository;
 import com.listochef.repository.RecipeCategoryRepository;
 import com.listochef.repository.RecipeTagRepository;
@@ -28,7 +27,6 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
     private final MongoRecipeRepository recipeRepository;
-    private final MongoIngredientRepository ingredientRepository;
     private final MongoIngredientCategoryRepository ingredientCategoryRepository; 
     private final RecipeTagRepository recipeTagRepository;           
     private final RecipeCategoryRepository recipeCategoryRepository;
@@ -41,7 +39,6 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.recipeRepository = recipeRepository;
-        this.ingredientRepository = ingredientRepository;
         this.ingredientCategoryRepository = ingredientCategoryRepository;
         this.recipeTagRepository = recipeTagRepository;
         this.recipeCategoryRepository = recipeCategoryRepository;
@@ -75,10 +72,12 @@ public class AuthService {
         response.put("token", token);
         response.put("user", storedUser);
         response.put("recipesSavedList", recipesSavedList);
-        response.put("groceryList", groceryList);
+        response.put("myGroceryList", storedUser.getMyGroceryList());
+        response.put("myPantryList", storedUser.getMyPantryList());
         response.put("listIngredientsTags", ingredientsCategories);
         response.put("listRecipesTags", listRecipesTags); 
         response.put("listRecipesCategories", listRecipesCategories);
+
 
         return response;
     }
