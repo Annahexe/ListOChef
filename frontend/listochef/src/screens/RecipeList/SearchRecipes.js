@@ -38,6 +38,8 @@ const SearchRecipes = (props) => {
 
   const toggleSaved = (id) => {
     setRecipeList((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
+    // aqui guardar en local -> setRecipesSaved() (similar a arriba, pero con solo una lista de los trues)
+    // y enviar petiton backend (id) true false lo que devuelve simplemente lo ponemos con un console log
   };
 
   //demo data

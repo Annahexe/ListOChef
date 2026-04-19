@@ -19,7 +19,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 const RecipesList = (props) => {
   const { route } = useContext(Context);
   const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
-  const { token, setToken } = useContext(Context);
+  const { token } = useContext(Context);
 
   const { recipesSaved, setRecipesSaved } = useContext(Context);
 
@@ -34,7 +34,9 @@ const RecipesList = (props) => {
 
   useEffect(() => {
     console.log("EN RECIPE LIST" + recipesSaved)
-    // setRecipeList([
+    // aqui se muestran las recetas de recipesSaved (no hace falta hacer petition al backend porque lo obtenemos desde el login, lo demas lo guardamos en local)
+
+    // setRecipesSaved([
     //   {
     //     id: "1",
     //     recipeName: "Spaghetti",
