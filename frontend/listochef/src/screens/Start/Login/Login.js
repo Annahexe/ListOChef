@@ -72,37 +72,37 @@ const Login = (props) => {
 
 const debugLogin = async () => {
   const debugCredentials = {
-    email: "debugMail@mail.com",
+    email: "Adminpistacho@gmail.com",
     password: "12345",
   };
   setLoginData(debugCredentials);
 
-  // const response = await postDataOnboarding(route + "/login", debugCredentials); //WHEN THE SERVER IS ONLINE REGISTER A DEBUG USER, AND PUT THE INFO FOR THE LOGIN and uncomment
+  const response = await postDataOnboarding(route + "/login", debugCredentials); 
 
-  // if (!response) {
+  if (!response) {
     console.log("SERVER **OFFLINE**, SETTING UP FAKE INFO FOR QUICK LOGIN");
     props.navigation.navigate("Home");
-  // } else {   
-  //   console.log("DEBUG RESPONSE: " + response);
+  } else {   
+    console.log("DEBUG RESPONSE: " + response);
 
-  //   const [status, jsonResponse] = response;
-  //   console.log("STATUS: " + status);
+    const [status, jsonResponse] = response;
+    console.log("STATUS: " + status);
 
-  //   if (status === 200) {
-  //     jsonResponse.listIngredientsTags.map((ingredient) =>
-  //       setIngredientTags((prev) => [...prev, ingredient.name])
-  //     );
-  //     setUser(jsonResponse.user);
-  //     console.log("TOKEN:" + jsonResponse.token);
-  //     setToken(jsonResponse.token);
-  //     setRecipesSaved(jsonResponse.recipesSavedList);
-  //     props.navigation.navigate("Home");
-  //   } else {
-  //     console.log("SERVER **ERROR**, SETTING UP FAKE INFO FOR QUICK LOGIN");
-  //     props.navigation.navigate("Home");
-  //     return;
-  //   }
-  // }
+    if (status === 200) {
+      jsonResponse.listIngredientsTags.map((ingredient) =>
+        setIngredientTags((prev) => [...prev, ingredient.name])
+      );
+      setUser(jsonResponse.user);
+      console.log("TOKEN:" + jsonResponse.token);
+      setToken(jsonResponse.token);
+      setRecipesSaved(jsonResponse.recipesSavedList);
+      props.navigation.navigate("Home");
+    } else {
+      console.log("SERVER **ERROR**, SETTING UP FAKE INFO FOR QUICK LOGIN");
+      props.navigation.navigate("Home");
+      return;
+    }
+  }
 };
 
   return (
