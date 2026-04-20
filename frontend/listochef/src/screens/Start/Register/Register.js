@@ -6,7 +6,7 @@ import OnboardingCard from "../../../components/OnboardingCard";
 import ItemInput from "../../../components/ItemInput";
 import PrimaryButton from "../../../components/PrimaryButton";
 import { isRequired, isEmail, minLength, matches } from "../../../utils/validators";
-import { postDataOnboarding } from "../../../services/services";
+import { postData } from "../../../services/services";
 
 const Register = (props) => {
   const { route } = useContext(Context);
@@ -45,6 +45,8 @@ const Register = (props) => {
 
   const onCreateAccount = async () => {
     const isValid = validateForm();
+    console.log("REGISTER DATA:", registerData);
+    console.log("IS VALID:", isValid);
     if (!isValid) return;
 
     const isSuccess = await sendRegisterRequest();
@@ -60,7 +62,8 @@ const Register = (props) => {
     const { confirmPassword, ...dataToSend } = registerData;
     console.log(dataToSend);
 
-    const response = await postDataOnboarding(route + "/register", dataToSend);
+    const response = await postData(route + "/register", dataToSend);
+    console.log(dataToSend)
     if (!response) return false;
 
     const [status] = response;
