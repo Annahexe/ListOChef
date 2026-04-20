@@ -90,7 +90,7 @@ const debugLogin = async () => {
 
     if (status === 200) {
       jsonResponse.listIngredientsTags.map((ingredient) =>
-        setIngredientTags((prev) => [...prev, ingredient.name])
+        setIngredientTags((prev) => [...prev, ingredient.icon + " " + ingredient.ingredientCategoryName])
       );
       setUser(jsonResponse.user);
       console.log("TOKEN:" + jsonResponse.token);
