@@ -54,14 +54,14 @@ const Login = (props) => {
   const sendLoginRequest = async () => {
     const response = await postDataOnboarding(route + "/login", loginData);
     if (!response) return false;
-    console.log("RESPONSE: " + response)
+    console.log("RESPONSE: " + response);
 
     const [status, jsonResponse] = response;
-    console.log("STATUS: " + status)
+    console.log("STATUS: " + status);
     if (status === 200) {
-      jsonResponse.listIngredientsTags.map((ingredient) => setIngredientTags((prev) =>[...prev, ingredient.name]))
-      setUser(jsonResponse.user)
-      console.log("TOKEN:" + jsonResponse.token)
+      jsonResponse.listIngredientsTags.map((ingredient) => setIngredientTags((prev) => [...prev, ingredient.name]));
+      setUser(jsonResponse.user);
+      console.log("TOKEN:" + jsonResponse.token);
       setToken(jsonResponse.token);
       setRecipesSaved(jsonResponse.recipesSavedList);
       return true;
@@ -69,6 +69,41 @@ const Login = (props) => {
 
     return false;
   };
+
+const debugLogin = async () => {
+  const debugCredentials = {
+    email: "debugMail@mail.com",
+    password: "12345",
+  };
+  setLoginData(debugCredentials);
+
+  // const response = await postDataOnboarding(route + "/login", debugCredentials); //WHEN THE SERVER IS ONLINE REGISTER A DEBUG USER, AND PUT THE INFO FOR THE LOGIN and uncomment
+
+  // if (!response) {
+    console.log("SERVER **OFFLINE**, SETTING UP FAKE INFO FOR QUICK LOGIN");
+    props.navigation.navigate("Home");
+  // } else {   
+  //   console.log("DEBUG RESPONSE: " + response);
+
+  //   const [status, jsonResponse] = response;
+  //   console.log("STATUS: " + status);
+
+  //   if (status === 200) {
+  //     jsonResponse.listIngredientsTags.map((ingredient) =>
+  //       setIngredientTags((prev) => [...prev, ingredient.name])
+  //     );
+  //     setUser(jsonResponse.user);
+  //     console.log("TOKEN:" + jsonResponse.token);
+  //     setToken(jsonResponse.token);
+  //     setRecipesSaved(jsonResponse.recipesSavedList);
+  //     props.navigation.navigate("Home");
+  //   } else {
+  //     console.log("SERVER **ERROR**, SETTING UP FAKE INFO FOR QUICK LOGIN");
+  //     props.navigation.navigate("Home");
+  //     return;
+  //   }
+  // }
+};
 
   return (
     <OnboardingCard pageTitle="Log in">
@@ -99,7 +134,9 @@ const Login = (props) => {
           <PrimaryButton buttonText={"Login"} onPress={onLogin}></PrimaryButton>
         </View>
 
-        <Text style={styles.smallText}>Don't remember your password?</Text>
+        <Text style={styles.smallText} onPress={() => debugLogin()}>
+          Don't remember your password?
+        </Text>
         <Pressable onPress={() => props.navigation.navigate("ResetPassword")}>
           <Text style={[styles.smallText, { color: "#5A983D" }]}>Click here</Text>
         </Pressable>

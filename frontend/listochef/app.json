@@ -20,7 +20,8 @@
         "foregroundImage": "./assets/icons/ListoChefLogo.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "softwareKeyboardLayoutMode": "pan"
     },
     "web": {
       "favicon": "./assets/icons/ListoChefLogo.png"
