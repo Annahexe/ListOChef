@@ -18,4 +18,8 @@ public interface UserRepository {
 	void addToRecipesSaved(String email, String recipeId);
 	
 	UpdateResult deleteFromRecipesSaved(String email, String recipeId);
+	
+	void removeFromGroceryList(String email, String ingredientName);
+	
+	void removeFromPantryList(String email, String ingredientName);
 	}

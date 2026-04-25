@@ -131,4 +131,20 @@ public class MongoUserRepository implements UserRepository {
 	    );
 	    return user;
 	}
+	
+    @Override
+    public void removeFromGroceryList(String email, String ingredientName) {
+        collection.updateOne(
+            eq("email", email),
+            pull("myGroceryList", new Document("ingredientName", ingredientName))
+        );
+    }
+
+    @Override
+    public void removeFromPantryList(String email, String ingredientName) {
+        collection.updateOne(
+            eq("email", email),
+            pull("myPantryList", new Document("ingredientName", ingredientName))
+        );
+    }
 }
