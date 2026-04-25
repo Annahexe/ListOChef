@@ -3,7 +3,7 @@ const Context = createContext();
 
 export const Provider = ({ children }) => {
   const [route, setRoute] = useState("http://32.193.224.11:8080/ListOChef");
-  const [ingredientTags, setIngredientTags] = useState(["All"]);
+  const [ingredientTags, setIngredientTags] = useState([]);
   const [lastRecipeSeen, setLastRecipeSeen] = useState({
     id: "5",
     recipeName: "Potato Omelette",

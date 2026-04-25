@@ -5,8 +5,8 @@ const FilterTag = (props) => {
   const isSelected = props.isSelected;
 
   return (
-    <Pressable onPress={() => props.onPressTag(tag)} style={[styles.tag, isSelected && styles.tagSelected]}>
-      <Text style={styles.tagText}>{tag}</Text>
+    <Pressable onPress={() => props.onPressTag(tag.name)} style={[styles.tag, isSelected && styles.tagSelected]}>
+      <Text style={styles.tagText}>{tag.icon} {tag.name}</Text>
     </Pressable>
   );
 };
@@ -20,7 +20,7 @@ export const TagsCarousel = (props) => {
     <View style={styles.container}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {tagsList.map((tagItem) => (
-          <FilterTag key={tagItem} tag={tagItem} isSelected={selectedTags.includes(tagItem)} onPressTag={onToggleTag} />
+          <FilterTag key={tagItem.name} tag={tagItem} isSelected={selectedTags.includes(tagItem.name)} onPressTag={onToggleTag} />
         ))}
       </ScrollView>
     </View>
