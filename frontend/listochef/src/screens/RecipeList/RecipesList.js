@@ -1,4 +1,12 @@
-import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Keyboard } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  Keyboard,
+} from "react-native";
 import { useState, useEffect, useContext } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
@@ -17,9 +25,8 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const RecipesList = (props) => {
-  const { route } = useContext(Context);
+  const { route, token } = useContext(Context);
   const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
-  const { token } = useContext(Context);
 
   const { recipesSaved, setRecipesSaved } = useContext(Context);
 
@@ -33,7 +40,7 @@ const RecipesList = (props) => {
   }; //used to convert String creationDate to real date value
 
   useEffect(() => {
-    console.log("EN RECIPE LIST" + recipesSaved)
+    console.log("EN RECIPE LIST" + recipesSaved);
     // aqui se muestran las recetas de recipesSaved (no hace falta hacer petition al backend porque lo obtenemos desde el login, lo demas lo guardamos en local)
 
     // setRecipesSaved([
@@ -110,20 +117,20 @@ const RecipesList = (props) => {
     // ]);
   }, [recipesSaved]);
 
-  // useEffect(() => {
-  //   const loadRecipes = async () => {
-  //     console.log("token before request:", token);
+  useEffect(() => {
+    const loadRecipes = async () => {
+      console.log("token before request:", token);
 
-  //     const data = await getRecipesPetition();
-  //     console.log("recipes response:", data);
+      const data = await getRecipesPetition();
+      console.log("recipes response:", data);
 
-  //     if (data) {
-  //       setRecipeList(data);
-  //     }
-  //   };
+      if (data) {
+        setRecipeList(data);
+      }
+    };
 
-  //   loadRecipes();
-  // }, []);
+    loadRecipes();
+  }, []);
 
   const onAddRecipe = () => {
     return props.navigation.navigate("AddRecipe");
@@ -149,7 +156,11 @@ const RecipesList = (props) => {
   };
 
   const toggleSaved = (id) => {
-    setRecipesSaved((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
+    setRecipesSaved((prev) =>
+      prev.map((recipe) =>
+        recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe,
+      ),
+    );
   };
 
   const getRecipesPetition = async () => {
@@ -158,12 +169,20 @@ const RecipesList = (props) => {
   };
 
   return (
-    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
+    <ImageBackground
+      source={require("../../../assets/fondoApp.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
       <View style={styles.overlay}>
         <View style={styles.container}>
           <TitleIconPage titleText="Recipes List" icon={RecipeListTitleIcon} />
 
-          <Seeker placeholderText="Search recipe..." onPress={goSearchRecipe} editable={false}></Seeker>
+          <Seeker
+            placeholderText="Search recipe..."
+            onPress={goSearchRecipe}
+            editable={false}
+          ></Seeker>
 
           <View style={styles.featuredRecipe}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -186,7 +205,11 @@ const RecipesList = (props) => {
 
           <View style={styles.filterOrderContainer}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <MaterialCommunityIcons name="calendar-blank-outline" size={28} color="black" />
+              <MaterialCommunityIcons
+                name="calendar-blank-outline"
+                size={28}
+                color="black"
+              />
               <Text
                 style={{
                   fontSize: 15,
@@ -197,17 +220,31 @@ const RecipesList = (props) => {
               >
                 Order by...
               </Text>
-              <FilterOrderDropdown filterOrderValue={filterOrderValue} setFilterOrderValue={setFilterOrderValue} />
+              <FilterOrderDropdown
+                filterOrderValue={filterOrderValue}
+                setFilterOrderValue={setFilterOrderValue}
+              />
             </View>
           </View>
 
           <View style={{ flex: 1, width: "100%" }}>
-            <ScrollView style={{ width: "100%", marginBottom: 15 }} contentContainerStyle={{ paddingBottom: 5 }}>
+            <ScrollView
+              style={{ width: "100%", marginBottom: 15 }}
+              contentContainerStyle={{ paddingBottom: 5 }}
+            >
               {sortedRecipes.map((recipe, index) => (
-                <RecipeCard key={index} recipe={recipe} isDetailedBox={false} onViewRecipe={onViewRecipe} onToggleSaved={toggleSaved}></RecipeCard>
+                <RecipeCard
+                  key={index}
+                  recipe={recipe}
+                  isDetailedBox={false}
+                  onViewRecipe={onViewRecipe}
+                  onToggleSaved={toggleSaved}
+                ></RecipeCard>
               ))}
             </ScrollView>
-            <View style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}>
+            <View
+              style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}
+            >
               <Pressable onPress={onAddRecipe}>
                 <AddCircleButton />
               </Pressable>
