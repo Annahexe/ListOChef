@@ -112,11 +112,11 @@ const AddProduct = (props) => {
       { ingredientName: "Eggs", ingredientTag: "protein" },
       { ingredientName: "Wheat Bread", ingredientTag: "bakery" },
       { ingredientName: "Pasta", ingredientTag: "grain" },
-      { ingredientName: "Tomatoes", ingredientTag: "vegetable" },
+      { ingredientName: "Tomatoes", ingredientTag: "vegetables" },
       { ingredientName: "Cereals", ingredientTag: "grain" },
       { ingredientName: "Mayonnaise", ingredientTag: "sauce" },
       { ingredientName: "Maple syrup", ingredientTag: "sweet" },
-      { ingredientName: "Macaroni", ingredientTag: "grain" },
+      { ingredientName: "Macaroni", ingredientTag: "Grains & Starches" },
       { ingredientName: "Mango", ingredientTag: "fruit" },
       { ingredientName: "Marshmallow", ingredientTag: "sweet" },
       { ingredientName: "Macadamia", ingredientTag: "nuts" },
@@ -125,7 +125,7 @@ const AddProduct = (props) => {
       { ingredientName: "Mascarpone", ingredientTag: "dairy" },
       { ingredientName: "Mackerel", ingredientTag: "fish" },
       { ingredientName: "Macaroons", ingredientTag: "dessert" },
-      { ingredientName: "Mandarin", ingredientTag: "fruit" },
+      { ingredientName: "Mandarin", ingredientTag: "fruits" },
     ];
 
     setIngredientsList(ingredientsData);
