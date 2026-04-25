@@ -70,4 +70,20 @@ public class UserController {
         boolean saved = service.toggleRecipeSaved(email, recipeId);
         return ResponseEntity.ok().body("saved:" + saved);
     }
+    
+    @PostMapping("/removeFromGroceryList")
+    public ResponseEntity<Void> removeFromGroceryList(
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal String email) {
+        service.removeFromGroceryList(email, body.get("ingredientName"));
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/removeFromPantryList")
+    public ResponseEntity<Void> removeFromPantryList(
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal String email) {
+        service.removeFromPantryList(email, body.get("ingredientName"));
+        return ResponseEntity.ok().build();
+    }
 }

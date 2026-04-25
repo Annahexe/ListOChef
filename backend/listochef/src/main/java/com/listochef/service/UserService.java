@@ -9,14 +9,16 @@ import org.springframework.stereotype.Service;
 import com.listochef.model.User;
 import com.listochef.repository.UserRepository;
 import com.mongodb.client.result.UpdateResult;
-
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+
+import org.springframework.mail.javamail.MimeMessageHelper;
+import javax.mail.internet.MimeMessage;
+import org.springframework.core.io.ClassPathResource;
 
 @Service
 public class UserService {
@@ -113,17 +115,48 @@ public class UserService {
 	}
 	
 	public void forgotPassword(String email) {
-        if (userRepository.findByEmail(email).isEmpty()) return;
+	    if (userRepository.findByEmail(email).isEmpty()) return;
 
-        String codigo = String.format("%06d", new Random().nextInt(999999));
-        resetCodes.put(email, codigo);
+	    String codigo = String.format("%06d", new Random().nextInt(999999));
+	    resetCodes.put(email, codigo);
 
-        SimpleMailMessage mensaje = new SimpleMailMessage();
-        mensaje.setTo(email);
-        mensaje.setSubject("ListoChef - Recuperación de contraseña");
-        mensaje.setText("Tu código de recuperación es: " + codigo);
-        mailSender.send(mensaje);
-    }
+	    try {
+	        MimeMessage mensaje = mailSender.createMimeMessage();
+	        MimeMessageHelper helper = new MimeMessageHelper(mensaje, true, "UTF-8");
+
+	        helper.setTo(email);
+	        helper.setSubject("ListoChef - Password Recovery");
+
+	        String html = """
+	            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 30px; border: 1px solid #e0e0e0; border-radius: 10px;">
+	                <div style="text-align: center; margin-bottom: 24px;">
+	                    <img src="cid:logo" width="80" alt="ListoChef Logo"/>
+	                </div>
+	                <p>Hello,</p>
+	                <p>We have received a request to reset your password on <strong>ListoChef</strong>.</p>
+	                <p>Here is your verification code:</p>
+	                <div style="text-align: center; margin: 24px 0;">
+	                    <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #2e7d32;">%s</span>
+	                </div>
+	                <p>Enter it in the app to continue. For security reasons, this code will expire in a few minutes.</p>
+	                <p>If you did not make this request, you can ignore this message and your password will remain unchanged.</p>
+	                <br/>
+	                <p>Thank you,<br/><strong>The ListoChef Team</strong></p>
+	            </div>
+	            """.formatted(codigo);
+
+	        helper.setText(html, true);
+
+	        // Cargar el logo desde resources
+	        ClassPathResource logo = new ClassPathResource("static/logo.png");
+	        helper.addInline("cid:logo", logo);
+
+	        mailSender.send(mensaje);
+
+	    } catch (Exception e) {
+	        System.out.println("Error enviando email: " + e.getMessage());
+	    }
+	}
 	
 	public void resetPassword(String email, String code, String newPassword) {
         if (!resetCodes.containsKey(email) || !resetCodes.get(email).equals(code)) {
@@ -183,5 +216,12 @@ public class UserService {
 	    return false;
 	}
 	
+	public void removeFromGroceryList(String email, String ingredientName) {
+	    userRepository.removeFromGroceryList(email, ingredientName);
+	}
+
+	public void removeFromPantryList(String email, String ingredientName) {
+	    userRepository.removeFromPantryList(email, ingredientName);
+	}
 	
 }

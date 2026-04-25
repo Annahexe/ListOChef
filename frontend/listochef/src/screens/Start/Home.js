@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 
 import NavigationGroceryList from "../GroceryList/NavigationGroceryList";
 import NavigationPantry from "../Pantry/NavigationPantry";
-import Expenses from "../Expenses/Expenses";
+import NavigationExpenses from "../Expenses/NavigationExpenses";
 import NavigationRecipeList from "../RecipeList/NavigationRecipeList";
 import NavigationProfile from "../Profile/NavigationProfile";
 
@@ -30,7 +30,7 @@ const ICONS = {
     inactive: GroceryListIcon,
   },
   NavigationPantry: { active: PantryIconActive, inactive: PantryIcon },
-  Expenses: { active: ExpensesIconActive, inactive: ExpensesIcon },
+  NavigationExpenses: { active: ExpensesIconActive, inactive: ExpensesIcon },
   NavigationProfile: { active: ProfileIconActive, inactive: ProfileIcon },
 };
 
@@ -38,7 +38,7 @@ const SCREENS = [
   { name: "NavigationRecipeList", component: NavigationRecipeList },
   { name: "NavigationGroceryList", component: NavigationGroceryList },
   { name: "NavigationPantry", component: NavigationPantry },
-  { name: "Expenses", component: Expenses },
+  { name: "NavigationExpenses", component: NavigationExpenses },
   { name: "NavigationProfile", component: NavigationProfile },
 ];
 

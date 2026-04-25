@@ -39,6 +39,7 @@ export const Provider = ({ children }) => {
   ]);
 
   const [recipesSaved, setRecipesSaved] = useState([]);
+  const [ticketsSaved, setTicketsSaved] = useState([]);
 
   return (
     <Context.Provider
@@ -57,8 +58,10 @@ export const Provider = ({ children }) => {
         setSelectedIngredients,
         pantryItems,
         setPantryItems,
-        recipesSaved, 
-        setRecipesSaved
+        recipesSaved,
+        setRecipesSaved,
+        ticketsSaved,
+        setTicketsSaved,
       }}
     >
       {children}
