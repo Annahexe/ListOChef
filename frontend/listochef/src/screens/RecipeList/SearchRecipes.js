@@ -18,20 +18,32 @@ const SearchRecipes = (props) => {
   const [searchText, setSearchText] = useState("");
 
   //THESE TAGS SHOULD BE FROM BACKEND, FOR EXAMPLE const TAGS = ["All", ...listRecipesTags];
-  const TAGS = ["All", "Pasta", "Fish", "Pork", "Beef", "Chicken", "Meat"];
+  const TAGS = [
+    { name: "All", icon: "" },
+    { name: "Pasta", icon: "🍝" },
+    { name: "Fish", icon: "🐟" },
+    { name: "Pork", icon: "🐖" },
+    { name: "Beef", icon: "🐄" },
+    { name: "Chicken", icon: "🐔" },
+    { name: "Meat", icon: "🥩" },
+  ];
 
   const [selectedTags, setSelectedTags] = useState(["All"]);
 
   const toggleTag = (selectedTag) => {
     setSelectedTags((previousSelectedTags) => {
-      if (selectedTag == "All") {
+      if (selectedTag === "All") {
         return ["All"];
       }
-      const tagsWithoutAll = previousSelectedTags.filter((element) => element !== "All");
+
+      const tagsWithoutAll = previousSelectedTags.filter((tag) => tag !== "All");
+
       if (tagsWithoutAll.includes(selectedTag)) {
-        const selectedTagsList = tagsWithoutAll.filter((element) => element !== selectedTag);
+        const selectedTagsList = tagsWithoutAll.filter((tag) => tag !== selectedTag);
+
         return selectedTagsList.length === 0 ? ["All"] : selectedTagsList;
       }
+
       return [...tagsWithoutAll, selectedTag];
     });
   };
@@ -45,9 +57,8 @@ const SearchRecipes = (props) => {
   //demo data
   useEffect(() => {
     console.log("USE EFFECT AQUI");
-    
-    async function fetchData() {
 
+    async function fetchData() {
       console.log("FETCHING DATA");
       const data = await getRecipesPetition();
       console.log(data);
@@ -161,7 +172,9 @@ const SearchRecipes = (props) => {
 
     // Filter by tags
     if (!selectedTags.includes("All")) {
-      result = result.filter((recipe) => recipe.tag.some((recipeTag) => selectedTags.map((tag) => tag.toLowerCase()).includes(recipeTag.toLowerCase())));
+      const normalizedSelectedTags = selectedTags.map((tag) => tag.toLowerCase());
+
+      result = result.filter((recipe) => recipe.tags?.some((recipeTag) => normalizedSelectedTags.includes(recipeTag.toLowerCase())));
     }
 
     setFilteredRecipes(result);
