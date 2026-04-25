@@ -5,7 +5,6 @@ import {
   ImageBackground,
   Pressable,
   ScrollView,
-  Keyboard,
   Alert,
   Platform,
 } from "react-native";
@@ -19,14 +18,10 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import ExpensiveCard from "../../components/ExpensesCard";
 import AddCircleButton from "../../components/AddCircleButton";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Seeker } from "../../components/Seeker";
-import { FilterOrderDropdown } from "../../components/FilterOrderDropdown";
-
 import Context from "../../context/Context";
 import { getData } from "../../services/services";
 
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const Expenses = (props) => {
   const { route, token } = useContext(Context);
@@ -267,7 +262,7 @@ const Expenses = (props) => {
                   {" "}
                   <Pressable onPress={() => setShowFromPicker(true)}>
                     {" "}
-                    <Text style={styles.textDate}>From: </Text>{" "}
+                    <Text style={styles.label}>From: </Text>{" "}
                     <DateTimePicker
                       value={fromDate || new Date()}
                       mode="date"
@@ -285,7 +280,7 @@ const Expenses = (props) => {
                   {" "}
                   <Pressable onPress={() => setShowUntilPicker(true)}>
                     {" "}
-                    <Text style={styles.textDate}>Until: </Text>{" "}
+                    <Text style={styles.label}>Until: </Text>{" "}
                     <DateTimePicker
                       value={untilDate || new Date()}
                       mode="date"
@@ -377,12 +372,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontFamily: "InterSemiBold",
   },
-  textFilter: {
-    fontSize: 15,
-    fontFamily: "MontserratSemiBold",
-    marginLeft: 8,
-    marginRight: 20,
-  },
   summaryTextBox: {
     backgroundColor: "#77AF5C",
     borderRadius: 15,
@@ -413,15 +402,8 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginRight: 20,
   },
-  dateButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#E8F5E9",
-    padding: 10,
-    borderRadius: 10,
-  },
   value: {
-    width: "90%",
+    width: "95%",
     padding: 5,
     borderRadius: 20,
     backgroundColor: "#6a6d6a63",
