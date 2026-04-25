@@ -59,7 +59,13 @@ const Login = (props) => {
     const [status, jsonResponse] = response;
     console.log("STATUS: " + status);
     if (status === 200) {
-      jsonResponse.listIngredientsTags.map((ingredient) => setIngredientTags((prev) => [...prev, ingredient.name]));
+      setIngredientTags([
+        { name: "All", icon: "" },
+        ...jsonResponse.listIngredientsTags.map((ingredient) => ({
+          name: ingredient.ingredientCategoryName,
+          icon: ingredient.icon,
+        })),
+      ]);
       setUser(jsonResponse.user);
       console.log("TOKEN:" + jsonResponse.token);
       setToken(jsonResponse.token);
@@ -70,40 +76,44 @@ const Login = (props) => {
     return false;
   };
 
-const debugLogin = async () => {
-  const debugCredentials = {
-    email: "Adminpistacho@gmail.com",
-    password: "12345",
-  };
-  setLoginData(debugCredentials);
+  const debugLogin = async () => {
+    const debugCredentials = {
+      email: "Adminpistacho@gmail.com",
+      password: "12345",
+    };
+    setLoginData(debugCredentials);
 
-  const response = await postDataOnboarding(route + "/login", debugCredentials); 
+    const response = await postDataOnboarding(route + "/login", debugCredentials);
 
-  if (!response) {
-    console.log("SERVER **OFFLINE**, SETTING UP FAKE INFO FOR QUICK LOGIN");
-    props.navigation.navigate("Home");
-  } else {   
-    console.log("DEBUG RESPONSE: " + response);
-
-    const [status, jsonResponse] = response;
-    console.log("STATUS: " + status);
-
-    if (status === 200) {
-      jsonResponse.listIngredientsTags.map((ingredient) =>
-        setIngredientTags((prev) => [...prev, ingredient.icon + " " + ingredient.ingredientCategoryName])
-      );
-      setUser(jsonResponse.user);
-      console.log("TOKEN:" + jsonResponse.token);
-      setToken(jsonResponse.token);
-      setRecipesSaved(jsonResponse.recipesSavedList);
+    if (!response) {
+      console.log("SERVER **OFFLINE**, SETTING UP FAKE INFO FOR QUICK LOGIN");
       props.navigation.navigate("Home");
     } else {
-      console.log("SERVER **ERROR**, SETTING UP FAKE INFO FOR QUICK LOGIN");
-      props.navigation.navigate("Home");
-      return;
+      console.log("DEBUG RESPONSE: " + response);
+
+      const [status, jsonResponse] = response;
+      console.log("STATUS: " + status);
+
+      if (status === 200) {
+        setIngredientTags([
+          { name: "All", icon: "" },
+          ...jsonResponse.listIngredientsTags.map((ingredient) => ({
+            name: ingredient.ingredientCategoryName,
+            icon: ingredient.icon,
+          })),
+        ]);
+        setUser(jsonResponse.user);
+        console.log("TOKEN:" + jsonResponse.token);
+        setToken(jsonResponse.token);
+        setRecipesSaved(jsonResponse.recipesSavedList);
+        props.navigation.navigate("Home");
+      } else {
+        console.log("SERVER **ERROR**, SETTING UP FAKE INFO FOR QUICK LOGIN");
+        props.navigation.navigate("Home");
+        return;
+      }
     }
-  }
-};
+  };
 
   return (
     <OnboardingCard pageTitle="Log in">
