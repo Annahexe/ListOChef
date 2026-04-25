@@ -2,7 +2,7 @@ import { createContext, useState } from "react";
 const Context = createContext();
 
 export const Provider = ({ children }) => {
-  const [route, setRoute] = useState("http://18.204.200.165:8080/ListOChef");
+  const [route, setRoute] = useState("http://32.193.224.11:8080/ListOChef");
   const [ingredientTags, setIngredientTags] = useState(["All"]);
   const [lastRecipeSeen, setLastRecipeSeen] = useState({
     id: "5",
@@ -57,8 +57,8 @@ export const Provider = ({ children }) => {
         setSelectedIngredients,
         pantryItems,
         setPantryItems,
-        recipesSaved, 
-        setRecipesSaved
+        recipesSaved,
+        setRecipesSaved,
       }}
     >
       {children}
