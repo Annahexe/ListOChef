@@ -264,6 +264,7 @@ const Expenses = (props) => {
                     {" "}
                     <Text style={styles.label}>From: </Text>{" "}
                     <DateTimePicker
+                      style={{ alignSelf: "center" }}
                       value={fromDate || new Date()}
                       mode="date"
                       display="default"
@@ -282,6 +283,7 @@ const Expenses = (props) => {
                     {" "}
                     <Text style={styles.label}>Until: </Text>{" "}
                     <DateTimePicker
+                      style={{ alignSelf: "center" }}
                       value={untilDate || new Date()}
                       mode="date"
                       display="default"
