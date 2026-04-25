@@ -7,6 +7,7 @@ import {
   ScrollView,
   Keyboard,
   Alert,
+  Platform,
 } from "react-native";
 
 import ExpensesTitleIcon from "../../../assets/icons/expenses_titleIcon.svg";
@@ -82,6 +83,15 @@ const Expenses = (props) => {
     d.setMonth(d.getMonth() - 1);
     d.setHours(0, 0, 0, 0);
     return d;
+  };
+
+  //Fecha en bonita android
+  const formatDate = (date) => {
+    return new Intl.DateTimeFormat("es-ES", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(new Date(date));
   };
 
   //Las variables para el selector de fecha en el último mes
@@ -203,52 +213,95 @@ const Expenses = (props) => {
             </Text>
           </View>
 
-          <View style={styles.filterOrderContainer}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <MaterialCommunityIcons
-                name="calendar-blank-outline"
-                size={28}
-                color="black"
-              />
-              <Text style={styles.textFilter}>Filter by date</Text>
-            </View>
-          </View>
-          <View style={styles.filterOrderContainer}>
-            <View style={styles.dateColumn}>
-              <Pressable onPress={() => setShowFromPicker(true)}>
-                <Text style={styles.textDate}>From: </Text>
-                <DateTimePicker
-                  value={fromDate || new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={(event, selectedDate) => {
-                    setShowFromPicker(false);
+          {Platform.OS === "android" && (
+            <View style={styles.filterOrderContainer}>
+              <View style={styles.dateColumn}>
+                <Pressable onPress={() => setShowFromPicker(true)}>
+                  <Text style={styles.label}>From:</Text>
+                  <Text style={styles.value}>{formatDate(fromDate)}</Text>
+                </Pressable>
 
-                    if (event.type === "set" && selectedDate) {
-                      setFromDate(selectedDate);
-                    }
-                  }}
-                />
-              </Pressable>
-            </View>
-            <View style={styles.dateColumn}>
-              <Pressable onPress={() => setShowUntilPicker(true)}>
-                <Text style={styles.textDate}>Until: </Text>
-                <DateTimePicker
-                  value={untilDate || new Date()}
-                  mode="date"
-                  display="default"
-                  onChange={(event, selectedDate) => {
-                    setShowFromPicker(false);
+                {showFromPicker && (
+                  <DateTimePicker
+                    value={fromDate || new Date()}
+                    mode="date"
+                    display="calendar"
+                    onChange={(event, selectedDate) => {
+                      setShowFromPicker(false);
+                      if (event.type === "set" && selectedDate) {
+                        setFromDate(selectedDate);
+                      }
+                    }}
+                  />
+                )}
+              </View>
 
-                    if (event.type === "set" && selectedDate) {
-                      setFromDate(selectedDate);
-                    }
-                  }}
-                />
-              </Pressable>
+              <View style={styles.dateColumn}>
+                <Pressable onPress={() => setShowUntilPicker(true)}>
+                  <Text style={styles.label}>Until:</Text>
+                  <Text style={styles.value}>{formatDate(untilDate)}</Text>
+                </Pressable>
+
+                {showUntilPicker && (
+                  <DateTimePicker
+                    value={untilDate || new Date()}
+                    mode="date"
+                    display="calendar"
+                    onChange={(event, selectedDate) => {
+                      setShowUntilPicker(false);
+                      if (event.type === "set" && selectedDate) {
+                        setUntilDate(selectedDate);
+                      }
+                    }}
+                  />
+                )}
+              </View>
             </View>
-          </View>
+          )}
+
+          {Platform.OS === "ios" && (
+            <View style={styles.filterOrderContainer}>
+              <View style={styles.filterOrderContainer}>
+                {" "}
+                <View style={styles.dateColumn}>
+                  {" "}
+                  <Pressable onPress={() => setShowFromPicker(true)}>
+                    {" "}
+                    <Text style={styles.textDate}>From: </Text>{" "}
+                    <DateTimePicker
+                      value={fromDate || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowFromPicker(false);
+                        if (event.type === "set" && selectedDate) {
+                          setFromDate(selectedDate);
+                        }
+                      }}
+                    />{" "}
+                  </Pressable>{" "}
+                </View>
+                <View style={styles.dateColumn}>
+                  {" "}
+                  <Pressable onPress={() => setShowUntilPicker(true)}>
+                    {" "}
+                    <Text style={styles.textDate}>Until: </Text>{" "}
+                    <DateTimePicker
+                      value={untilDate || new Date()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selectedDate) => {
+                        setShowFromPicker(false);
+                        if (event.type === "set" && selectedDate) {
+                          setFromDate(selectedDate);
+                        }
+                      }}
+                    />{" "}
+                  </Pressable>{" "}
+                </View>
+              </View>
+            </View>
+          )}
 
           <View style={{ flex: 1, width: "100%" }}>
             <ScrollView
@@ -353,12 +406,29 @@ const styles = StyleSheet.create({
   dateColumn: {
     flex: 1,
   },
-  textDate: {
+  label: {
     color: "#173509",
     fontSize: 15,
     fontFamily: "MontserratSemiBold",
     marginLeft: 8,
     marginRight: 20,
+  },
+  dateButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#E8F5E9",
+    padding: 10,
+    borderRadius: 10,
+  },
+  value: {
+    width: "90%",
+    padding: 5,
+    borderRadius: 20,
+    backgroundColor: "#6a6d6a63",
+    marginVertical: 5,
+    fontFamily: "MontserratSemiBold",
+    textAlign: "center",
+    fontSize: 20,
   },
 });
 export default Expenses;
