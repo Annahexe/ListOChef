@@ -166,7 +166,7 @@ const Login = (props) => {
         />
 
         <View style={styles.buttonContainer}>
-          <PrimaryButton buttonText={isLoading ? "Loading..." : "Login"} onPress={isLoading ? null : onLogin} />
+          <PrimaryButton buttonText="Login" onPress={onLogin} isLoading={isLoading} />
         </View>
 
         <Text style={styles.smallText} onPress={() => debugLogin()}>
