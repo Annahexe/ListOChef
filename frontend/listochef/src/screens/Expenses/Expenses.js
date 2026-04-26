@@ -257,12 +257,9 @@ const Expenses = (props) => {
           {Platform.OS === "ios" && (
             <View style={styles.filterOrderContainer}>
               <View style={styles.filterOrderContainer}>
-                {" "}
                 <View style={styles.dateColumn}>
-                  {" "}
                   <Pressable onPress={() => setShowFromPicker(true)}>
-                    {" "}
-                    <Text style={styles.label}>From: </Text>{" "}
+                    <Text style={styles.label}>From: </Text>
                     <DateTimePicker
                       style={{ alignSelf: "center" }}
                       value={fromDate || new Date()}
@@ -274,14 +271,12 @@ const Expenses = (props) => {
                           setFromDate(selectedDate);
                         }
                       }}
-                    />{" "}
-                  </Pressable>{" "}
+                    />
+                  </Pressable>
                 </View>
                 <View style={styles.dateColumn}>
-                  {" "}
                   <Pressable onPress={() => setShowUntilPicker(true)}>
-                    {" "}
-                    <Text style={styles.label}>Until: </Text>{" "}
+                    <Text style={styles.label}>Until: </Text>
                     <DateTimePicker
                       style={{ alignSelf: "center" }}
                       value={untilDate || new Date()}
@@ -293,8 +288,8 @@ const Expenses = (props) => {
                           setFromDate(selectedDate);
                         }
                       }}
-                    />{" "}
-                  </Pressable>{" "}
+                    />
+                  </Pressable>
                 </View>
               </View>
             </View>
