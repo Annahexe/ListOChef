@@ -4,12 +4,12 @@ public class UserIngredient {
 
 	private String ingredientName;
 	private String ingredientTag;
-	private String ingredientAmount;
+	private int ingredientAmount;
 
 	public UserIngredient() {
 	}
 
-	public UserIngredient(String ingredientName, String ingredientTag, String ingredientAmount) {
+	public UserIngredient(String ingredientName, String ingredientTag, int ingredientAmount) {
 		this.ingredientName = ingredientName;
 		this.ingredientTag = ingredientTag;
 		this.ingredientAmount = ingredientAmount;
@@ -31,11 +31,11 @@ public class UserIngredient {
 		this.ingredientTag = ingredientTag;
 	}
 
-	public String getIngredientAmount() {
+	public int getIngredientAmount() {
 		return ingredientAmount;
 	}
 
-	public void setIngredientAmount(String ingredientAmount) {
+	public void setIngredientAmount(int ingredientAmount) {
 		this.ingredientAmount = ingredientAmount;
 	}
 }

@@ -20,11 +20,6 @@ public class MongoConfig {
 
     @Value("${spring.data.mongodb.database}")
     private String databaseName;
-
-    @PostConstruct
-    public void test() {
-        System.out.println("Mongo URI: " + mongoUri);
-    }
     
     @Bean
     public MongoClient mongoClient() {

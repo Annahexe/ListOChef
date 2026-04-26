@@ -1,10 +1,12 @@
 package com.listochef.controller;
 
 import com.listochef.model.User;
+import com.listochef.model.UserIngredient;
 import com.listochef.service.UserService;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -17,80 +19,67 @@ import com.listochef.model.UserIngredient;
 @RequestMapping("/ListOChef")
 public class UserController {
 
-    private final UserService service;
+	private final UserService service;
 
-    public UserController(UserService service) {
-        this.service = service;
-    }
-    
-    @PostMapping("/register")
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-    	service.register(user); 
-        return ResponseEntity.ok().build();  
-    }
-    
-    @PostMapping("/forgotPassword")
-    public ResponseEntity<Void> forgotPassword(@RequestBody Map<String, String> body) {
-        service.forgotPassword(body.get("email"));
-        return ResponseEntity.ok().build();
-    }
+	public UserController(UserService service) {
+		this.service = service;
+	}
 
-    @PostMapping("/resetPassword")
-    public ResponseEntity<Void> resetPassword(@RequestBody Map<String, String> body) {
-        service.resetPassword(
-            body.get("email"),
-            body.get("code"),
-            body.get("newPassword")
-        );
-        return ResponseEntity.ok().build();
-    }
-    
-    @PostMapping("/changePassword")
-    public ResponseEntity<Void> changePassword(
-            @RequestBody Map<String, String> body,
-            @AuthenticationPrincipal String email) {
+	@PostMapping("/register")
+	public ResponseEntity<User> createUser(@RequestBody User user) {
+		service.register(user);
+		return ResponseEntity.ok().build();
+	}
 
-        service.changePassword(
-            email,
-            body.get("currentPassword"),
-            body.get("newPassword")
-        );
-        return ResponseEntity.ok().build();
-    }
-    
-    @PostMapping("/editProfile")
-    public ResponseEntity<Void> editProfile(
-            @RequestBody Map<String, String> body,
-            @AuthenticationPrincipal String email) {
-        service.editProfile(email, body);
-        return ResponseEntity.ok().build();
-    }
-    
-    @PostMapping("/toggleSaved")
-    public ResponseEntity<String> toggleRecipeSaved(
-            @RequestBody String recipeId,
-            @AuthenticationPrincipal String email) {
-        boolean saved = service.toggleRecipeSaved(email, recipeId);
-        return ResponseEntity.ok().body("saved:" + saved);
-    }
-    
-    @PostMapping("/removeFromGroceryList")
-    public ResponseEntity<Void> removeFromGroceryList(
-            @RequestBody Map<String, String> body,
-            @AuthenticationPrincipal String email) {
-        service.removeFromGroceryList(email, body.get("ingredientName"));
-        return ResponseEntity.ok().build();
-    }
+	@PostMapping("/forgotPassword")
+	public ResponseEntity<Void> forgotPassword(@RequestBody Map<String, String> body) {
+		service.forgotPassword(body.get("email"));
+		return ResponseEntity.ok().build();
+	}  
+  
+	@PostMapping("/resetPassword")
+	public ResponseEntity<Void> resetPassword(@RequestBody Map<String, String> body) {
+		service.resetPassword(body.get("email"), body.get("code"), body.get("newPassword"));
+		return ResponseEntity.ok().build();
+	}
 
-    @PostMapping("/removeFromPantryList")
-    public ResponseEntity<Void> removeFromPantryList(
-            @RequestBody Map<String, String> body,
-            @AuthenticationPrincipal String email) {
-        service.removeFromPantryList(email, body.get("ingredientName"));
-        return ResponseEntity.ok().build();
-    }
-    
-    @PostMapping("/updateGroceryList")
+	@PostMapping("/changePassword")
+	public ResponseEntity<Void> changePassword(@RequestBody Map<String, String> body,
+			@AuthenticationPrincipal String email) {
+
+		service.changePassword(email, body.get("currentPassword"), body.get("newPassword"));
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/editProfile")
+	public ResponseEntity<Void> editProfile(@RequestBody Map<String, String> body,
+			@AuthenticationPrincipal String email) {
+		service.editProfile(email, body);
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/toggleSaved")
+	public ResponseEntity<String> toggleRecipeSaved(@RequestBody Map<String, String> body,
+			@AuthenticationPrincipal String email) {
+		boolean saved = service.toggleRecipeSaved(email, body.get("recipeId"));
+		return ResponseEntity.ok().body("saved:" + saved);
+	}
+
+	@PostMapping("/removeFromGroceryList")
+	public ResponseEntity<Void> removeFromGroceryList(@RequestBody Map<String, String> body,
+			@AuthenticationPrincipal String email) {
+		service.removeFromGroceryList(email, body.get("ingredientName"));
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/updatePantryList")
+	public ResponseEntity<Void> removeFromPantryList(@RequestBody List<UserIngredient> body,
+			@AuthenticationPrincipal String email) {
+		service.updatePantryList(email, body);
+		return ResponseEntity.ok().build();
+	} 
+	
+	 @PostMapping("/updateGroceryList")
     public ResponseEntity<Void> updateGroceryList(
             @RequestBody List<UserIngredient> ingredients,
             @AuthenticationPrincipal String email) {
@@ -98,4 +87,11 @@ public class UserController {
         service.updateGroceryList(email, ingredients);
         return ResponseEntity.ok().build();
     }
+
+	@PostMapping("/removeFromPantryList")
+	public ResponseEntity<Void> removeFromPantryList(@RequestBody Map<String, String> body,
+			@AuthenticationPrincipal String email) {
+		service.removeFromPantryList(email, body.get("ingredientName"));
+		return ResponseEntity.ok().build();
+	}
 }
