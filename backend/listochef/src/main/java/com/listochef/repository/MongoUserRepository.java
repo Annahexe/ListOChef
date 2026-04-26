@@ -1,6 +1,7 @@
 package com.listochef.repository;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.bson.Document;
@@ -147,4 +148,37 @@ public class MongoUserRepository implements UserRepository {
             pull("myPantryList", new Document("ingredientName", ingredientName))
         );
     }
+    
+    @Override
+    public void updateGroceryList(String email, List<UserIngredient> ingredients) {
+        if (ingredients == null || ingredients.isEmpty()) {
+            return;
+        }
+
+        for (UserIngredient ingredient : ingredients) {
+            if (ingredient.getIngredientName() == null || ingredient.getIngredientName().isBlank()) {
+                continue;
+            }
+
+            collection.updateOne(
+                eq("email", email),
+                pull("myGroceryList", new Document("ingredientName", ingredient.getIngredientName()))
+            );
+
+            if (ingredient.getIngredientAmount() == null || ingredient.getIngredientAmount().trim().equals("0")) {
+                continue;
+            }
+
+            Document ingredientDoc = new Document()
+                .append("ingredientName", ingredient.getIngredientName())
+                .append("ingredientTag", ingredient.getIngredientTag())
+                .append("ingredientAmount", ingredient.getIngredientAmount());
+
+            collection.updateOne(
+                eq("email", email),
+                push("myGroceryList", ingredientDoc)
+            );
+        }
+    }
+    
 }

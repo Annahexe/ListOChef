@@ -10,6 +10,9 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import java.util.List;
+import com.listochef.model.UserIngredient;
+
 @RestController
 @RequestMapping("/ListOChef")
 public class UserController {
@@ -84,6 +87,15 @@ public class UserController {
             @RequestBody Map<String, String> body,
             @AuthenticationPrincipal String email) {
         service.removeFromPantryList(email, body.get("ingredientName"));
+        return ResponseEntity.ok().build();
+    }
+    
+    @PostMapping("/updateGroceryList")
+    public ResponseEntity<Void> updateGroceryList(
+            @RequestBody List<UserIngredient> ingredients,
+            @AuthenticationPrincipal String email) {
+
+        service.updateGroceryList(email, ingredients);
         return ResponseEntity.ok().build();
     }
 }

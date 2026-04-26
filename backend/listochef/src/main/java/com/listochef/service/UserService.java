@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.listochef.model.User;
+import com.listochef.model.UserIngredient;
 import com.listochef.repository.UserRepository;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -224,4 +225,7 @@ public class UserService {
 	    userRepository.removeFromPantryList(email, ingredientName);
 	}
 	
+	public void updateGroceryList(String email, List<UserIngredient> ingredients) {
+	    userRepository.updateGroceryList(email, ingredients);
+	}
 }
