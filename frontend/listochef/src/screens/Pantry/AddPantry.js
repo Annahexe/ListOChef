@@ -158,7 +158,7 @@ const AddPantry = (props) => {
     }
 
     setFilteredPantryItemsList(result);
-  }, [searchText, selectedTags, pantryItems]);
+  }, [searchText, selectedTags, ingredientsList]);
 
   return (
     <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
