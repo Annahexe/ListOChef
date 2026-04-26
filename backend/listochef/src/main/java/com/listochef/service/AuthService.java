@@ -76,8 +76,6 @@ public class AuthService {
         response.put("token", token);
         response.put("user", storedUser);
         response.put("recipesSavedList", recipesSavedList);
-        response.put("myGroceryList", storedUser.getMyGroceryList());
-        response.put("myPantryList", storedUser.getMyPantryList());
         response.put("listIngredientsTags", ingredientsCategories);
         response.put("listRecipesTags", listRecipesTags); 
         response.put("listRecipesCategories", listRecipesCategories);

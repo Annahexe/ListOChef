@@ -73,7 +73,8 @@ public class UserController {
 	}
 
 	@PostMapping("/updatePantryList")
-	public ResponseEntity<Void> removeFromPantryList(@RequestBody List<UserIngredient> body,
+	public ResponseEntity<Void> removeFromPantryList(
+			@RequestBody List<UserIngredient> body,
 			@AuthenticationPrincipal String email) {
 		service.updatePantryList(email, body);
 		return ResponseEntity.ok().build();
