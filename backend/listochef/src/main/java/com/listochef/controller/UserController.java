@@ -12,6 +12,9 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import java.util.List;
+import com.listochef.model.UserIngredient;
+
 @RestController
 @RequestMapping("/ListOChef")
 public class UserController {
@@ -32,8 +35,8 @@ public class UserController {
 	public ResponseEntity<Void> forgotPassword(@RequestBody Map<String, String> body) {
 		service.forgotPassword(body.get("email"));
 		return ResponseEntity.ok().build();
-	}
-
+	}  
+  
 	@PostMapping("/resetPassword")
 	public ResponseEntity<Void> resetPassword(@RequestBody Map<String, String> body) {
 		service.resetPassword(body.get("email"), body.get("code"), body.get("newPassword"));
@@ -74,7 +77,16 @@ public class UserController {
 			@AuthenticationPrincipal String email) {
 		service.updatePantryList(email, body);
 		return ResponseEntity.ok().build();
-	}
+	} 
+	
+	 @PostMapping("/updateGroceryList")
+    public ResponseEntity<Void> updateGroceryList(
+            @RequestBody List<UserIngredient> ingredients,
+            @AuthenticationPrincipal String email) {
+
+        service.updateGroceryList(email, ingredients);
+        return ResponseEntity.ok().build();
+    }
 
 	@PostMapping("/removeFromPantryList")
 	public ResponseEntity<Void> removeFromPantryList(@RequestBody Map<String, String> body,

@@ -1,6 +1,7 @@
 package com.listochef.repository;
 
 import java.util.List;
+
 import java.util.Optional;
 
 import com.listochef.model.User;
@@ -26,4 +27,6 @@ public interface UserRepository {
 	void removeFromGroceryList(String email, String ingredientName);
 	
 	void removeFromPantryList(String email, String ingredientName);
+	
+	void updateGroceryList(String email, List<UserIngredient> ingredients);
 	}

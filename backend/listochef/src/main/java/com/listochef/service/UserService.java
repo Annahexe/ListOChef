@@ -260,4 +260,7 @@ public class UserService {
 	    userRepository.removeFromPantryList(email, ingredientName);
 	}
 	
+	public void updateGroceryList(String email, List<UserIngredient> ingredients) {
+	    userRepository.updateGroceryList(email, ingredients);
+	}
 }
