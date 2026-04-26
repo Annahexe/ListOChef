@@ -1,6 +1,7 @@
 package com.listochef.repository;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.bson.Document;
@@ -16,7 +17,6 @@ import static com.mongodb.client.model.Updates.*;
 
 @Repository
 public class MongoUserRepository implements UserRepository {
-
 
 	private final MongoCollection<Document> collection;
 
@@ -34,7 +34,7 @@ public class MongoUserRepository implements UserRepository {
 				UserIngredient ingredient = new UserIngredient();
 				ingredient.setIngredientName(ingredientDoc.getString("ingredientName"));
 				ingredient.setIngredientTag(ingredientDoc.getString("ingredientTag"));
-				ingredient.setIngredientAmount(ingredientDoc.getString("ingredientAmount"));
+				ingredient.setIngredientAmount(ingredientDoc.getInteger("ingredientAmount"));
 				myGroceryList.add(ingredient);
 			}
 		}
@@ -45,22 +45,14 @@ public class MongoUserRepository implements UserRepository {
 				UserIngredient ingredient = new UserIngredient();
 				ingredient.setIngredientName(ingredientDoc.getString("ingredientName"));
 				ingredient.setIngredientTag(ingredientDoc.getString("ingredientTag"));
-				ingredient.setIngredientAmount(ingredientDoc.getString("ingredientAmount"));
+				ingredient.setIngredientAmount(ingredientDoc.getInteger("ingredientAmount"));
 				myPantryList.add(ingredient);
 			}
 		}
 
-		return new User(
-			doc.getObjectId("_id").toHexString(),
-			doc.getString("name"),
-			doc.getString("surname"),
-			doc.getString("email"),
-			doc.getString("password"),
-			doc.getString("avatar"),
-			doc.getList("recipesSavedIds", String.class),
-			myGroceryList,
-			myPantryList
-		);
+		return new User(doc.getObjectId("_id").toHexString(), doc.getString("name"), doc.getString("surname"),
+				doc.getString("email"), doc.getString("password"), doc.getString("avatar"),
+				doc.getList("recipesSavedIds", String.class), myGroceryList, myPantryList);
 	}
 
 	@Override
@@ -68,7 +60,7 @@ public class MongoUserRepository implements UserRepository {
 		Document doc = collection.find(eq("email", email)).first();
 
 		if (doc == null) {
-			return Optional.empty();			
+			return Optional.empty();
 		}
 
 		return Optional.of(toUser(doc));
@@ -76,15 +68,10 @@ public class MongoUserRepository implements UserRepository {
 
 	@Override
 	public User register(User user) {
-		Document doc = new Document()
-				.append("name", user.getName())
-				.append("surname", user.getSurname())
-				.append("email", user.getEmail())
-				.append("password", user.getPassword())
-				.append("avatar", user.getAvatar())
-				.append("recipesSavedIds", new ArrayList<>())
-				.append("myGroceryList", new ArrayList<>())
-				.append("myPantryList", new ArrayList<>());
+		Document doc = new Document().append("name", user.getName()).append("surname", user.getSurname())
+				.append("email", user.getEmail()).append("password", user.getPassword())
+				.append("avatar", user.getAvatar()).append("recipesSavedIds", new ArrayList<>())
+				.append("myGroceryList", new ArrayList<>()).append("myPantryList", new ArrayList<>());
 
 		collection.insertOne(doc);
 
@@ -92,59 +79,48 @@ public class MongoUserRepository implements UserRepository {
 
 		return user;
 	}
-	
+
 	@Override
 	public User setPassword(User user) {
-	    collection.updateOne(
-	        eq("email", user.getEmail()),
-	        set("password", user.getPassword())
-	    );
-	    return user;
+		collection.updateOne(eq("email", user.getEmail()), set("password", user.getPassword()));
+		return user;
 	}
 
 	@Override
 	public void addToRecipesSaved(String email, String recipeId) {
-	    collection.updateOne(
-	        eq("email", email),
-	        addToSet("recipesSavedIds", recipeId)
-	    );
+		collection.updateOne(eq("email", email), addToSet("recipesSavedIds", recipeId));
 	}
-	
+
 	@Override
 	public UpdateResult deleteFromRecipesSaved(String email, String recipeId) {
-		 return collection.updateOne(
-			    eq("email", email),
-			    pull("recipesSavedIds", recipeId)
-			);
+		return collection.updateOne(eq("email", email), pull("recipesSavedIds", recipeId));
 	}
 
-	
 	@Override
 	public User editProfile(User user) {
-	    collection.updateOne(
-	        eq("email", user.getEmail()),
-	        combine(
-	            set("name", user.getName()),
-	            set("surname", user.getSurname()),
-	            set("password", user.getPassword())
-	        )
-	    );
-	    return user;
+		collection.updateOne(eq("email", user.getEmail()), combine(set("name", user.getName()),
+				set("surname", user.getSurname()), set("password", user.getPassword())));
+		return user;
 	}
-	
-    @Override
-    public void removeFromGroceryList(String email, String ingredientName) {
-        collection.updateOne(
-            eq("email", email),
-            pull("myGroceryList", new Document("ingredientName", ingredientName))
-        );
-    }
 
-    @Override
-    public void removeFromPantryList(String email, String ingredientName) {
-        collection.updateOne(
-            eq("email", email),
-            pull("myPantryList", new Document("ingredientName", ingredientName))
-        );
-    }
+	@Override
+	public void removeFromGroceryList(String email, String ingredientName) {
+		collection.updateOne(eq("email", email), pull("myGroceryList", new Document("ingredientName", ingredientName)));
+	}
+
+	@Override
+	public void updatePantryList(String email, List<UserIngredient> userIngredients) {
+		List<Document> pantryDocs = userIngredients.stream()
+				.map(i -> new Document().append("ingredientName", i.getIngredientName())
+						.append("ingredientAmount", i.getIngredientAmount())
+						.append("ingredientTag", i.getIngredientTag()))
+				.toList();
+		collection.updateOne(eq("email", email), set("myPantryList", pantryDocs));
+	}
+
+	@Override
+	public void removeFromPantryList(String email, String ingredientName) {
+		collection.updateOne(eq("email", email), pull("myPantryList", new Document("ingredientName", ingredientName)));
+	}
+
 }
