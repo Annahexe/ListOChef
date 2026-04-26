@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
+import Toast from "react-native-toast-message";
 
 import Context from "../../../context/Context";
 import OnboardingCard from "../../../components/OnboardingCard";
@@ -26,6 +27,7 @@ const Register = (props) => {
     password: "",
     confirmPassword: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = () => {
     const newErrors = {
@@ -46,15 +48,36 @@ const Register = (props) => {
   const onCreateAccount = async () => {
     const isValid = validateForm();
     console.log("REGISTER DATA:", registerData);
-    console.log("IS VALID:", isValid);
-    if (!isValid) return;
+    if (!isValid) {
+      Toast.show({
+        type: "error",
+        text1: "Check your register details",
+        text2: "Please complete all fields correctly.",
+      });
+      return;
+    }
+
+    setIsLoading(true);
 
     const isSuccess = await sendRegisterRequest();
 
+    setIsLoading(false);
+
     if (isSuccess) {
       props.navigation.navigate("Login");
+      setTimeout(() => {
+        Toast.show({
+          type: "success",
+          text1: "Account created!",
+          text2: "You can now log in.",
+        });
+      }, 400);
     } else {
-      alert("Failed Register.");
+      Toast.show({
+        type: "error",
+        text1: "Register failed",
+        text2: "Please try again later or with different details.",
+      });
     }
   };
 
@@ -63,12 +86,12 @@ const Register = (props) => {
     console.log(dataToSend);
 
     const response = await postData(route + "/register", dataToSend);
-    console.log(dataToSend)
+    console.log(dataToSend);
     if (!response) return false;
 
     const [status] = response;
     if (status === 200) {
-      console.log("return true")
+      console.log("return true");
       return true;
     }
 
@@ -133,7 +156,7 @@ const Register = (props) => {
         </Pressable>
 
         <View style={styles.buttonContainer}>
-          <PrimaryButton buttonText={"Create account"} onPress={onCreateAccount}></PrimaryButton>
+          <PrimaryButton buttonText="Create account" onPress={onCreateAccount} isLoading={isLoading} />
         </View>
 
         <Text style={styles.smallText}>Do you already have an account?</Text>

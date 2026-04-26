@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
+import Toast from "react-native-toast-message";
 
 import Context from "../../../context/Context";
 import OnboardingCard from "../../../components/OnboardingCard";
@@ -23,6 +24,7 @@ const Login = (props) => {
     password: "",
   });
   const [isLoginSuccess, setIsLoginSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = () => {
     const newErrors = {
@@ -36,19 +38,32 @@ const Login = (props) => {
   };
 
   const onLogin = async () => {
-    let isValid = validateForm();
-    if (!isValid) return;
+    const isValid = validateForm();
 
-    console.log(loginData);
+    if (!isValid) {
+      Toast.show({
+        type: "error",
+        text1: "Check your login details",
+        text2: "Please enter a valid email and password.",
+      });
+      return;
+    }
 
-    let isSuccess = await sendLoginRequest();
+    setIsLoading(true);
+
+    const isSuccess = await sendLoginRequest();
+
+    setIsLoading(false);
 
     if (isSuccess) {
       props.navigation.navigate("Home");
     } else {
-      alert("Failed login. :( Try again");
+      Toast.show({
+        type: "error",
+        text1: "Login failed",
+        text2: "Email or password is incorrect.",
+      });
     }
-    //props.navigation.navigate("Home");
   };
 
   const sendLoginRequest = async () => {
@@ -86,6 +101,11 @@ const Login = (props) => {
     const response = await postDataOnboarding(route + "/login", debugCredentials);
 
     if (!response) {
+      Toast.show({
+        type: "error",
+        text1: "SERVER **OFFLINE**",
+        text2: "SETTING UP FAKE INFO FOR QUICK LOGIN.",
+      });
       console.log("SERVER **OFFLINE**, SETTING UP FAKE INFO FOR QUICK LOGIN");
       props.navigation.navigate("Home");
     } else {
@@ -108,6 +128,11 @@ const Login = (props) => {
         setRecipesSaved(jsonResponse.recipesSavedList);
         props.navigation.navigate("Home");
       } else {
+        Toast.show({
+          type: "error",
+          text1: "SERVER **ERROR**",
+          text2: "SETTING UP FAKE INFO FOR QUICK LOGIN.",
+        });
         console.log("SERVER **ERROR**, SETTING UP FAKE INFO FOR QUICK LOGIN");
         props.navigation.navigate("Home");
         return;
@@ -141,7 +166,7 @@ const Login = (props) => {
         />
 
         <View style={styles.buttonContainer}>
-          <PrimaryButton buttonText={"Login"} onPress={onLogin}></PrimaryButton>
+          <PrimaryButton buttonText="Login" onPress={onLogin} isLoading={isLoading} />
         </View>
 
         <Text style={styles.smallText} onPress={() => debugLogin()}>

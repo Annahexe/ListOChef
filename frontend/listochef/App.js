@@ -3,6 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Provider as PaperProvider } from "react-native-paper";
 import { Provider } from "./src/context/Context";
 import { useFonts } from "expo-font";
+import Toast from "react-native-toast-message";
+import toastConfig from "./src/components/ToastConfig";
 
 import Start from "./src/screens/Start/Start";
 import Login from "./src/screens/Start/Login/Login";
@@ -42,6 +44,7 @@ export default function App() {
             <Stack.Screen name="Home" component={Home} />
           </Stack.Navigator>
         </NavigationContainer>
+        <Toast config={toastConfig} topOffset={40} />
       </Provider>
     </PaperProvider>
   );

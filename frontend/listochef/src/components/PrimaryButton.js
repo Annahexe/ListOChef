@@ -1,10 +1,13 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 
-const PrimaryButton = (props) => {
+const PrimaryButton = ({ onPress, buttonText, isLoading }) => {
   return (
     <View style={styles.buttonContainer}>
-      <Pressable style={styles.buttonStyle} onPress={props.onPress}>
-        <Text style={styles.buttonTextStyle}>{props.buttonText}</Text>
+      <Pressable style={styles.buttonStyle} onPress={onPress} disabled={isLoading}>
+        <View style={styles.content}>
+          {isLoading && <ActivityIndicator size="small" color="white" style={styles.loader} />}
+          <Text style={styles.buttonTextStyle}>{isLoading ? "Loading..." : buttonText}</Text>
+        </View>
       </Pressable>
     </View>
   );
@@ -34,6 +37,14 @@ const styles = StyleSheet.create({
     fontFamily: "MontserratSemiBold",
     color: "white",
     textAlign: "center",
+  },
+  content: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  loader: {
+    marginRight: 10,
   },
 });
 
