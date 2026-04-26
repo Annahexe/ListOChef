@@ -118,8 +118,15 @@ public class UserService {
 	}
 	
 	public void forgotPassword(String email) {
-	    if (userRepository.findByEmail(email).isEmpty()) return;
-
+		System.out.println("forgotPassword llamado con email: " + email);
+	    
+	    boolean exists = userRepository.findByEmail(email).isPresent();
+	    System.out.println("Usuario existe: " + exists);
+	    
+	    if (!exists) {
+	        System.out.println("Usuario no encontrado, saliendo sin enviar email");
+	        return;
+	    }
 	    String codigo = String.format("%06d", new Random().nextInt(999999));
 	    resetCodes.put(email, codigo);
 
@@ -131,32 +138,28 @@ public class UserService {
 	        helper.setSubject("ListoChef - Password Recovery");
 
 	        String html = """
-	            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 30px; border: 1px solid #e0e0e0; border-radius: 10px;">
-	                <div style="text-align: center; margin-bottom: 24px;">
-	                    <img src="cid:logo" width="80" alt="ListoChef Logo"/>
-	                </div>
-	                <p>Hello,</p>
-	                <p>We have received a request to reset your password on <strong>ListoChef</strong>.</p>
-	                <p>Here is your verification code:</p>
-	                <div style="text-align: center; margin: 24px 0;">
-	                    <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #2e7d32;">%s</span>
-	                </div>
-	                <p>Enter it in the app to continue. For security reasons, this code will expire in a few minutes.</p>
-	                <p>If you did not make this request, you can ignore this message and your password will remain unchanged.</p>
-	                <br/>
-	                <p>Thank you,<br/><strong>The ListoChef Team</strong></p>
-	            </div>
-	            """.formatted(codigo);
+	        	    <div style="font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 30px; border: 1px solid #e0e0e0; border-radius: 10px;">
+	        	        <div style="text-align: center; margin-bottom: 24px;">
+	        	            <img src="https://res.cloudinary.com/druphhiyv/image/upload/v1777107618/logo_qgbjc3.png" width="80" alt="ListoChef Logo"/>
+	        	        </div>
+	        	        <p>Hello,</p>
+	        	        <p>We have received a request to reset your password on <strong>ListoChef</strong>.</p>
+	        	        <p>Here is your verification code:</p>
+	        	        <div style="text-align: center; margin: 24px 0;">
+	        	            <span style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #2e7d32;">%s</span>
+	        	        </div>
+	        	        <p>Enter it in the app to continue. For security reasons, this code will expire in a few minutes.</p>
+	        	        <p>If you did not make this request, you can ignore this message and your password will remain unchanged.</p>
+	        	        <br/>
+	        	        <p>Thank you,<br/><strong>The ListoChef Team</strong></p>
+	        	    </div>
+	        	    """.formatted(codigo);
 
 	        helper.setText(html, true);
-
-	        // Cargar el logo desde resources
-	        ClassPathResource logo = new ClassPathResource("static/logo.png");
-	        helper.addInline("cid:logo", logo);
-
 	        mailSender.send(mensaje);
 
 	    } catch (Exception e) {
+	        e.printStackTrace();
 	        System.out.println("Error enviando email: " + e.getMessage());
 	    }
 	}
