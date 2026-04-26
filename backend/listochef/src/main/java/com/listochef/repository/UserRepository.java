@@ -1,8 +1,10 @@
 package com.listochef.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.listochef.model.User;
+import com.listochef.model.UserIngredient;
 import com.mongodb.client.result.UpdateResult;
 
 public interface UserRepository {
@@ -18,6 +20,8 @@ public interface UserRepository {
 	void addToRecipesSaved(String email, String recipeId);
 	
 	UpdateResult deleteFromRecipesSaved(String email, String recipeId);
+	
+	void updatePantryList (String email, List<UserIngredient> userIngredients);
 	
 	void removeFromGroceryList(String email, String ingredientName);
 	

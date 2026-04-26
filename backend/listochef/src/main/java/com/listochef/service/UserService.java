@@ -7,14 +7,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.listochef.model.User;
+import com.listochef.model.UserIngredient;
 import com.listochef.repository.UserRepository;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.springframework.mail.javamail.MimeMessageHelper;
 import javax.mail.internet.MimeMessage;
@@ -218,6 +221,39 @@ public class UserService {
 	
 	public void removeFromGroceryList(String email, String ingredientName) {
 	    userRepository.removeFromGroceryList(email, ingredientName);
+	}
+	
+	public void updatePantryList(String email, List<UserIngredient> userIngredients) {
+
+	    if (userIngredients == null) {
+	        throw new IllegalArgumentException("Lista nula");
+	    }
+
+	    // borra ingredientes con cantidad 0
+	    userIngredients.removeIf(i -> i.getIngredientAmount() == 0);
+
+	    // Set = libreta de nombres ya vistos
+	    Set<String> names = new HashSet<>();
+
+	    for (UserIngredient i : userIngredients) {
+
+	        if (i.getIngredientName() == null || i.getIngredientName().isBlank()) {
+	            throw new IllegalArgumentException("Nombre inválido");
+	        }
+
+	        if (i.getIngredientAmount() < 0) {
+	            throw new IllegalArgumentException("Cantidad inválida");
+	        }
+	        
+	        // si veo uno nuevo → lo anoto, si ya estaba anotado → error
+	        if (!names.add(i.getIngredientName().toLowerCase())) {
+	            throw new IllegalArgumentException(
+	                "Ingrediente duplicado: " + i.getIngredientName()
+	            );
+	        }
+	    }
+
+	    userRepository.updatePantryList(email, userIngredients);
 	}
 
 	public void removeFromPantryList(String email, String ingredientName) {
