@@ -139,7 +139,7 @@ public class MongoUserRepository implements UserRepository {
                 pull("myGroceryList", new Document("ingredientName", ingredient.getIngredientName()))
             );
 
-            if (ingredient.getIngredientAmount() == null || ingredient.getIngredientAmount().trim().equals("0")) {
+            if (ingredient.getIngredientAmount() == 0) {
                 continue;
             }
 
