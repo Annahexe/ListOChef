@@ -27,17 +27,16 @@ public class Main {
 	    public static void main(String[] args) {
 	        SpringApplication.run(Main.class, args);
 	    }
-
+	    
 	    @Bean
 	    public CommandLineRunner startupInfo(Environment env) {
 	        return args -> {
 	            log.info("========================================");
 	            log.info("🚀 ListOChef iniciado correctamente");
 	            log.info("========================================");
-	            log.info("📌 Perfil activo: {}", activeProfile);
-	            log.info("🔐 JWT Secret: {}...", jwtSecret.substring(0, Math.min(15, jwtSecret.length())));
-	            log.info("🗄️  MongoDB URI: {}...", mongoUri.substring(0, Math.min(30, mongoUri.length())));
+	            log.info("📌 Perfil: {}", activeProfile);
 	            log.info("🌐 Puerto: {}", env.getProperty("server.port"));
+	            log.info("🗄️ MongoDB: OK");
 	            log.info("========================================");
 	        };
 	    }
