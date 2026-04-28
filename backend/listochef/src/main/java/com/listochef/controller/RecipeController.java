@@ -16,64 +16,58 @@ import java.util.List;
 @RequestMapping("/ListOChef/recipes")
 public class RecipeController {
 
-    private final RecipeService service;
+	private final RecipeService service;
+	private final ObjectMapper mapper;
 
-    public RecipeController(RecipeService service) {
-        this.service = service;
-    }
+	public RecipeController(RecipeService service, ObjectMapper mapper) {
+		this.service = service;
+		this.mapper = mapper;
 
-    // 🔹 Crear receta
-    @PostMapping(value = "/createRecipe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createRecipe(
-        @AuthenticationPrincipal String email,
-        @RequestPart("recipe") String recipeJson,
-        @RequestPart(value = "photo", required = false) MultipartFile photo
-    ) throws Exception {
+	}
 
-        ObjectMapper mapper = new ObjectMapper();
-        Recipe recipe = mapper.readValue(recipeJson, Recipe.class);
+	// 🔹 Crear receta
+	@PostMapping(value = "/createRecipe", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<?> createRecipe(@AuthenticationPrincipal String email,
+			@RequestPart("recipe") String recipeJson,
+			@RequestPart(value = "photo", required = false) MultipartFile photo) throws Exception {
 
-        service.createRecipe(recipe, email, photo);
+		Recipe recipe = mapper.readValue(recipeJson, Recipe.class);
 
-        return ResponseEntity.ok().build();
-    }
-    
+		service.createRecipe(recipe, email, photo);
 
+		return ResponseEntity.ok().build();
+	}
 
-    // 🔹 Obtener todas
-    @GetMapping
-    public ResponseEntity<List<Recipe>> getAllRecipes(@AuthenticationPrincipal String email) {        
-        return ResponseEntity.ok(service.findAll(email));
-    }
+	// 🔹 Obtener todas
+	@GetMapping
+	public ResponseEntity<List<Recipe>> getAllRecipes(@AuthenticationPrincipal String email) {
+		return ResponseEntity.ok(service.findAll(email));
+	}
 
-    // 🔹 Obtener por ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Recipe> getRecipeById(@AuthenticationPrincipal String email, @PathVariable String id) {
-        return service.findById(id, email)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    @GetMapping("/search")
-    public ResponseEntity<List<Recipe>> getRecipes(
-    		@AuthenticationPrincipal String email,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String recipeName) {
+	// 🔹 Obtener por ID
+	@GetMapping("/{id}")
+	public ResponseEntity<Recipe> getRecipeById(@AuthenticationPrincipal String email, @PathVariable String id) {
+		return service.findById(id, email).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+	}
 
-        return ResponseEntity.ok(service.findByFilters(category, recipeName, email));
-    }
-    
+	@GetMapping("/search")
+	public ResponseEntity<List<Recipe>> getRecipes(@AuthenticationPrincipal String email,
+			@RequestParam(required = false) String category, @RequestParam(required = false) String recipeName) {
+
+		return ResponseEntity.ok(service.findByFilters(category, recipeName, email));
+	}
+
 //    @GetMapping("/userRecipes")
 //    public ResponseEntity<List<Recipe>> getRecipesUser(
 //    		@AuthenticationPrincipal String email) {
 //
 //        return ResponseEntity.ok(service.findByUser(email));
 //    }
-    
-    @GetMapping("/userRecipesSaved")
-    public ResponseEntity<List<Recipe>> getUserRecipesSaved(
-    		@AuthenticationPrincipal String email) {
 
-        return ResponseEntity.ok(service.getUserRecipesSaved(email));
-    }
-    
+	@GetMapping("/userRecipesSaved")
+	public ResponseEntity<List<Recipe>> getUserRecipesSaved(@AuthenticationPrincipal String email) {
+
+		return ResponseEntity.ok(service.getUserRecipesSaved(email));
+	}
+
 }

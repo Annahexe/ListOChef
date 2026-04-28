@@ -5,9 +5,12 @@ import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.listochef.model.UploadResult;
 import com.listochef.model.User;
 import com.listochef.model.UserIngredient;
+import com.listochef.model.UserTicket;
 import com.listochef.repository.UserRepository;
 import com.mongodb.client.result.UpdateResult;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -29,7 +32,8 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JavaMailSender mailSender;
-	
+    private final CloudinaryImageStorageService cloudinaryService;
+
 	private final List<String> avatars = List.of(
 	        "https://res.cloudinary.com/druphhiyv/image/upload/v1772983965/1_vlhqym.png",
 	        "https://res.cloudinary.com/druphhiyv/image/upload/v1772983965/2_wlsxdh.png",
@@ -78,10 +82,13 @@ public class UserService {
 		return avatars.get(randomIndex);
 	}
 
-	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JavaMailSender mailSender) {
+	public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JavaMailSender mailSender,
+			CloudinaryImageStorageService cloudinaryService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailSender = mailSender;
+        this.cloudinaryService = cloudinaryService;
+
     }
 
 	// 🔹 Crear usuario
@@ -265,5 +272,16 @@ public class UserService {
 	
 	public void updateGroceryList(String email, List<UserIngredient> ingredients) {
 	    userRepository.updateGroceryList(email, ingredients);
+	}
+	
+	public UserTicket createTicket(String email, UserTicket newTicket, MultipartFile photo) {
+		
+        // Si tiene foto, la sube
+        if (photo != null && !photo.isEmpty()) {
+            UploadResult res = cloudinaryService.upload(photo, email);
+            newTicket.setTicketPictureUri(res.getImageUrl());
+        }
+        
+        return userRepository.createTicket(email, newTicket);
 	}
 }
