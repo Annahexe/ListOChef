@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.listochef.model.User;
 import com.listochef.model.UserIngredient;
+import com.listochef.model.UserTicket;
 import com.mongodb.client.result.UpdateResult;
 
 public interface UserRepository {
@@ -29,4 +30,6 @@ public interface UserRepository {
 	void removeFromPantryList(String email, String ingredientName);
 	
 	void updateGroceryList(String email, List<UserIngredient> ingredients);
+	
+	UserTicket createTicket(String email, UserTicket newTicket);
 	}

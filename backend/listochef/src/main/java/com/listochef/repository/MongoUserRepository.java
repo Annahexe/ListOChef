@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 import com.listochef.model.User;
 import com.listochef.model.UserIngredient;
+import com.listochef.model.UserTicket;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.UpdateResult;
@@ -27,6 +29,7 @@ public class MongoUserRepository implements UserRepository {
 	private User toUser(Document doc) {
 		ArrayList<UserIngredient> myGroceryList = new ArrayList<>();
 		ArrayList<UserIngredient> myPantryList = new ArrayList<>();
+		ArrayList<UserTicket> myTicketsList = new ArrayList<>();
 
 		ArrayList<Document> groceryDocs = (ArrayList<Document>) doc.get("myGroceryList");
 		if (groceryDocs != null) {
@@ -49,10 +52,24 @@ public class MongoUserRepository implements UserRepository {
 				myPantryList.add(ingredient);
 			}
 		}
+		
+		ArrayList<Document> ticketsDocs = (ArrayList<Document>) doc.get("myTicketsList");
+		if (ticketsDocs != null) {
+			for (Document ticketDoc : ticketsDocs) {
+				UserTicket ticket = new UserTicket();
+				ticket.setId(ticketDoc.getObjectId("_id").toHexString());
+				ticket.setTicketPictureUri(ticketDoc.getString("ticketPictureUri"));
+				ticket.setSupermarket(ticketDoc.getString("supermarket"));
+				ticket.setTicketDate(ticketDoc.getDate("ticketDate"));
+				ticket.setAmountProducts(ticketDoc.getInteger("amountProducts"));
+				ticket.setTotalPrice(ticketDoc.getDouble("totalPrice"));
+				myTicketsList.add(ticket);
+			}
+		}
 
 		return new User(doc.getObjectId("_id").toHexString(), doc.getString("name"), doc.getString("surname"),
 				doc.getString("email"), doc.getString("password"), doc.getString("avatar"),
-				doc.getList("recipesSavedIds", String.class), myGroceryList, myPantryList);
+				doc.getList("recipesSavedIds", String.class), myGroceryList, myPantryList, myTicketsList);
 	}
 
 	@Override
@@ -71,7 +88,8 @@ public class MongoUserRepository implements UserRepository {
 		Document doc = new Document().append("name", user.getName()).append("surname", user.getSurname())
 				.append("email", user.getEmail()).append("password", user.getPassword())
 				.append("avatar", user.getAvatar()).append("recipesSavedIds", new ArrayList<>())
-				.append("myGroceryList", new ArrayList<>()).append("myPantryList", new ArrayList<>());
+				.append("myGroceryList", new ArrayList<>()).append("myPantryList", new ArrayList<>())
+				.append("myTicketsList", new ArrayList<>());
 
 		collection.insertOne(doc);
 
@@ -151,5 +169,25 @@ public class MongoUserRepository implements UserRepository {
             collection.updateOne(eq("email", email),push("myGroceryList", ingredientDoc));
         }
     }
+
+	@Override
+	public UserTicket createTicket(String email, UserTicket newTicket) {
+
+		ObjectId id = new ObjectId();
+
+	    newTicket.setId(id.toHexString());
+	    
+		Document newTicketDoc = new Document()
+				.append("_id", id)
+				.append("ticketPictureUri", newTicket.getTicketPictureUri())
+				.append("supermarket", newTicket.getSupermarket())
+				.append("ticketDate", newTicket.getTicketDate())
+				.append("amountProducts", newTicket.getAmountProducts())
+				.append("totalPrice", newTicket.getTotalPrice());
+		
+        collection.updateOne(eq("email", email),push("myTicketsList", newTicketDoc));
+
+        return newTicket;
+	}
     
 }

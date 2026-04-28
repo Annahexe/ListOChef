@@ -1,14 +1,18 @@
 package com.listochef.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.listochef.model.User;
 import com.listochef.model.UserIngredient;
+import com.listochef.model.UserTicket;
 import com.listochef.service.UserService;
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
@@ -20,9 +24,11 @@ import com.listochef.model.UserIngredient;
 public class UserController {
 
 	private final UserService service;
+	private final ObjectMapper mapper;
 
-	public UserController(UserService service) {
+	public UserController(UserService service, ObjectMapper mapper) {
 		this.service = service;
+		this.mapper = mapper;
 	}
 
 	@PostMapping("/register")
@@ -35,8 +41,8 @@ public class UserController {
 	public ResponseEntity<Void> forgotPassword(@RequestBody Map<String, String> body) {
 		service.forgotPassword(body.get("email"));
 		return ResponseEntity.ok().build();
-	}  
-  
+	}
+
 	@PostMapping("/resetPassword")
 	public ResponseEntity<Void> resetPassword(@RequestBody Map<String, String> body) {
 		service.resetPassword(body.get("email"), body.get("code"), body.get("newPassword"));
@@ -73,21 +79,19 @@ public class UserController {
 	}
 
 	@PostMapping("/updatePantryList")
-	public ResponseEntity<Void> removeFromPantryList(
-			@RequestBody List<UserIngredient> body,
+	public ResponseEntity<Void> removeFromPantryList(@RequestBody List<UserIngredient> body,
 			@AuthenticationPrincipal String email) {
 		service.updatePantryList(email, body);
 		return ResponseEntity.ok().build();
-	} 
-	
-	 @PostMapping("/updateGroceryList")
-    public ResponseEntity<Void> updateGroceryList(
-            @RequestBody List<UserIngredient> ingredients,
-            @AuthenticationPrincipal String email) {
+	}
 
-        service.updateGroceryList(email, ingredients);
-        return ResponseEntity.ok().build();
-    }
+	@PostMapping("/updateGroceryList")
+	public ResponseEntity<Void> updateGroceryList(@RequestBody List<UserIngredient> ingredients,
+			@AuthenticationPrincipal String email) {
+
+		service.updateGroceryList(email, ingredients);
+		return ResponseEntity.ok().build();
+	}
 
 	@PostMapping("/removeFromPantryList")
 	public ResponseEntity<Void> removeFromPantryList(@RequestBody Map<String, String> body,
@@ -95,4 +99,16 @@ public class UserController {
 		service.removeFromPantryList(email, body.get("ingredientName"));
 		return ResponseEntity.ok().build();
 	}
+
+	@PostMapping(value = "/createTicket", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<UserTicket> createTicket(@RequestPart("ticket") String ticketJson,
+			@RequestPart(value = "photo", required = false) MultipartFile photo, @AuthenticationPrincipal String email)
+			throws Exception {
+		UserTicket ticket = mapper.readValue(ticketJson, UserTicket.class);
+
+		UserTicket created = service.createTicket(email, ticket, photo);
+
+		return ResponseEntity.ok(created);
+	}
+
 }

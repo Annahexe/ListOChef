@@ -14,12 +14,13 @@ public class User {
 	private List<String> recipesSavedIds;
 	private List<UserIngredient> myGroceryList;
 	private List<UserIngredient> myPantryList;
+	private List<UserTicket> myTicketsList;
 	
 	public User() {
 	}
 
 	public User(String id, String name, String surname, String email, String password, String avatar,
-			List<String> recipesSavedIds, List<UserIngredient> myGroceryList, List<UserIngredient> myPantryList) {
+			List<String> recipesSavedIds, List<UserIngredient> myGroceryList, List<UserIngredient> myPantryList, List<UserTicket> myTicketsList) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -30,6 +31,7 @@ public class User {
 		this.recipesSavedIds = recipesSavedIds;
 		this.myGroceryList = myGroceryList;
 		this.myPantryList = myPantryList;
+		this.myTicketsList = myTicketsList;
 	}
 
 	public String getId() {
@@ -105,4 +107,11 @@ public class User {
 		this.myPantryList = myPantryList;
 	}
 
+	public List<UserTicket> getMyTicketsList() {
+		return myTicketsList;
+	}
+
+	public void setMyTicketsList(List<UserTicket> myTicketsList) {
+		this.myTicketsList = myTicketsList;
+	}
 }
