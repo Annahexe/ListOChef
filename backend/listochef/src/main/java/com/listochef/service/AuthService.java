@@ -49,6 +49,9 @@ public class AuthService {
     }
 
     public Map<String, Object> login(User user) {
+    	if (user.getEmail() != null) {
+            user.setEmail(user.getEmail().toLowerCase().trim());
+        }
         Optional<User> userOptional = repository.findByEmail(user.getEmail());
         if (userOptional.isEmpty()) {
             throw new RuntimeException("Invalid credentials");
