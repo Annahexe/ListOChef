@@ -110,5 +110,12 @@ public class UserController {
 
 		return ResponseEntity.ok(created);
 	}
+	
+	@PostMapping(value = "/deleteTicket/{ticketId}")
+	public ResponseEntity<Void> deleteTicket(@PathVariable String ticketId,
+	                                          @AuthenticationPrincipal String email) {
+	    service.deleteTicket(email, ticketId);
+	    return ResponseEntity.noContent().build();
+	}
 
 }

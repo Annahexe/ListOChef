@@ -284,4 +284,8 @@ public class UserService {
         
         return userRepository.createTicket(email, newTicket);
 	}
+	
+	public void deleteTicket(String email, String ticketId) {
+	    userRepository.deleteTicket(email, ticketId);
+	}
 }

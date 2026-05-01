@@ -32,4 +32,6 @@ public interface UserRepository {
 	void updateGroceryList(String email, List<UserIngredient> ingredients);
 	
 	UserTicket createTicket(String email, UserTicket newTicket);
+	
+	void deleteTicket(String email, String ticketId);
 	}

@@ -189,5 +189,13 @@ public class MongoUserRepository implements UserRepository {
 
         return newTicket;
 	}
+	
+	@Override
+	public void deleteTicket(String email, String ticketId) {
+	    collection.updateOne(
+	        eq("email", email),
+	        pull("myTicketsList", eq("_id", new ObjectId(ticketId)))
+	    );
+	}
     
 }
