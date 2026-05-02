@@ -23,3 +23,18 @@ export const isRequiredArray = (values) => {
 
   return hasEmptyItem ? "This field is required" : "";
 };
+
+export const isPositiveNumber = (value) => {
+  const number = Number(value);
+  return !isNaN(number) && number > 0 ? "" : "Must be greater than 0";
+};
+
+export const isPositiveInteger = (value) => {
+  const number = Number(value);
+  return Number.isInteger(number) && number > 0 ? "" : "Must be a whole number greater than 0";
+};
+
+export const isValidDate = (value) => {
+  const date = new Date(value);
+  return !isNaN(date.getTime()) ? "" : "Please enter a valid date";
+};

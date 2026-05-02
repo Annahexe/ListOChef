@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  Keyboard,
-  Dimensions,
-  Platform,
-} from "react-native";
+import { View, Text, Pressable, StyleSheet, Keyboard, Dimensions, Platform } from "react-native";
 import { useState, useContext } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -16,11 +8,11 @@ import Context from "../../context/Context";
 import PhotoPicker from "../../components/PhotoPicker";
 import ItemInput from "../../components/ItemInput";
 import TitleModalScreen from "../../components/TitleModalScreen";
-import AutocompleteInput from "../../components/AutocompleteInput";
-import AutocompleteList from "../../components/AutocompleteList";
 import ModalButtons from "../../components/ModalButtons";
 
-import { isRequired, isRequiredArray } from "../../utils/validators";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
+import { isRequired, isPositiveNumber, isPositiveInteger, isValidDate } from "../../utils/validators";
 import { postDataToken } from "../../services/services";
 
 const { height, width } = Dimensions.get("window");
@@ -29,49 +21,20 @@ const AddTicket = ({ navigation }) => {
   const { token, route } = useContext(Context);
   const [form, setForm] = useState({
     photo: null,
-    name: "",
-    category: "",
-    steps: "",
-    time: "",
-    difficulty: "",
+    supermarket: "",
+    ticketDate: new Date(),
+    amountProducts: "",
+    totalPrice: "",
   });
 
   const [errors, setErrors] = useState({
-    name: "",
-    category: "",
-    steps: "",
-    time: "",
-    difficulty: "",
-    ingredients: "",
-    tags: "",
+    supermarket: "",
+    ticketDate: "",
+    amountProducts: "",
+    totalPrice: "",
   });
 
-  const [ingredientsList, setIngredientsList] = useState([
-    "Pasta",
-    "Tomato",
-    "Tomato Sauce",
-    "Minced meat",
-    "Oil",
-    "Olive oil",
-    "Spices",
-    "Onion",
-    "Cheese",
-    "Apple",
-    "Orange",
-    "Jam",
-    "Egg",
-  ]);
-  const [tagsList, setTagsList] = useState([
-    "Pasta",
-    "Fish",
-    "Vegetable",
-    "Pork",
-    "Beef",
-    "Chicken",
-    "Vegan",
-  ]);
-  const [ingredients, setIngredients] = useState([""]);
-  const [tags, setTags] = useState([""]);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -93,8 +56,15 @@ const AddTicket = ({ navigation }) => {
     }
   };
 
+  const formatDate = (date) => {
+    return new Intl.DateTimeFormat("es-ES", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(new Date(date));
+  };
+
   const onSaved = async () => {
-    console.log("ON SAVED PRESSED");
     const isValid = validateForm();
 
     if (!isValid) {
@@ -102,19 +72,17 @@ const AddTicket = ({ navigation }) => {
       return;
     }
 
-    const newRecipe = {
-      recipeName: form.name,
-      ingredients,
-      category: form.category,
-      time: Number(form.time),
-      steps: form.steps,
-      difficulty: form.difficulty,
-      tags,
+    const newTicket = {
+      supermarket: form.supermarket,
+      ticketDate: form.ticketDate,
+      amountProducts: Number(form.amountProducts),
+      totalPrice: Number(form.totalPrice),
     };
-    console.log("SENDING NEW RECIPE: " + newRecipe);
+
+    console.log("SENDING NEW TICKET: " + newTicket);
 
     const formData = new FormData();
-    formData.append("recipe", JSON.stringify(newRecipe));
+    formData.append("ticket", JSON.stringify(newTicket));
 
     if (form.photo) {
       formData.append("photo", {
@@ -124,7 +92,7 @@ const AddTicket = ({ navigation }) => {
       });
     }
 
-    const isSuccess = await createRecipeRequest(formData);
+    const isSuccess = await addTicketRequest(formData);
 
     if (isSuccess) {
       console.log("SAVED CORRECTLY");
@@ -136,14 +104,10 @@ const AddTicket = ({ navigation }) => {
     Keyboard.dismiss();
   };
 
-  const createRecipeRequest = async (formData) => {
-    console.log("SENDING PETITION CREATERECIPEREQUEST");
+  const addTicketRequest = async (formData) => {
+    console.log("SENDING PETITION CREATE_TICKET_REQUEST");
 
-    const response = await postDataToken(
-      route + "/recipes/createRecipe",
-      formData,
-      token,
-    );
+    //const response = await postDataToken(route + "/recipes/createRecipe", formData, token);
 
     if (!response) {
       console.log("NO RESPONSE");
@@ -156,45 +120,28 @@ const AddTicket = ({ navigation }) => {
     return status === 200 || status === 201;
   };
 
-  const isFormComplete =
-    Object.values(form).every((value) => value) &&
-    ingredients.every((value) => value) &&
-    tags.every((value) => value);
+  const isFormComplete = Object.values(form).every((value) => value);
 
   const validateForm = () => {
     const newErrors = {
-      name: isRequired(form.name),
-      category: isRequired(form.category),
-      steps: isRequired(form.steps),
-      time: isRequired(form.time),
-      difficulty: isRequired(form.difficulty),
-      ingredients: isRequiredArray(ingredients),
-      tags: isRequiredArray(tags),
+      supermarket: isRequired(form.supermarket),
+      ticketDate: isRequired(form.ticketDate),
+      amountProducts: isRequired(form.amountProducts),
+      totalPrice: isRequired(form.totalPrice),
     };
 
     setErrors(newErrors);
-    return (
-      !newErrors.name &&
-      !newErrors.category &&
-      !newErrors.steps &&
-      !newErrors.time &&
-      !newErrors.difficulty &&
-      !newErrors.ingredients &&
-      !newErrors.tags
-    );
+    return !newErrors.supermarket && !newErrors.ticketDate && !newErrors.amountProducts && !newErrors.totalPrice;
   };
 
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-        <TitleModalScreen
-          title={"New Recipe"}
-          onPress={() => navigation.goBack()}
-        />
+        <TitleModalScreen title={"New Ticket"} onPress={() => navigation.goBack()} />
 
         <KeyboardAwareScrollView
           style={styles.scrollContainer}
-          nestedScrollEnabled={true} //perimte Scroll dentro de Scroll
+          nestedScrollEnabled={true}
           keyboardShouldPersistTaps="handled"
           extraScrollHeight={60}
           enableOnAndroid={true}
@@ -203,105 +150,43 @@ const AddTicket = ({ navigation }) => {
           <PhotoPicker photo={form.photo?.uri} choosePhoto={choosePhoto} />
 
           <ItemInput
-            label="Name:"
-            placeholder="Ex: Roast beef"
-            value={form.name}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, name: text }))
-            }
+            label="Supermarket:"
+            placeholder="Ex: Mercadona, Consum..."
+            value={form.supermarket}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, supermarket: text }))}
             keyboardType="default"
-            error={errors.name}
-          />
-
-          <AutocompleteList
-            label="Ingredients:"
-            values={ingredients}
-            setValues={setIngredients}
-            options={ingredientsList}
-            placeholder="Ex: Pasta"
-            error={errors.ingredients}
-          />
-
-          <AutocompleteInput
-            label="Category:"
-            placeholder="Ex: Breakfast"
-            value={form.category}
-            options={[
-              "Breakfast",
-              "Lunch",
-              "Dinner",
-              "Snack",
-              "Dessert",
-              "Brunch",
-            ]}
-            onSelect={(text) =>
-              setForm((prev) => ({ ...prev, category: text }))
-            }
-            error={errors.category}
+            error={errors.supermarket}
           />
 
           <ItemInput
-            label="Steps to make:"
-            placeholder="Step 1: ..."
-            value={form.steps}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, steps: text }))
-            }
+            label="Date:"
+            placeholder="Ex: 03/01/2025"
+            value={form.ticketDate}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, ticketDate: text }))}
             keyboardType="default"
-            multiline
-            numberOfLines={6}
-            error={errors.steps}
+            error={errors.ticketDate}
           />
 
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-            }}
-          >
-            <View style={{ width: "45%" }}>
-              <ItemInput
-                label="Time:"
-                placeholder="Ex: 20 min"
-                value={form.time}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, time: text }))
-                }
-                keyboardType="numeric"
-                error={errors.time}
-              />
-            </View>
+          <ItemInput
+            label="Total:"
+            placeholder="0.00"
+            value={form.totalPrice}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, totalPrice: text }))}
+            keyboardType="decimal"
+            error={errors.totalPrice}
+          />
 
-            <View style={{ width: "45%" }}>
-              <AutocompleteInput
-                label="Difficulty:"
-                placeholder="Ex: Low "
-                value={form.difficulty}
-                options={["Low", "Medium", "Hard"]}
-                onSelect={(text) =>
-                  setForm((prev) => ({ ...prev, difficulty: text }))
-                }
-                error={errors.difficulty}
-              />
-            </View>
-          </View>
-
-          <AutocompleteList
-            label="Tags"
-            values={tags}
-            setValues={setTags}
-            options={tagsList}
-            placeholder="Ex: Pasta"
-            error={errors.tags}
+          <ItemInput
+            label="Number of products:"
+            placeholder="0"
+            value={form.amountProducts}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, amountProducts: text }))}
+            keyboardType="numeric"
+            error={errors.amountProducts}
           />
         </KeyboardAwareScrollView>
 
-        <ModalButtons
-          onCancel={() => navigation.goBack()}
-          onSave={onSaved}
-          isFormComplete={isFormComplete}
-        />
+        <ModalButtons onCancel={() => navigation.goBack()} onSave={onSaved} isFormComplete={isFormComplete} />
       </View>
     </View>
   );
