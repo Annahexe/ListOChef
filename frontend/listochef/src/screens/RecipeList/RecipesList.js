@@ -1,7 +1,8 @@
 import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Keyboard } from "react-native";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import Toast from "react-native-toast-message";
+import { useFocusEffect } from "@react-navigation/native";
 
 import RecipeCard from "../../components/RecipeCard";
 import AddCircleButton from "../../components/AddCircleButton";
@@ -106,19 +107,21 @@ const RecipesList = (props) => {
     //     saved: true,
     //   },
     // ]);
-  }, [recipesSaved]);
+  }, []);
 
-  useEffect(() => {
-    async function fetchData() {
-      const data = await getUserRecipesPetition();
+  useFocusEffect(
+    useCallback(() => {
+      async function fetchData() {
+        const data = await getUserRecipesPetition();
 
-      if (data) {
-        setRecipesSaved(data);
+        if (data) {
+          setRecipesSaved(data);
+        }
       }
-    }
 
-    fetchData();
-  }, [recipesSaved]);
+      fetchData();
+    }, []),
+  );
 
   const onAddRecipe = () => {
     return props.navigation.navigate("AddRecipe");
@@ -144,6 +147,8 @@ const RecipesList = (props) => {
   };
 
   const toggleSaved = async (id) => {
+    const previousRecipes = recipesSaved;
+
     setRecipesSaved((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
 
     const result = await toggleSavedPetition({
@@ -151,6 +156,10 @@ const RecipesList = (props) => {
       token,
       recipeId: id,
     });
+
+    if (result === "ERROR") {
+      setRecipesSaved(previousRecipes);
+    }
 
     showToggleSavedToast(result);
   };
