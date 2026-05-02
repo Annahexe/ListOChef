@@ -13,6 +13,7 @@ import Context from "../../context/Context";
 import { getData } from "../../services/services";
 
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { dateBeautify } from "../../utils/dateBeautify";
 
 const Expenses = (props) => {
   const { route, token } = useContext(Context);
@@ -110,24 +111,11 @@ const Expenses = (props) => {
   const onViewTicket = (ticket) => {
     const serializedTicket = {
     ...ticket,
-    ticketDate: ticket.ticketDate.toLocaleDateString(),
+    ticketDate: ticket.ticketDate.toISOString(),
   };
     return props.navigation.navigate("ViewTicket", {
       ticket: serializedTicket,
     });
-  };
-
-  //Poner fecha bonita (meses)
-  const beautifulDate = (item) => {
-    const d = new Date(item.ticketDate);
-
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-    const day = d.getDate();
-    const month = months[d.getMonth()];
-    const year = d.getFullYear();
-
-    return `${day} ${month} ${year}`;
   };
 
   //Permite borrar ticket.  Salta alerta por si es un error.
@@ -278,7 +266,7 @@ const Expenses = (props) => {
                 <ExpensiveCard
                   key={ticket.id}
                   super={ticket.supermarket}
-                  date={beautifulDate(ticket)}
+                  date={dateBeautify(ticket.ticketDate)}
                   amount={ticket.amountProducts}
                   money={ticket.totalPrice}
                   onDelete={() => onDelete(ticket)}

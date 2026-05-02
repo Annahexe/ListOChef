@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import TitleModalScreen from "../../components/TitleModalScreen";
 import PrimaryButton from "../../components/PrimaryButton";
 
+import { dateBeautify } from "../../utils/dateBeautify";
+
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
@@ -35,7 +37,7 @@ const ViewTicket = ({ navigation, route }) => {
           </View>
 
           <View style={styles.ticketInfoContainer}>
-            <TicketInfoRow icon={<MaterialCommunityIcons name="calendar-blank-outline" size={28} color="white" />} label="Date:" value={ticket.ticketDate} />
+            <TicketInfoRow icon={<MaterialCommunityIcons name="calendar-blank-outline" size={28} color="white" />} label="Date:" value={dateBeautify(ticket.ticketDate)} />
 
             <TicketInfoRow icon={<AntDesign name="shopping-cart" size={28} color="white" />} label="Products:" value={`${ticket.amountProducts} products`} />
 
