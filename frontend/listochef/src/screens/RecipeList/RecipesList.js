@@ -19,7 +19,7 @@ import { FilterOrderDropdown } from "../../components/FilterOrderDropdown";
 import RecipeListTitleIcon from "../../../assets/icons/recipeList_titleIcon.svg";
 
 import Context from "../../context/Context";
-import { getData } from "../../services/services";
+import { getData, postDataToken } from "../../services/services";
 
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -40,9 +40,6 @@ const RecipesList = (props) => {
   }; //used to convert String creationDate to real date value
 
   useEffect(() => {
-    console.log("EN RECIPE LIST" + recipesSaved);
-    // aqui se muestran las recetas de recipesSaved (no hace falta hacer petition al backend porque lo obtenemos desde el login, lo demas lo guardamos en local)
-
     // setRecipesSaved([
     //   {
     //     id: "1",
@@ -118,18 +115,16 @@ const RecipesList = (props) => {
   }, [recipesSaved]);
 
   useEffect(() => {
-    const loadRecipes = async () => {
-      console.log("token before request:", token);
-
-      const data = await getRecipesPetition();
-      console.log("recipes response:", data);
+    async function fetchData() {
+      const data = await getUserRecipesPetition();
+      console.log(data);
 
       if (data) {
-        setRecipeList(data);
+        setRecipesSaved(data);
       }
-    };
+    }
 
-    loadRecipes();
+    fetchData();
   }, []);
 
   const onAddRecipe = () => {
@@ -161,11 +156,39 @@ const RecipesList = (props) => {
         recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe,
       ),
     );
+
+    const hasSavedRecipe = await toggleSavedPetition(id);
+
+    if (hasSavedRecipe) {
+      Toast.show({
+      type: "success",
+       text1: "Successfully saved recipe.",
+            });
+          } else {
+            Toast.show({
+              type: "error",
+              text1: "Removed from saved recipes.",
+            });
+          }
   };
 
-  const getRecipesPetition = async () => {
-    const response = await getData(route + "/recipes/userRecipes", token);
+  const getUserRecipesPetition = async () => {
+    const response = await getData(route + "/recipes/userRecipesSaved", token);
     return response;
+  };
+
+  const toggleSavedPetition = async (id) => {
+    let dataIdRecipe = {recipeId: id}
+    const response = await postDataToken(route + "/toggleSaved", dataIdRecipe, token);
+    if (!response) return false;
+
+    const [status, response] = response;
+    if (status === 200) {
+      console.log("RECEIVED RESPONSE FROM TOGGLE SAVED: ", response)
+      return true;
+    }
+
+    return false;
   };
 
   return (
