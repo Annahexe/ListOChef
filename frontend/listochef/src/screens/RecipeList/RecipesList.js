@@ -1,8 +1,7 @@
 import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Keyboard } from "react-native";
-import { useState, useEffect, useContext, useCallback } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import Toast from "react-native-toast-message";
-import { useFocusEffect } from "@react-navigation/native";
 
 import RecipeCard from "../../components/RecipeCard";
 import AddCircleButton from "../../components/AddCircleButton";
@@ -109,19 +108,17 @@ const RecipesList = (props) => {
     // ]);
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      async function fetchData() {
-        const data = await getUserRecipesPetition();
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getUserRecipesPetition();
 
-        if (data) {
-          setRecipesSaved(data);
-        }
+      if (data) {
+        setRecipesSaved(data);
       }
+    }
 
-      fetchData();
-    }, []),
-  );
+    fetchData();
+  }, [recipesSaved]);
 
   const onAddRecipe = () => {
     return props.navigation.navigate("AddRecipe");

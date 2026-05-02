@@ -30,8 +30,7 @@ export const postDataOnboarding = async (url, data) => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const jsonReceived = await response.json();
-    console.log("Contenido response text: " + jsonReceived);
-    console.log("Status: " + response.status);
+    console.log("Contenido response text: ", jsonReceived);
     return [response.status, jsonReceived];
   } catch (error) {
     console.log("postData error:", error);
@@ -52,7 +51,7 @@ export const postData = async (url, data) => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     const received = await response.status;
-    console.log("Contenido response text: " + received);
+    console.log("Contenido response text: ", received);
     return [received];
   } catch (error) {
     console.log("postData error:", error);
