@@ -1,6 +1,7 @@
 import { View, Text, Pressable, StyleSheet, Keyboard, Dimensions, Platform } from "react-native";
 import { useState, useContext } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import Toast from "react-native-toast-message";
 
 import * as ImagePicker from "expo-image-picker";
 
@@ -82,7 +83,11 @@ const AddRecipe = ({ navigation }) => {
     const isValid = validateForm();
 
     if (!isValid) {
-      alert("Please fill in all fields before saving");
+      Toast.show({
+        type: "error",
+        text1: "Check your recipe details.",
+        text2: "Please complete all fields correctly.",
+      });
       return;
     }
 
@@ -111,10 +116,20 @@ const AddRecipe = ({ navigation }) => {
     const isSuccess = await createRecipeRequest(formData);
 
     if (isSuccess) {
-      console.log("SAVED CORRECTLY");
       navigation.goBack();
+      setTimeout(() => {
+        Toast.show({
+          type: "success",
+          text1: "Recipe created!",
+          text2: "Your recipe was saved correctly.",
+        });
+      }, 400);
     } else {
-      alert("Failed :(");
+      Toast.show({
+        type: "error",
+        text1: "Recipe creation failed.",
+        text2: "Please try again later.",
+      });
     }
 
     Keyboard.dismiss();

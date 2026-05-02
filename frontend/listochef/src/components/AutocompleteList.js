@@ -6,7 +6,11 @@ const AutocompleteList = (props) => {
     if (props.values.length === 0 || props.values[props.values.length - 1] !== "") {
       props.setValues((prev) => [...prev, ""]);
     } else {
-      alert(`Please fill in the previous ${props.label.toLowerCase()} before adding a new one.`);
+      Toast.show({
+        type: "error",
+        text1: `Please fill in the previous ${props.label.toLowerCase()}`,
+        text2: "before adding a new one.",
+      });
     }
   };
 

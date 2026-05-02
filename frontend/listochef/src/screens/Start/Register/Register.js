@@ -51,7 +51,7 @@ const Register = (props) => {
     if (!isValid) {
       Toast.show({
         type: "error",
-        text1: "Check your register details",
+        text1: "Check your register details.",
         text2: "Please complete all fields correctly.",
       });
       return;
@@ -75,7 +75,7 @@ const Register = (props) => {
     } else {
       Toast.show({
         type: "error",
-        text1: "Register failed",
+        text1: "Register failed.",
         text2: "Please try again later or with different details.",
       });
     }

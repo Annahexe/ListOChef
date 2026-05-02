@@ -43,7 +43,7 @@ const Login = (props) => {
     if (!isValid) {
       Toast.show({
         type: "error",
-        text1: "Check your login details",
+        text1: "Check your login details.",
         text2: "Please enter a valid email and password.",
       });
       return;
@@ -60,7 +60,7 @@ const Login = (props) => {
     } else {
       Toast.show({
         type: "error",
-        text1: "Login failed",
+        text1: "Login failed.",
         text2: "Email or password is incorrect.",
       });
     }
