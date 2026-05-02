@@ -1,7 +1,7 @@
 import { View, Text, Pressable, StyleSheet, Keyboard, Dimensions, Platform } from "react-native";
 import { useState, useContext } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
+import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
 
 import Context from "../../context/Context";
@@ -10,15 +10,14 @@ import ItemInput from "../../components/ItemInput";
 import TitleModalScreen from "../../components/TitleModalScreen";
 import ModalButtons from "../../components/ModalButtons";
 
-import DateTimePicker from "@react-native-community/datetimepicker";
-
 import { isRequired, isPositiveNumber, isPositiveInteger, isValidDate } from "../../utils/validators";
 import { postDataToken } from "../../services/services";
 
-const { height, width } = Dimensions.get("window");
+const { height } = Dimensions.get("window");
 
 const AddTicket = ({ navigation }) => {
   const { token, route } = useContext(Context);
+
   const [form, setForm] = useState({
     photo: null,
     supermarket: "",
@@ -79,7 +78,7 @@ const AddTicket = ({ navigation }) => {
       totalPrice: Number(form.totalPrice),
     };
 
-    console.log("SENDING NEW TICKET: " + newTicket);
+    console.log("SENDING NEW TICKET: ", newTicket);
 
     const formData = new FormData();
     formData.append("ticket", JSON.stringify(newTicket));
