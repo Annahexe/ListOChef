@@ -1,94 +1,51 @@
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  ScrollView,
-  Image,
-} from "react-native";
-import { useState, useEffect, useContext } from "react";
+import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 
-import ItemView from "../../components/ItemView";
 import TitleModalScreen from "../../components/TitleModalScreen";
-import Heart from "../../components/Heart";
+import PrimaryButton from "../../components/PrimaryButton";
 
-import Context from "../../context/Context";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
-const ViewTicket = ({ navigation }) => {
-  const [recipe, setRecipe] = useState();
-  const [isSaved, setIsSaved] = useState(recipe?.isSaved ?? false);
-  const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
+const TicketInfoRow = ({ icon, label, value }) => {
+  return (
+    <View style={styles.infoRow}>
+      {icon}
 
-  useEffect(() => {
-    //llamada a la api con el id que tendremos. Actualmente ponemos nosotros el objeto
-    setRecipe(lastRecipeSeen);
-  }, []);
+      <View style={styles.infoTextContainer}>
+        <Text style={styles.ticketTextLabel}>{label}</Text>
+        <Text style={styles.ticketText}>{value}</Text>
+      </View>
+    </View>
+  );
+};
 
-  const onAddGroceryList = () => {
-    return navigation.goBack();
-  };
+const ViewTicket = ({ navigation, route }) => {
+  const { ticket } = route.params;
 
-  if (!recipe) return null;
-
-  const onToggleSaved = () => {
-    setIsSaved((prev) => !prev);
-    setRecipe((prev) => ({ ...prev, isSaved: !prev.isSaved }));
-    setLastRecipeSeen((prev) => ({ ...prev, isSaved: !prev.isSaved }));
-  };
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-        <TitleModalScreen
-          title={recipe.recipeName}
-          onPress={() => navigation.goBack()}
-          size={25}
-        />
+        <TitleModalScreen title={ticket.supermarket} onPress={() => navigation.goBack()} size={30} />
 
         <ScrollView style={styles.scrollContainer}>
+          <Text style={styles.labelStyle} numberOfLines={1}>TICKET PHOTO:</Text>
+
           <View style={styles.imageContainer}>
-            <Image
-              style={styles.mainImage}
-              source={{
-                uri: recipe.photo,
-              }}
-            ></Image>
-            <Heart
-              colorHeart={isSaved ? "red" : "white"}
-              stiles={"onImage"}
-              onPress={() => onToggleSaved?.()}
-            />
-          </View>
-          <ItemView
-            label={"Ingredients"}
-            ingredients={recipe.ingredients}
-          ></ItemView>
-
-          <Pressable
-            onPress={onAddGroceryList}
-            style={[styles.button, { borderRadius: 22 }]}
-          >
-            <Text style={styles.textButton}>Add to grocery list</Text>
-          </Pressable>
-
-          <View style={styles.multipleLines}>
-            <ItemView
-              label={"Category"}
-              info={recipe.category}
-              style={{ flex: 1 }}
-            ></ItemView>
-            <ItemView
-              label={"Time"}
-              time={recipe.time}
-              style={{ flex: 1 }}
-            ></ItemView>
-            <ItemView
-              label={"Difficulty"}
-              info={recipe.difficulty}
-              style={{ flex: 1 }}
-            ></ItemView>
+            <Image style={styles.mainImage} source={{ uri: ticket.ticketPictureUri }} />
           </View>
 
-          <ItemView label={"Steps to create"} info={recipe.steps}></ItemView>
+          <View style={styles.ticketInfoContainer}>
+            <TicketInfoRow icon={<MaterialCommunityIcons name="calendar-blank-outline" size={28} color="white" />} label="Date:" value={ticket.ticketDate} />
+
+            <TicketInfoRow icon={<AntDesign name="shopping-cart" size={28} color="white" />} label="Products:" value={`${ticket.amountProducts} products`} />
+
+            <View style={styles.totalRow}>
+              <Text style={styles.ticketText}>Total:</Text>
+              <Text style={styles.ticketPrice}>{ticket.totalPrice}€</Text>
+            </View>
+          </View>
+
+          <PrimaryButton onPress={() => navigation.goBack()} buttonText="Close" />
         </ScrollView>
       </View>
     </View>
@@ -99,7 +56,7 @@ const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center", // o flex-end si quieres tipo bottom sheet
+    justifyContent: "center",
     padding: 20,
     paddingVertical: 50,
   },
@@ -109,62 +66,85 @@ const styles = StyleSheet.create({
     flex: 2,
     overflow: "hidden",
   },
-  button: {
-    margin: 10,
-    backgroundColor: "#4B643F",
-    padding: 10,
-    borderRadius: 8,
-    textAlign: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: -1, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 5,
-  },
   scrollContainer: {
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingHorizontal: 20,
     flex: 2,
     marginVertical: 15,
-    paddingBottom: 20,
     marginBottom: 0,
   },
-  buttonContainer: {
-    width: "60%",
-    alignSelf: "center",
-  },
-  textButton: {
-    fontSize: 25,
+  labelStyle: {
+    fontSize: 16,
     fontFamily: "InterBold",
-    color: "white",
-    textAlign: "center",
-  },
-  mainImage: {
-    borderRadius: 15,
-    width: "100%",
-    height: 150,
-    resizeMode: "cover",
+    color: "#2C5818",
   },
   imageContainer: {
     position: "relative",
     marginBottom: 10,
+    aspectRatio: 0.6,
     shadowColor: "#000",
     shadowOffset: { width: -1, height: 4 },
     shadowOpacity: 0.5,
     shadowRadius: 2,
     elevation: 5,
+    backgroundColor: "#DBE0D9",
+    borderRadius: 15,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderColor: "#2C5818",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  saveButton: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    zIndex: 10, // asegurar que esté encima
-    padding: 5,
+  mainImage: {
+    width: "92%",
+    height: "95%",
+    resizeMode: "cover",
   },
-  multipleLines: {
+  ticketInfoContainer: {
+    backgroundColor: "#A5B19F",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: -1, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    marginBottom: 10,
+    elevation: 5,
+    paddingLeft: "4%",
+    padding: "3%",
+  },
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    borderBottomWidth: 1,
+    borderBottomColor: "#0C1F03",
+    width: "100%",
+    alignSelf: "center",
+    alignItems: "center",
+    paddingVertical: 5,
+  },
+  infoTextContainer: {
+    marginLeft: "2%",
+  },
+  totalRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    width: "100%",
+    alignSelf: "center",
+    paddingVertical: "5%",
+  },
+  ticketTextLabel: {
+    color: "white",
+    fontSize: 14,
+    fontFamily: "MontserratSemiBold",
+  },
+  ticketText: {
+    color: "white",
+    fontSize: 16,
+    fontFamily: "MontserratSemiBold",
+  },
+  ticketPrice: {
+    color: "#2C5818",
+    fontSize: 18,
+    fontFamily: "MontserratSemiBold",
   },
 });
 

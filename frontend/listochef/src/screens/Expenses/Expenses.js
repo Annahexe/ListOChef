@@ -107,8 +107,14 @@ const Expenses = (props) => {
   };
 
   //Accede a la pantalla de ver ticket
-  const onViewTicket = () => {
-    return props.navigation.navigate("ViewTicket");
+  const onViewTicket = (ticket) => {
+    const serializedTicket = {
+    ...ticket,
+    ticketDate: ticket.ticketDate.toLocaleDateString(),
+  };
+    return props.navigation.navigate("ViewTicket", {
+      ticket: serializedTicket,
+    });
   };
 
   //Poner fecha bonita (meses)
@@ -276,7 +282,7 @@ const Expenses = (props) => {
                   amount={ticket.amountProducts}
                   money={ticket.totalPrice}
                   onDelete={() => onDelete(ticket)}
-                  onViewTicket={onViewTicket}
+                  onViewTicket={() => onViewTicket(ticket)}
                 />
               ))}
             </ScrollView>
