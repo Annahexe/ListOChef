@@ -6,7 +6,8 @@ import { TagsCarousel } from "../../components/TagsCarousel";
 import RecipeCard from "../../components/RecipeCard";
 
 import Context from "../../context/Context";
-import { getData } from "../../services/services";
+import Toast from "react-native-toast-message";
+import { getData, postDataToken } from "../../services/services";
 
 import Feather from "@expo/vector-icons/Feather";
 
@@ -16,6 +17,11 @@ const SearchRecipes = (props) => {
   const [recipeList, setRecipeList] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const TOGGLE_SAVED_STATUS = {
+    SAVED: "SAVED",
+    REMOVED: "REMOVED",
+    ERROR: "ERROR",
+  };
 
   //THESE TAGS SHOULD BE FROM BACKEND, FOR EXAMPLE const TAGS = ["All", ...listRecipesTags];
   const TAGS = [
@@ -48,10 +54,27 @@ const SearchRecipes = (props) => {
     });
   };
 
-  const toggleSaved = (id) => {
+  const toggleSaved = async (id) => {
     setRecipeList((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
-    // aqui guardar en local -> setRecipesSaved() (similar a arriba, pero con solo una lista de los trues)
-    // y enviar petiton backend (id) true false lo que devuelve simplemente lo ponemos con un console log
+
+    const result = await toggleSavedPetition(id);
+
+    if (result === TOGGLE_SAVED_STATUS.SAVED) {
+      Toast.show({
+        type: "success",
+        text1: "Successfully saved recipe.",
+      });
+    } else if (result === TOGGLE_SAVED_STATUS.REMOVED) {
+      Toast.show({
+        type: "error",
+        text1: "Removed from saved recipes.",
+      });
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Could not update saved recipe.",
+      });
+    }
   };
 
   //demo data
@@ -77,6 +100,24 @@ const SearchRecipes = (props) => {
     console.log("ENVIO PETICION");
     const response = await getData(route + "/recipes", token);
     return response;
+  };
+
+  const toggleSavedPetition = async (id) => {
+    const dataIdRecipe = { recipeId: id };
+    const response = await postDataToken(route + "/toggleSaved", dataIdRecipe, token);
+
+    if (!response) return TOGGLE_SAVED_STATUS.ERROR;
+
+    const [status, jsonResponse] = response;
+
+    if (status === 200) {
+      console.log("RECEIVED RESPONSE FROM TOGGLE SAVED: ", jsonResponse);
+
+      if (jsonResponse === "saved:true") return TOGGLE_SAVED_STATUS.SAVED;
+      if (jsonResponse === "saved:false") return TOGGLE_SAVED_STATUS.REMOVED;
+    }
+
+    return TOGGLE_SAVED_STATUS.ERROR;
   };
 
   // const recipesData = [

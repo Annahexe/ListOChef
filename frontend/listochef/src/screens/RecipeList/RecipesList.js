@@ -124,7 +124,7 @@ const RecipesList = (props) => {
     }
 
     fetchData();
-  }, []);
+  }, [recipesSaved]);
 
   const onAddRecipe = () => {
     return props.navigation.navigate("AddRecipe");
