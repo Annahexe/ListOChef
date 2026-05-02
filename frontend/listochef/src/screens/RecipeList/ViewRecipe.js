@@ -6,19 +6,13 @@ import TitleModalScreen from "../../components/TitleModalScreen";
 import Heart from "../../components/Heart";
 import Context from "../../context/Context";
 
-import Toast from "react-native-toast-message";
-import { postDataToken } from "../../services/services";
+import { getData } from "../../services/services";
+import { toggleSavedPetition, showToggleSavedToast } from "../../utils/toggleSavedRecipe";
 
 const ViewRecipe = ({ navigation }) => {
   const { route, token, lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
   const [recipe, setRecipe] = useState();
   const [isSaved, setIsSaved] = useState(recipe?.isSaved ?? false);
-
-  const TOGGLE_SAVED_STATUS = {
-    SAVED: "SAVED",
-    REMOVED: "REMOVED",
-    ERROR: "ERROR",
-  };
 
   useEffect(() => {
     setRecipe(lastRecipeSeen);
@@ -35,40 +29,13 @@ const ViewRecipe = ({ navigation }) => {
     setRecipe((prev) => ({ ...prev, saved: !prev.saved }));
     setLastRecipeSeen((prev) => ({ ...prev, saved: !prev.saved }));
 
-    const result = await toggleSavedPetition(recipe.id);
+    const result = await toggleSavedPetition({
+      route,
+      token,
+      recipeId: recipe.id,
+    });
 
-    if (result === TOGGLE_SAVED_STATUS.SAVED) {
-      Toast.show({
-        type: "success",
-        text1: "Successfully saved recipe.",
-      });
-    } else if (result === TOGGLE_SAVED_STATUS.REMOVED) {
-      Toast.show({
-        type: "error",
-        text1: "Removed from saved recipes.",
-      });
-    } else {
-      Toast.show({
-        type: "error",
-        text1: "Could not update saved recipe.",
-      });
-    }
-  };
-
-  const toggleSavedPetition = async (id) => {
-    const dataIdRecipe = { recipeId: id };
-    const response = await postDataToken(route + "/toggleSaved", dataIdRecipe, token);
-
-    if (!response) return TOGGLE_SAVED_STATUS.ERROR;
-
-    const [status, jsonResponse] = response;
-
-    if (status === 200) {
-      if (jsonResponse === "saved:true") return TOGGLE_SAVED_STATUS.SAVED;
-      if (jsonResponse === "saved:false") return TOGGLE_SAVED_STATUS.REMOVED;
-    }
-
-    return TOGGLE_SAVED_STATUS.ERROR;
+    showToggleSavedToast(result);
   };
 
   return (

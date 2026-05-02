@@ -12,7 +12,8 @@ import { FilterOrderDropdown } from "../../components/FilterOrderDropdown";
 import RecipeListTitleIcon from "../../../assets/icons/recipeList_titleIcon.svg";
 
 import Context from "../../context/Context";
-import { getData, postDataToken } from "../../services/services";
+import { getData } from "../../services/services";
+import { toggleSavedPetition, showToggleSavedToast } from "../../utils/toggleSavedRecipe";
 
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -25,12 +26,6 @@ const RecipesList = (props) => {
 
   const tabBarHeight = useBottomTabBarHeight();
   const [filterOrderValue, setFilterOrderValue] = useState("Oldest");
-
-  const TOGGLE_SAVED_STATUS = {
-    SAVED: "SAVED",
-    REMOVED: "REMOVED",
-    ERROR: "ERROR",
-  };
 
   const toTime = (ddmmyyyy) => {
     // "17/02/2026" -> [17, 2, 2026]
@@ -151,45 +146,18 @@ const RecipesList = (props) => {
   const toggleSaved = async (id) => {
     setRecipesSaved((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
 
-    const result = await toggleSavedPetition(id);
+    const result = await toggleSavedPetition({
+      route,
+      token,
+      recipeId: id,
+    });
 
-    if (result === TOGGLE_SAVED_STATUS.SAVED) {
-      Toast.show({
-        type: "success",
-        text1: "Successfully saved recipe.",
-      });
-    } else if (result === TOGGLE_SAVED_STATUS.REMOVED) {
-      Toast.show({
-        type: "error",
-        text1: "Removed from saved recipes.",
-      });
-    } else {
-      Toast.show({
-        type: "error",
-        text1: "Could not update saved recipe.",
-      });
-    }
+    showToggleSavedToast(result);
   };
 
   const getUserRecipesPetition = async () => {
     const response = await getData(route + "/recipes/userRecipesSaved", token);
     return response;
-  };
-
-  const toggleSavedPetition = async (id) => {
-    const dataIdRecipe = { recipeId: id };
-    const response = await postDataToken(route + "/toggleSaved", dataIdRecipe, token);
-
-    if (!response) return TOGGLE_SAVED_STATUS.ERROR;
-
-    const [status, jsonResponse] = response;
-
-    if (status === 200) {
-      if (jsonResponse === "saved:true") return TOGGLE_SAVED_STATUS.SAVED;
-      if (jsonResponse === "saved:false") return TOGGLE_SAVED_STATUS.REMOVED;
-    }
-
-    return TOGGLE_SAVED_STATUS.ERROR;
   };
 
   return (
@@ -198,7 +166,7 @@ const RecipesList = (props) => {
         <View style={styles.container}>
           <TitleIconPage titleText="My Recipes" icon={RecipeListTitleIcon} />
 
-          <Seeker placeholderText="Search recipe..." onPress={goSearchRecipe} editable={false}></Seeker>
+          <Seeker placeholderText="Search new recipes..." onPress={goSearchRecipe} editable={false}></Seeker>
 
           <View style={{ flex: 1, width: "100%" }}>
             <ScrollView style={{ width: "100%" }} contentContainerStyle={{ paddingBottom: 80 }}>

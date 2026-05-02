@@ -7,7 +7,8 @@ import RecipeCard from "../../components/RecipeCard";
 
 import Context from "../../context/Context";
 import Toast from "react-native-toast-message";
-import { getData, postDataToken } from "../../services/services";
+import { getData } from "../../services/services";
+import { toggleSavedPetition, showToggleSavedToast } from "../../utils/toggleSavedRecipe";
 
 import Feather from "@expo/vector-icons/Feather";
 
@@ -17,11 +18,6 @@ const SearchRecipes = (props) => {
   const [recipeList, setRecipeList] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const TOGGLE_SAVED_STATUS = {
-    SAVED: "SAVED",
-    REMOVED: "REMOVED",
-    ERROR: "ERROR",
-  };
 
   //THESE TAGS SHOULD BE FROM BACKEND, FOR EXAMPLE const TAGS = ["All", ...listRecipesTags];
   const TAGS = [
@@ -57,24 +53,13 @@ const SearchRecipes = (props) => {
   const toggleSaved = async (id) => {
     setRecipeList((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
 
-    const result = await toggleSavedPetition(id);
+    const result = await toggleSavedPetition({
+      route,
+      token,
+      recipeId: id,
+    });
 
-    if (result === TOGGLE_SAVED_STATUS.SAVED) {
-      Toast.show({
-        type: "success",
-        text1: "Successfully saved recipe.",
-      });
-    } else if (result === TOGGLE_SAVED_STATUS.REMOVED) {
-      Toast.show({
-        type: "error",
-        text1: "Removed from saved recipes.",
-      });
-    } else {
-      Toast.show({
-        type: "error",
-        text1: "Could not update saved recipe.",
-      });
-    }
+    showToggleSavedToast(result);
   };
 
   useEffect(() => {
@@ -99,22 +84,6 @@ const SearchRecipes = (props) => {
   const getRecipesPetition = async () => {
     const response = await getData(route + "/recipes", token);
     return response;
-  };
-
-  const toggleSavedPetition = async (id) => {
-    const dataIdRecipe = { recipeId: id };
-    const response = await postDataToken(route + "/toggleSaved", dataIdRecipe, token);
-
-    if (!response) return TOGGLE_SAVED_STATUS.ERROR;
-
-    const [status, jsonResponse] = response;
-
-    if (status === 200) {
-      if (jsonResponse === "saved:true") return TOGGLE_SAVED_STATUS.SAVED;
-      if (jsonResponse === "saved:false") return TOGGLE_SAVED_STATUS.REMOVED;
-    }
-
-    return TOGGLE_SAVED_STATUS.ERROR;
   };
 
   // const recipesData = [
