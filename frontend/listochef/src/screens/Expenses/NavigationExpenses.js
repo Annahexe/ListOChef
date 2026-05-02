@@ -10,8 +10,16 @@ const NavigationExpenses = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Group>
       <Stack.Screen name="Expenses" component={Expenses} />
-      <Stack.Screen name="AddTicket" component={AddTicket} />
-      <Stack.Screen name="ViewTicket" component={ViewTicket} />
+    </Stack.Group>
+    <Stack.Group
+      screenOptions={{
+        presentation: "transparentModal",
+        animation: "slide_from_bottom",
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="AddTicket" component={AddTicket} options={{ headerShown: false, headerMode: "none" }} />
+      <Stack.Screen name="ViewTicket" component={ViewTicket} options={{ headerShown: false, headerMode: "none" }} />
     </Stack.Group>
   </Stack.Navigator>
 );
