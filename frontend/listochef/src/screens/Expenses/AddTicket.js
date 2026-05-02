@@ -1,77 +1,39 @@
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  Keyboard,
-  Dimensions,
-  Platform,
-} from "react-native";
+import { View, Text, Pressable, StyleSheet, Keyboard, Dimensions, Platform } from "react-native";
 import { useState, useContext } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
+import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from "expo-image-picker";
 
 import Context from "../../context/Context";
 import PhotoPicker from "../../components/PhotoPicker";
 import ItemInput from "../../components/ItemInput";
 import TitleModalScreen from "../../components/TitleModalScreen";
-import AutocompleteInput from "../../components/AutocompleteInput";
-import AutocompleteList from "../../components/AutocompleteList";
 import ModalButtons from "../../components/ModalButtons";
 
-import { isRequired, isRequiredArray } from "../../utils/validators";
+import { isRequired, isPositiveNumber, isPositiveInteger, isValidDate } from "../../utils/validators";
 import { postDataToken } from "../../services/services";
 
-const { height, width } = Dimensions.get("window");
+const { height } = Dimensions.get("window");
 
 const AddTicket = ({ navigation }) => {
   const { token, route } = useContext(Context);
+
   const [form, setForm] = useState({
     photo: null,
-    name: "",
-    category: "",
-    steps: "",
-    time: "",
-    difficulty: "",
+    supermarket: "",
+    ticketDate: new Date(),
+    amountProducts: "",
+    totalPrice: "",
   });
 
   const [errors, setErrors] = useState({
-    name: "",
-    category: "",
-    steps: "",
-    time: "",
-    difficulty: "",
-    ingredients: "",
-    tags: "",
+    supermarket: "",
+    ticketDate: "",
+    amountProducts: "",
+    totalPrice: "",
   });
 
-  const [ingredientsList, setIngredientsList] = useState([
-    "Pasta",
-    "Tomato",
-    "Tomato Sauce",
-    "Minced meat",
-    "Oil",
-    "Olive oil",
-    "Spices",
-    "Onion",
-    "Cheese",
-    "Apple",
-    "Orange",
-    "Jam",
-    "Egg",
-  ]);
-  const [tagsList, setTagsList] = useState([
-    "Pasta",
-    "Fish",
-    "Vegetable",
-    "Pork",
-    "Beef",
-    "Chicken",
-    "Vegan",
-  ]);
-  const [ingredients, setIngredients] = useState([""]);
-  const [tags, setTags] = useState([""]);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -93,8 +55,15 @@ const AddTicket = ({ navigation }) => {
     }
   };
 
+  const formatDate = (date) => {
+    return new Intl.DateTimeFormat("es-ES", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(new Date(date));
+  };
+
   const onSaved = async () => {
-    console.log("ON SAVED PRESSED");
     const isValid = validateForm();
 
     if (!isValid) {
@@ -102,19 +71,17 @@ const AddTicket = ({ navigation }) => {
       return;
     }
 
-    const newRecipe = {
-      recipeName: form.name,
-      ingredients,
-      category: form.category,
-      time: Number(form.time),
-      steps: form.steps,
-      difficulty: form.difficulty,
-      tags,
+    const newTicket = {
+      supermarket: form.supermarket,
+      ticketDate: form.ticketDate.toISOString(), // THIS IS TO SEND DATE SAFELY
+      amountProducts: Number(form.amountProducts),
+      totalPrice: Number(form.totalPrice),
     };
-    console.log("SENDING NEW RECIPE: " + newRecipe);
+
+    console.log("SENDING NEW TICKET: ", newTicket);
 
     const formData = new FormData();
-    formData.append("recipe", JSON.stringify(newRecipe));
+    formData.append("ticket", JSON.stringify(newTicket));
 
     if (form.photo) {
       formData.append("photo", {
@@ -124,7 +91,7 @@ const AddTicket = ({ navigation }) => {
       });
     }
 
-    const isSuccess = await createRecipeRequest(formData);
+    const isSuccess = await addTicketRequest(formData);
 
     if (isSuccess) {
       console.log("SAVED CORRECTLY");
@@ -136,14 +103,10 @@ const AddTicket = ({ navigation }) => {
     Keyboard.dismiss();
   };
 
-  const createRecipeRequest = async (formData) => {
-    console.log("SENDING PETITION CREATERECIPEREQUEST");
+  const addTicketRequest = async (formData) => {
+    console.log("SENDING PETITION CREATE_TICKET_REQUEST");
 
-    const response = await postDataToken(
-      route + "/recipes/createRecipe",
-      formData,
-      token,
-    );
+    //const response = await postDataToken(route + "/recipes/createRecipe", formData, token);
 
     if (!response) {
       console.log("NO RESPONSE");
@@ -156,152 +119,88 @@ const AddTicket = ({ navigation }) => {
     return status === 200 || status === 201;
   };
 
-  const isFormComplete =
-    Object.values(form).every((value) => value) &&
-    ingredients.every((value) => value) &&
-    tags.every((value) => value);
+  const isFormComplete = Object.values(form).every((value) => value);
 
   const validateForm = () => {
     const newErrors = {
-      name: isRequired(form.name),
-      category: isRequired(form.category),
-      steps: isRequired(form.steps),
-      time: isRequired(form.time),
-      difficulty: isRequired(form.difficulty),
-      ingredients: isRequiredArray(ingredients),
-      tags: isRequiredArray(tags),
+      supermarket: isRequired(form.supermarket),
+      ticketDate: isValidDate(form.ticketDate),
+      amountProducts: isRequired(form.amountProducts) || isPositiveInteger(form.amountProducts),
+      totalPrice: isRequired(form.totalPrice) || isPositiveNumber(form.totalPrice),
     };
 
     setErrors(newErrors);
-    return (
-      !newErrors.name &&
-      !newErrors.category &&
-      !newErrors.steps &&
-      !newErrors.time &&
-      !newErrors.difficulty &&
-      !newErrors.ingredients &&
-      !newErrors.tags
-    );
+
+    return !newErrors.supermarket && !newErrors.ticketDate && !newErrors.amountProducts && !newErrors.totalPrice;
   };
 
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-        <TitleModalScreen
-          title={"New Recipe"}
-          onPress={() => navigation.goBack()}
-        />
+        <TitleModalScreen title={"New Ticket"} onPress={() => navigation.goBack()} />
 
         <KeyboardAwareScrollView
           style={styles.scrollContainer}
-          nestedScrollEnabled={true} //perimte Scroll dentro de Scroll
+          nestedScrollEnabled={true}
           keyboardShouldPersistTaps="handled"
           extraScrollHeight={60}
           enableOnAndroid={true}
           contentContainerStyle={{ paddingBottom: 20 }}
         >
+          <Text style={styles.labelStyle}>TICKET PHOTO:</Text>
           <PhotoPicker photo={form.photo?.uri} choosePhoto={choosePhoto} />
 
           <ItemInput
-            label="Name:"
-            placeholder="Ex: Roast beef"
-            value={form.name}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, name: text }))
-            }
+            label="Supermarket:"
+            placeholder="Ex: Mercadona, Consum..."
+            value={form.supermarket}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, supermarket: text }))}
             keyboardType="default"
-            error={errors.name}
+            error={errors.supermarket}
           />
 
-          <AutocompleteList
-            label="Ingredients:"
-            values={ingredients}
-            setValues={setIngredients}
-            options={ingredientsList}
-            placeholder="Ex: Pasta"
-            error={errors.ingredients}
-          />
+          <Pressable onPress={() => setShowDatePicker(true)}>
+            <ItemInput label="Date:" placeholder="Select date" value={formatDate(form.ticketDate)} editable={false} error={errors.ticketDate} />
+          </Pressable>
 
-          <AutocompleteInput
-            label="Category:"
-            placeholder="Ex: Breakfast"
-            value={form.category}
-            options={[
-              "Breakfast",
-              "Lunch",
-              "Dinner",
-              "Snack",
-              "Dessert",
-              "Brunch",
-            ]}
-            onSelect={(text) =>
-              setForm((prev) => ({ ...prev, category: text }))
-            }
-            error={errors.category}
+          {showDatePicker && (
+            <DateTimePicker
+              value={form.ticketDate}
+              mode="date"
+              display={Platform.OS === "ios" ? "spinner" : "calendar"}
+              onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
+
+                if (selectedDate) {
+                  setForm((prev) => ({
+                    ...prev,
+                    ticketDate: selectedDate,
+                  }));
+                }
+              }}
+            />
+          )}
+
+          <ItemInput
+            label="Total:"
+            placeholder="0.00"
+            value={form.totalPrice}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, totalPrice: text }))}
+            keyboardType="numeric"
+            error={errors.totalPrice}
           />
 
           <ItemInput
-            label="Steps to make:"
-            placeholder="Step 1: ..."
-            value={form.steps}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, steps: text }))
-            }
-            keyboardType="default"
-            multiline
-            numberOfLines={6}
-            error={errors.steps}
-          />
-
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-            }}
-          >
-            <View style={{ width: "45%" }}>
-              <ItemInput
-                label="Time:"
-                placeholder="Ex: 20 min"
-                value={form.time}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, time: text }))
-                }
-                keyboardType="numeric"
-                error={errors.time}
-              />
-            </View>
-
-            <View style={{ width: "45%" }}>
-              <AutocompleteInput
-                label="Difficulty:"
-                placeholder="Ex: Low "
-                value={form.difficulty}
-                options={["Low", "Medium", "Hard"]}
-                onSelect={(text) =>
-                  setForm((prev) => ({ ...prev, difficulty: text }))
-                }
-                error={errors.difficulty}
-              />
-            </View>
-          </View>
-
-          <AutocompleteList
-            label="Tags"
-            values={tags}
-            setValues={setTags}
-            options={tagsList}
-            placeholder="Ex: Pasta"
-            error={errors.tags}
+            label="Number of products:"
+            placeholder="0"
+            value={form.amountProducts}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, amountProducts: text }))}
+            keyboardType="numeric"
+            error={errors.amountProducts}
           />
         </KeyboardAwareScrollView>
 
-        <ModalButtons
-          onCancel={() => navigation.goBack()}
-          onSave={onSaved}
-          isFormComplete={isFormComplete}
-        />
+        <ModalButtons onCancel={() => navigation.goBack()} onSave={onSaved} isFormComplete={isFormComplete} />
       </View>
     </View>
   );
@@ -328,6 +227,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginVertical: 15,
     paddingBottom: 50,
+  },
+  labelStyle: {
+    fontSize: 16,
+    fontFamily: "InterBold",
+    marginVertical: 5,
+    color: "#2C5818",
   },
 });
 

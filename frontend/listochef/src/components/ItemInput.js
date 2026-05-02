@@ -22,6 +22,7 @@ const ItemInput = (props) => {
           numberOfLines={props.multiline ? props.numberOfLines || 4 : 1}
           textAlignVertical={props.multiline ? "top" : "center"}
           secureTextEntry={props.eye && !showPassword}
+          editable={props.editable ?? true}
         />
 
         {props.eye && (
