@@ -196,52 +196,55 @@ const RecipesList = (props) => {
     <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <TitleIconPage titleText="Recipes List" icon={RecipeListTitleIcon} />
+          <TitleIconPage titleText="My Recipes" icon={RecipeListTitleIcon} />
 
           <Seeker placeholderText="Search recipe..." onPress={goSearchRecipe} editable={false}></Seeker>
 
-          <View style={styles.featuredRecipe}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <FontAwesome5 name="history" size={26} color="white" />
-              <Text
-                style={{
-                  color: "white",
-                  fontSize: 20,
-                  marginLeft: 10,
-                  fontFamily: "InterSemiBold",
-                }}
-              >
-                Last recipe seen
-              </Text>
-            </View>
-            <Text style={styles.label} onPress={onViewRecipe}>
-              {lastRecipeSeen.recipeName}
-            </Text>
-          </View>
-
-          <View style={styles.filterOrderContainer}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <MaterialCommunityIcons name="calendar-blank-outline" size={28} color="black" />
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontFamily: "MontserratSemiBold",
-                  marginLeft: 8,
-                  marginRight: 20,
-                }}
-              >
-                Order by...
-              </Text>
-              <FilterOrderDropdown filterOrderValue={filterOrderValue} setFilterOrderValue={setFilterOrderValue} />
-            </View>
-          </View>
-
           <View style={{ flex: 1, width: "100%" }}>
-            <ScrollView style={{ width: "100%", marginBottom: 15 }} contentContainerStyle={{ paddingBottom: 5 }}>
+            <ScrollView style={{ width: "100%" }} contentContainerStyle={{ paddingBottom: 80 }}>
+              <View style={styles.featuredRecipe}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <FontAwesome5 name="history" size={26} color="white" />
+                  <Text
+                    style={{
+                      color: "white",
+                      fontSize: 20,
+                      marginLeft: 10,
+                      fontFamily: "InterSemiBold",
+                    }}
+                  >
+                    Last recipe seen
+                  </Text>
+                </View>
+
+                <Text style={styles.label} onPress={onViewRecipe}>
+                  {lastRecipeSeen.recipeName}
+                </Text>
+              </View>
+
+              <View style={styles.filterOrderContainer}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <MaterialCommunityIcons name="calendar-blank-outline" size={28} color="black" />
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontFamily: "MontserratSemiBold",
+                      marginLeft: 8,
+                      marginRight: 20,
+                    }}
+                  >
+                    Order by...
+                  </Text>
+
+                  <FilterOrderDropdown filterOrderValue={filterOrderValue} setFilterOrderValue={setFilterOrderValue} />
+                </View>
+              </View>
+
               {sortedRecipes.map((recipe, index) => (
-                <RecipeCard key={index} recipe={recipe} isDetailedBox={false} onViewRecipe={onViewRecipe} onToggleSaved={toggleSaved}></RecipeCard>
+                <RecipeCard key={index} recipe={recipe} isDetailedBox={false} onViewRecipe={onViewRecipe} onToggleSaved={toggleSaved} />
               ))}
             </ScrollView>
+
             <View style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}>
               <Pressable onPress={onAddRecipe}>
                 <AddCircleButton />
@@ -292,6 +295,7 @@ const styles = StyleSheet.create({
   },
   filterOrderContainer: {
     width: "90%",
+    alignSelf: "center",
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 5,
