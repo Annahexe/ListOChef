@@ -95,6 +95,10 @@ public class UserService {
 	public void register(User user) {
 
 
+		if (user.getEmail() != null) {
+	        user.setEmail(user.getEmail().toLowerCase().trim());
+	    }
+		
 		if (user.getEmail() == null || user.getEmail().isBlank()) {
 			throw new IllegalArgumentException("User email cannot be empty");
 		}
@@ -283,5 +287,9 @@ public class UserService {
         }
         
         return userRepository.createTicket(email, newTicket);
+	}
+	
+	public void deleteTicket(String email, String ticketId) {
+	    userRepository.deleteTicket(email, ticketId);
 	}
 }
