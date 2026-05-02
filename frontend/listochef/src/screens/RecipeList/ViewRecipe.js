@@ -1,26 +1,26 @@
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  ScrollView,
-  Image,
-} from "react-native";
+import { View, Text, Pressable, StyleSheet, ScrollView, Image } from "react-native";
 import { useState, useEffect, useContext } from "react";
 
 import ItemView from "../../components/ItemView";
 import TitleModalScreen from "../../components/TitleModalScreen";
 import Heart from "../../components/Heart";
-
 import Context from "../../context/Context";
 
+import Toast from "react-native-toast-message";
+import { postDataToken } from "../../services/services";
+
 const ViewRecipe = ({ navigation }) => {
+  const { route, token, lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
   const [recipe, setRecipe] = useState();
   const [isSaved, setIsSaved] = useState(recipe?.isSaved ?? false);
-  const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
+
+  const TOGGLE_SAVED_STATUS = {
+    SAVED: "SAVED",
+    REMOVED: "REMOVED",
+    ERROR: "ERROR",
+  };
 
   useEffect(() => {
-    //llamada a la api con el id que tendremos. Actualmente ponemos nosotros el objeto
     setRecipe(lastRecipeSeen);
   }, []);
 
@@ -30,19 +30,53 @@ const ViewRecipe = ({ navigation }) => {
 
   if (!recipe) return null;
 
-  const onToggleSaved = () => {
+  const onToggleSaved = async () => {
     setIsSaved((prev) => !prev);
-    setRecipe((prev) => ({ ...prev, isSaved: !prev.isSaved }));
-    setLastRecipeSeen((prev) => ({ ...prev, isSaved: !prev.isSaved }));
+    setRecipe((prev) => ({ ...prev, saved: !prev.saved }));
+    setLastRecipeSeen((prev) => ({ ...prev, saved: !prev.saved }));
+
+    const result = await toggleSavedPetition(recipe.id);
+
+    if (result === TOGGLE_SAVED_STATUS.SAVED) {
+      Toast.show({
+        type: "success",
+        text1: "Successfully saved recipe.",
+      });
+    } else if (result === TOGGLE_SAVED_STATUS.REMOVED) {
+      Toast.show({
+        type: "error",
+        text1: "Removed from saved recipes.",
+      });
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Could not update saved recipe.",
+      });
+    }
   };
+
+  const toggleSavedPetition = async (id) => {
+    const dataIdRecipe = { recipeId: id };
+    const response = await postDataToken(route + "/toggleSaved", dataIdRecipe, token);
+
+    if (!response) return TOGGLE_SAVED_STATUS.ERROR;
+
+    const [status, jsonResponse] = response;
+
+    if (status === 200) {
+      console.log("RECEIVED RESPONSE FROM TOGGLE SAVED: ", jsonResponse);
+
+      if (jsonResponse === "saved:true") return TOGGLE_SAVED_STATUS.SAVED;
+      if (jsonResponse === "saved:false") return TOGGLE_SAVED_STATUS.REMOVED;
+    }
+
+    return TOGGLE_SAVED_STATUS.ERROR;
+  };
+
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-        <TitleModalScreen
-          title={recipe.recipeName}
-          onPress={() => navigation.goBack()}
-          size={25}
-        />
+        <TitleModalScreen title={recipe.recipeName} onPress={() => navigation.goBack()} size={25} />
 
         <ScrollView style={styles.scrollContainer}>
           <View style={styles.imageContainer}>
@@ -52,40 +86,18 @@ const ViewRecipe = ({ navigation }) => {
                 uri: recipe.photo,
               }}
             ></Image>
-            <Heart
-              colorHeart={isSaved ? "red" : "white"}
-              stiles={"onImage"}
-              onPress={() => onToggleSaved?.()}
-            />
+            <Heart colorHeart={recipe.saved ? "red" : "white"} stiles={"onImage"} onPress={() => onToggleSaved()} />
           </View>
-          <ItemView
-            label={"Ingredients"}
-            ingredients={recipe.ingredients}
-          ></ItemView>
+          <ItemView label={"Ingredients"} ingredients={recipe.ingredients}></ItemView>
 
-          <Pressable
-            onPress={onAddGroceryList}
-            style={[styles.button, { borderRadius: 22 }]}
-          >
+          <Pressable onPress={onAddGroceryList} style={[styles.button, { borderRadius: 22 }]}>
             <Text style={styles.textButton}>Add to grocery list</Text>
           </Pressable>
 
           <View style={styles.multipleLines}>
-            <ItemView
-              label={"Category"}
-              info={recipe.category}
-              style={{ flex: 1 }}
-            ></ItemView>
-            <ItemView
-              label={"Time"}
-              time={recipe.time}
-              style={{ flex: 1 }}
-            ></ItemView>
-            <ItemView
-              label={"Difficulty"}
-              info={recipe.difficulty}
-              style={{ flex: 1 }}
-            ></ItemView>
+            <ItemView label={"Category"} info={recipe.category} style={{ flex: 1 }}></ItemView>
+            <ItemView label={"Time"} time={recipe.time} style={{ flex: 1 }}></ItemView>
+            <ItemView label={"Difficulty"} info={recipe.difficulty} style={{ flex: 1 }}></ItemView>
           </View>
 
           <ItemView label={"Steps to create"} info={recipe.steps}></ItemView>
