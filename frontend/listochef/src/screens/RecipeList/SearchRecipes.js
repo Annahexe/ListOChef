@@ -6,7 +6,9 @@ import { TagsCarousel } from "../../components/TagsCarousel";
 import RecipeCard from "../../components/RecipeCard";
 
 import Context from "../../context/Context";
+import Toast from "react-native-toast-message";
 import { getData } from "../../services/services";
+import { toggleSavedPetition, showToggleSavedToast } from "../../utils/toggleSavedRecipe";
 
 import Feather from "@expo/vector-icons/Feather";
 
@@ -48,25 +50,31 @@ const SearchRecipes = (props) => {
     });
   };
 
-  const toggleSaved = (id) => {
+  const toggleSaved = async (id) => {
     setRecipeList((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
-    // aqui guardar en local -> setRecipesSaved() (similar a arriba, pero con solo una lista de los trues)
-    // y enviar petiton backend (id) true false lo que devuelve simplemente lo ponemos con un console log
+
+    const result = await toggleSavedPetition({
+      route,
+      token,
+      recipeId: id,
+    });
+
+    showToggleSavedToast(result);
   };
 
-  //demo data
   useEffect(() => {
-    console.log("USE EFFECT AQUI");
-
     async function fetchData() {
-      console.log("FETCHING DATA");
       const data = await getRecipesPetition();
-      console.log(data);
 
       if (data) {
-        console.log("IF DATA SI");
         setRecipeList(data);
         setFilteredRecipes(data);
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "There was an error loading the recipes.",
+          text2: "Please try again later.",
+        });
       }
     }
 
@@ -74,7 +82,6 @@ const SearchRecipes = (props) => {
   }, []);
 
   const getRecipesPetition = async () => {
-    console.log("ENVIO PETICION");
     const response = await getData(route + "/recipes", token);
     return response;
   };

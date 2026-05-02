@@ -69,10 +69,9 @@ const Login = (props) => {
   const sendLoginRequest = async () => {
     const response = await postDataOnboarding(route + "/login", loginData);
     if (!response) return false;
-    console.log("RESPONSE: " + response);
+    console.log("RESPONSE: ", response);
 
     const [status, jsonResponse] = response;
-    console.log("STATUS: " + status);
     if (status === 200) {
       setIngredientTags([
         { name: "All", icon: "" },
@@ -82,7 +81,7 @@ const Login = (props) => {
         })),
       ]);
       setUser(jsonResponse.user);
-      console.log("TOKEN:" + jsonResponse.token);
+      console.log("TOKEN:", jsonResponse.token);
       setToken(jsonResponse.token);
       setRecipesSaved(jsonResponse.recipesSavedList);
       return true;
@@ -112,7 +111,6 @@ const Login = (props) => {
       console.log("DEBUG RESPONSE: " + response);
 
       const [status, jsonResponse] = response;
-      console.log("STATUS: " + status);
 
       if (status === 200) {
         setIngredientTags([

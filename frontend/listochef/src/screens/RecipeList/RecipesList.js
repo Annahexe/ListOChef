@@ -1,14 +1,8 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-  Keyboard,
-} from "react-native";
-import { useState, useEffect, useContext } from "react";
+import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Keyboard } from "react-native";
+import { useState, useEffect, useContext, useCallback } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import Toast from "react-native-toast-message";
+import { useFocusEffect } from "@react-navigation/native";
 
 import RecipeCard from "../../components/RecipeCard";
 import AddCircleButton from "../../components/AddCircleButton";
@@ -20,6 +14,7 @@ import RecipeListTitleIcon from "../../../assets/icons/recipeList_titleIcon.svg"
 
 import Context from "../../context/Context";
 import { getData } from "../../services/services";
+import { toggleSavedPetition, showToggleSavedToast } from "../../utils/toggleSavedRecipe";
 
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -40,9 +35,6 @@ const RecipesList = (props) => {
   }; //used to convert String creationDate to real date value
 
   useEffect(() => {
-    console.log("EN RECIPE LIST" + recipesSaved);
-    // aqui se muestran las recetas de recipesSaved (no hace falta hacer petition al backend porque lo obtenemos desde el login, lo demas lo guardamos en local)
-
     // setRecipesSaved([
     //   {
     //     id: "1",
@@ -115,22 +107,21 @@ const RecipesList = (props) => {
     //     saved: true,
     //   },
     // ]);
-  }, [recipesSaved]);
-
-  useEffect(() => {
-    const loadRecipes = async () => {
-      console.log("token before request:", token);
-
-      const data = await getRecipesPetition();
-      console.log("recipes response:", data);
-
-      if (data) {
-        setRecipeList(data);
-      }
-    };
-
-    loadRecipes();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      async function fetchData() {
+        const data = await getUserRecipesPetition();
+
+        if (data) {
+          setRecipesSaved(data);
+        }
+      }
+
+      fetchData();
+    }, []),
+  );
 
   const onAddRecipe = () => {
     return props.navigation.navigate("AddRecipe");
@@ -155,96 +146,83 @@ const RecipesList = (props) => {
     return props.navigation.navigate("SearchRecipes");
   };
 
-  const toggleSaved = (id) => {
-    setRecipesSaved((prev) =>
-      prev.map((recipe) =>
-        recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe,
-      ),
-    );
+  const toggleSaved = async (id) => {
+    const previousRecipes = recipesSaved;
+
+    setRecipesSaved((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
+
+    const result = await toggleSavedPetition({
+      route,
+      token,
+      recipeId: id,
+    });
+
+    if (result === "ERROR") {
+      setRecipesSaved(previousRecipes);
+    }
+
+    showToggleSavedToast(result);
   };
 
-  const getRecipesPetition = async () => {
-    const response = await getData(route + "/recipes/userRecipes", token);
+  const getUserRecipesPetition = async () => {
+    const response = await getData(route + "/recipes/userRecipesSaved", token);
     return response;
   };
 
   return (
-    <ImageBackground
-      source={require("../../../assets/fondoApp.png")}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <TitleIconPage titleText="Recipes List" icon={RecipeListTitleIcon} />
+          <TitleIconPage titleText="My Recipes" icon={RecipeListTitleIcon} />
 
-          <Seeker
-            placeholderText="Search recipe..."
-            onPress={goSearchRecipe}
-            editable={false}
-          ></Seeker>
-
-          <View style={styles.featuredRecipe}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <FontAwesome5 name="history" size={26} color="white" />
-              <Text
-                style={{
-                  color: "white",
-                  fontSize: 20,
-                  marginLeft: 10,
-                  fontFamily: "InterSemiBold",
-                }}
-              >
-                Last recipe seen
-              </Text>
-            </View>
-            <Text style={styles.label} onPress={onViewRecipe}>
-              {lastRecipeSeen.recipeName}
-            </Text>
-          </View>
-
-          <View style={styles.filterOrderContainer}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <MaterialCommunityIcons
-                name="calendar-blank-outline"
-                size={28}
-                color="black"
-              />
-              <Text
-                style={{
-                  fontSize: 15,
-                  fontFamily: "MontserratSemiBold",
-                  marginLeft: 8,
-                  marginRight: 20,
-                }}
-              >
-                Order by...
-              </Text>
-              <FilterOrderDropdown
-                filterOrderValue={filterOrderValue}
-                setFilterOrderValue={setFilterOrderValue}
-              />
-            </View>
-          </View>
+          <Seeker placeholderText="Search new recipes..." onPress={goSearchRecipe} editable={false}></Seeker>
 
           <View style={{ flex: 1, width: "100%" }}>
-            <ScrollView
-              style={{ width: "100%", marginBottom: 15 }}
-              contentContainerStyle={{ paddingBottom: 5 }}
-            >
+            <ScrollView style={{ width: "100%" }} contentContainerStyle={{ paddingBottom: 80 }}>
+              <View style={styles.featuredRecipe}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <FontAwesome5 name="history" size={26} color="white" />
+                  <Text
+                    style={{
+                      color: "white",
+                      fontSize: 20,
+                      marginLeft: 10,
+                      fontFamily: "InterSemiBold",
+                    }}
+                  >
+                    Last recipe seen
+                  </Text>
+                </View>
+
+                <Text style={styles.label} onPress={onViewRecipe}>
+                  {lastRecipeSeen.recipeName}
+                </Text>
+              </View>
+
+              <View style={styles.filterOrderContainer}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <MaterialCommunityIcons name="calendar-blank-outline" size={28} color="black" />
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontFamily: "MontserratSemiBold",
+                      marginLeft: 8,
+                      marginRight: 20,
+                    }}
+                  >
+                    Order by...
+                  </Text>
+
+                  <FilterOrderDropdown filterOrderValue={filterOrderValue} setFilterOrderValue={setFilterOrderValue} />
+                </View>
+              </View>
+
               {sortedRecipes.map((recipe, index) => (
-                <RecipeCard
-                  key={index}
-                  recipe={recipe}
-                  isDetailedBox={false}
-                  onViewRecipe={onViewRecipe}
-                  onToggleSaved={toggleSaved}
-                ></RecipeCard>
+                <RecipeCard key={index} recipe={recipe} isDetailedBox={false} onViewRecipe={onViewRecipe} onToggleSaved={toggleSaved} />
               ))}
             </ScrollView>
-            <View
-              style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}
-            >
+
+            <View style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}>
               <Pressable onPress={onAddRecipe}>
                 <AddCircleButton />
               </Pressable>
@@ -294,6 +272,7 @@ const styles = StyleSheet.create({
   },
   filterOrderContainer: {
     width: "90%",
+    alignSelf: "center",
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 5,
