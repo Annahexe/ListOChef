@@ -77,19 +77,19 @@ const SearchRecipes = (props) => {
     }
   };
 
-  //demo data
   useEffect(() => {
-    console.log("USE EFFECT AQUI");
-
     async function fetchData() {
-      console.log("FETCHING DATA");
       const data = await getRecipesPetition();
-      console.log(data);
 
       if (data) {
-        console.log("IF DATA SI");
         setRecipeList(data);
         setFilteredRecipes(data);
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "There was an error loading the recipes.",
+          text2: "Please try again later.",
+        });
       }
     }
 
@@ -97,7 +97,6 @@ const SearchRecipes = (props) => {
   }, []);
 
   const getRecipesPetition = async () => {
-    console.log("ENVIO PETICION");
     const response = await getData(route + "/recipes", token);
     return response;
   };
@@ -111,8 +110,6 @@ const SearchRecipes = (props) => {
     const [status, jsonResponse] = response;
 
     if (status === 200) {
-      console.log("RECEIVED RESPONSE FROM TOGGLE SAVED: ", jsonResponse);
-
       if (jsonResponse === "saved:true") return TOGGLE_SAVED_STATUS.SAVED;
       if (jsonResponse === "saved:false") return TOGGLE_SAVED_STATUS.REMOVED;
     }

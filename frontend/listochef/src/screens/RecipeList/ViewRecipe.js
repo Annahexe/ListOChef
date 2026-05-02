@@ -64,8 +64,6 @@ const ViewRecipe = ({ navigation }) => {
     const [status, jsonResponse] = response;
 
     if (status === 200) {
-      console.log("RECEIVED RESPONSE FROM TOGGLE SAVED: ", jsonResponse);
-
       if (jsonResponse === "saved:true") return TOGGLE_SAVED_STATUS.SAVED;
       if (jsonResponse === "saved:false") return TOGGLE_SAVED_STATUS.REMOVED;
     }
