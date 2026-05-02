@@ -1,14 +1,7 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-  Keyboard,
-} from "react-native";
+import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Keyboard } from "react-native";
 import { useState, useEffect, useContext } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import Toast from "react-native-toast-message";
 
 import RecipeCard from "../../components/RecipeCard";
 import AddCircleButton from "../../components/AddCircleButton";
@@ -32,6 +25,12 @@ const RecipesList = (props) => {
 
   const tabBarHeight = useBottomTabBarHeight();
   const [filterOrderValue, setFilterOrderValue] = useState("Oldest");
+
+  const TOGGLE_SAVED_STATUS = {
+    SAVED: "SAVED",
+    REMOVED: "REMOVED",
+    ERROR: "ERROR",
+  };
 
   const toTime = (ddmmyyyy) => {
     // "17/02/2026" -> [17, 2, 2026]
@@ -150,26 +149,27 @@ const RecipesList = (props) => {
     return props.navigation.navigate("SearchRecipes");
   };
 
-  const toggleSaved = (id) => {
-    setRecipesSaved((prev) =>
-      prev.map((recipe) =>
-        recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe,
-      ),
-    );
+  const toggleSaved = async (id) => {
+    setRecipesSaved((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
 
-    const hasSavedRecipe = await toggleSavedPetition(id);
+    const result = await toggleSavedPetition(id);
 
-    if (hasSavedRecipe) {
+    if (result === TOGGLE_SAVED_STATUS.SAVED) {
       Toast.show({
-      type: "success",
-       text1: "Successfully saved recipe.",
-            });
-          } else {
-            Toast.show({
-              type: "error",
-              text1: "Removed from saved recipes.",
-            });
-          }
+        type: "success",
+        text1: "Successfully saved recipe.",
+      });
+    } else if (result === TOGGLE_SAVED_STATUS.REMOVED) {
+      Toast.show({
+        type: "error",
+        text1: "Removed from saved recipes.",
+      });
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Could not update saved recipe.",
+      });
+    }
   };
 
   const getUserRecipesPetition = async () => {
@@ -178,34 +178,30 @@ const RecipesList = (props) => {
   };
 
   const toggleSavedPetition = async (id) => {
-    let dataIdRecipe = {recipeId: id}
+    const dataIdRecipe = { recipeId: id };
     const response = await postDataToken(route + "/toggleSaved", dataIdRecipe, token);
-    if (!response) return false;
 
-    const [status, response] = response;
+    if (!response) return TOGGLE_SAVED_STATUS.ERROR;
+
+    const [status, jsonResponse] = response;
+
     if (status === 200) {
-      console.log("RECEIVED RESPONSE FROM TOGGLE SAVED: ", response)
-      return true;
+      console.log("RECEIVED RESPONSE FROM TOGGLE SAVED: ", jsonResponse);
+
+      if (jsonResponse === "saved:true") return TOGGLE_SAVED_STATUS.SAVED;
+      if (jsonResponse === "saved:false") return TOGGLE_SAVED_STATUS.REMOVED;
     }
 
-    return false;
+    return TOGGLE_SAVED_STATUS.ERROR;
   };
 
   return (
-    <ImageBackground
-      source={require("../../../assets/fondoApp.png")}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <View style={styles.container}>
           <TitleIconPage titleText="Recipes List" icon={RecipeListTitleIcon} />
 
-          <Seeker
-            placeholderText="Search recipe..."
-            onPress={goSearchRecipe}
-            editable={false}
-          ></Seeker>
+          <Seeker placeholderText="Search recipe..." onPress={goSearchRecipe} editable={false}></Seeker>
 
           <View style={styles.featuredRecipe}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -228,11 +224,7 @@ const RecipesList = (props) => {
 
           <View style={styles.filterOrderContainer}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <MaterialCommunityIcons
-                name="calendar-blank-outline"
-                size={28}
-                color="black"
-              />
+              <MaterialCommunityIcons name="calendar-blank-outline" size={28} color="black" />
               <Text
                 style={{
                   fontSize: 15,
@@ -243,31 +235,17 @@ const RecipesList = (props) => {
               >
                 Order by...
               </Text>
-              <FilterOrderDropdown
-                filterOrderValue={filterOrderValue}
-                setFilterOrderValue={setFilterOrderValue}
-              />
+              <FilterOrderDropdown filterOrderValue={filterOrderValue} setFilterOrderValue={setFilterOrderValue} />
             </View>
           </View>
 
           <View style={{ flex: 1, width: "100%" }}>
-            <ScrollView
-              style={{ width: "100%", marginBottom: 15 }}
-              contentContainerStyle={{ paddingBottom: 5 }}
-            >
+            <ScrollView style={{ width: "100%", marginBottom: 15 }} contentContainerStyle={{ paddingBottom: 5 }}>
               {sortedRecipes.map((recipe, index) => (
-                <RecipeCard
-                  key={index}
-                  recipe={recipe}
-                  isDetailedBox={false}
-                  onViewRecipe={onViewRecipe}
-                  onToggleSaved={toggleSaved}
-                ></RecipeCard>
+                <RecipeCard key={index} recipe={recipe} isDetailedBox={false} onViewRecipe={onViewRecipe} onToggleSaved={toggleSaved}></RecipeCard>
               ))}
             </ScrollView>
-            <View
-              style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}
-            >
+            <View style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}>
               <Pressable onPress={onAddRecipe}>
                 <AddCircleButton />
               </Pressable>
