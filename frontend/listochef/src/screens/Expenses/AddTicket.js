@@ -74,7 +74,7 @@ const AddTicket = ({ navigation }) => {
 
     const newTicket = {
       supermarket: form.supermarket,
-      ticketDate: form.ticketDate,
+      ticketDate: form.ticketDate.toISOString(), // THIS IS TO SEND DATE SAFELY
       amountProducts: Number(form.amountProducts),
       totalPrice: Number(form.totalPrice),
     };
@@ -125,12 +125,13 @@ const AddTicket = ({ navigation }) => {
   const validateForm = () => {
     const newErrors = {
       supermarket: isRequired(form.supermarket),
-      ticketDate: isRequired(form.ticketDate),
-      amountProducts: isRequired(form.amountProducts),
-      totalPrice: isRequired(form.totalPrice),
+      ticketDate: isValidDate(form.ticketDate),
+      amountProducts: isRequired(form.amountProducts) || isPositiveInteger(form.amountProducts),
+      totalPrice: isRequired(form.totalPrice) || isPositiveNumber(form.totalPrice),
     };
 
     setErrors(newErrors);
+
     return !newErrors.supermarket && !newErrors.ticketDate && !newErrors.amountProducts && !newErrors.totalPrice;
   };
 
@@ -147,6 +148,7 @@ const AddTicket = ({ navigation }) => {
           enableOnAndroid={true}
           contentContainerStyle={{ paddingBottom: 20 }}
         >
+          <Text style={styles.labelStyle}>TICKET PHOTO:</Text>
           <PhotoPicker photo={form.photo?.uri} choosePhoto={choosePhoto} />
 
           <ItemInput
@@ -158,21 +160,34 @@ const AddTicket = ({ navigation }) => {
             error={errors.supermarket}
           />
 
-          <ItemInput
-            label="Date:"
-            placeholder="Ex: 03/01/2025"
-            value={form.ticketDate}
-            onChangeText={(text) => setForm((prev) => ({ ...prev, ticketDate: text }))}
-            keyboardType="default"
-            error={errors.ticketDate}
-          />
+          <Pressable onPress={() => setShowDatePicker(true)}>
+            <ItemInput label="Date:" placeholder="Select date" value={formatDate(form.ticketDate)} editable={false} error={errors.ticketDate} />
+          </Pressable>
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={form.ticketDate}
+              mode="date"
+              display={Platform.OS === "ios" ? "spinner" : "calendar"}
+              onChange={(event, selectedDate) => {
+                setShowDatePicker(false);
+
+                if (selectedDate) {
+                  setForm((prev) => ({
+                    ...prev,
+                    ticketDate: selectedDate,
+                  }));
+                }
+              }}
+            />
+          )}
 
           <ItemInput
             label="Total:"
             placeholder="0.00"
             value={form.totalPrice}
             onChangeText={(text) => setForm((prev) => ({ ...prev, totalPrice: text }))}
-            keyboardType="decimal"
+            keyboardType="numeric"
             error={errors.totalPrice}
           />
 
@@ -213,6 +228,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginVertical: 15,
     paddingBottom: 50,
+  },
+  labelStyle: {
+    fontSize: 16,
+    fontFamily: "InterBold",
+    marginVertical: 5,
+    color: "#2C5818",
   },
 });
 
