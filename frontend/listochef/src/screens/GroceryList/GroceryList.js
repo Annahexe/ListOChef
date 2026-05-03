@@ -8,9 +8,12 @@ import GroceryListTitleIcon from "../../../assets/icons/groceryList_titleIcon.sv
 import { TitleIconPage } from "../../components/TitleIconPage";
 import { Seeker } from "../../components/Seeker";
 import { TagsCarousel } from "../../components/TagsCarousel";
+import { postDataToken } from "../../services/services";
+import Toast from "react-native-toast-message";
 
 import Context from "../../context/Context";
 const GroceryList = (props) => {
+  const { route, token } = useContext(Context);
   //Para tags
   const { ingredientTags, setIngredientTags } = useContext(Context);
   const [selectedTags, setSelectedTags] = useState(["All"]);
@@ -92,19 +95,39 @@ const GroceryList = (props) => {
 
   //Permite borrar ingredientes. Para ello los borra de la lista de los ingredientes y tambien de la lista si estuviese seleccionado. Salta alerta por si es un error.
   const onDelete = (item) => {
-    Alert.alert("Delete ingredient", `Remove ${item.name}?`, [
+    Alert.alert("Delete ingredient", `Remove ${item.ingredientName}?`, [
       { text: "Cancel", style: "cancel" },
       {
         text: "Delete",
         style: "destructive",
-        onPress: () => {
+        onPress: async () => {
           setSelectedIngredients((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
 
           setIngredientsToPantry((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
+          const respone = await removeFromGroceryListPetition(item.ingredientName)
         },
       },
     ]);
   };
+
+const removeFromGroceryListPetition = async (ingredientName) => {
+    const data = {ingredientName: ingredientName,};
+
+    const response = await postDataToken(route + "/removeFromGroceryList", data, token, );
+
+    if (!response) {
+      Toast.show({
+        type: "error",
+        text1: "Error removing ingredient!",
+        text2: "Please try again later.",
+      });
+
+      return false;
+    }
+
+    console.log("Ingredient removed from grocery list:", response);
+    return true;
+};
 
   return (
     <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
