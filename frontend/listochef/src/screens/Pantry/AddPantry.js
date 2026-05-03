@@ -1,20 +1,25 @@
 import { StyleSheet, View, ImageBackground, FlatList, Text } from "react-native";
 import { useEffect, useState, useContext, useRef, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
 
 import { Seeker } from "../../components/Seeker";
 import { TagsCarousel } from "../../components/TagsCarousel";
 import { ListItem } from "../../components/ListItem";
 import { buildIngredientsDiff } from "../../utils/buildIngredientsDiff";
+import { getData } from "../../services/services";
 
 import Context from "../../context/Context";
 import Feather from "@expo/vector-icons/Feather";
 
 const AddPantry = (props) => {
+  const { route, token } = useContext(Context);
+
   const { ingredientTags } = useContext(Context);
   const [selectedTags, setSelectedTags] = useState(["All"]);
 
   const [ingredientsList, setIngredientsList] = useState([]);
+  const [isLoadingIngredients, setIsLoadingIngredients] = useState(false);
   const { pantryItems, setPantryItems } = useContext(Context);
 
   const [filteredPantryItemsList, setFilteredPantryItemsList] = useState([]);
@@ -111,33 +116,40 @@ const AddPantry = (props) => {
     return ingredient ? ingredient.amount : 0;
   };
 
-  //demo data
   useEffect(() => {
-    //const ingredientsData = await getIngredients();
-    const ingredientsData = [
-      { ingredientName: "Whole Milk", ingredientTag: "dairy" },
-      { ingredientName: "Eggs", ingredientTag: "protein" },
-      { ingredientName: "Wheat Bread", ingredientTag: "bakery" },
-      { ingredientName: "Pasta", ingredientTag: "grain" },
-      { ingredientName: "Tomatoes", ingredientTag: "vegetable" },
-      { ingredientName: "Cereals", ingredientTag: "grain" },
-      { ingredientName: "Mayonnaise", ingredientTag: "sauce" },
-      { ingredientName: "Maple syrup", ingredientTag: "sweet" },
-      { ingredientName: "Macaroni", ingredientTag: "grain" },
-      { ingredientName: "Mango", ingredientTag: "fruit" },
-      { ingredientName: "Marshmallow", ingredientTag: "sweet" },
-      { ingredientName: "Macadamia", ingredientTag: "nuts" },
-      { ingredientName: "Manchego", ingredientTag: "dairy" },
-      { ingredientName: "Margarine", ingredientTag: "dairy" },
-      { ingredientName: "Mascarpone", ingredientTag: "dairy" },
-      { ingredientName: "Mackerel", ingredientTag: "fish" },
-      { ingredientName: "Macaroons", ingredientTag: "dessert" },
-      { ingredientName: "Mandarin", ingredientTag: "fruit" },
-    ];
+    const loadIngredients = async () => {
+      setIsLoadingIngredients(true);
 
-    setIngredientsList(ingredientsData);
-    setFilteredPantryItemsList(ingredientsData);
-  }, []);
+      const ingredients = await getData(route + "/ingredients", token);
+
+      setIsLoadingIngredients(false);
+
+      if (!ingredients) {
+        Toast.show({
+          type: "error",
+          text1: "Error loading ingredients!",
+          text2: "Please try again later.",
+        });
+
+        return;
+      }
+
+      if (!Array.isArray(ingredients)) {
+        Toast.show({
+          type: "error",
+          text1: "Error loading ingredients!",
+          text2: "Invalid response.",
+        });
+
+        return;
+      }
+
+      setIngredientsList(ingredients);
+      setFilteredPantryItemsList(ingredients);
+    };
+
+    loadIngredients();
+  }, [route, token]);
 
   //SEARCH USE EFFECT
   useEffect(() => {
@@ -171,7 +183,7 @@ const AddPantry = (props) => {
           <TagsCarousel tagsList={ingredientTags} selectedTags={selectedTags} onToggleTag={toggleTag} />
           <FlatList
             data={filteredPantryItemsList}
-            keyExtractor={(item) => item.ingredientName}
+            keyExtractor={(item) => item.id || item.ingredientName}
             style={{ width: "100%", marginBottom: "12%" }}
             contentContainerStyle={{ paddingBottom: 20 }}
             renderItem={({ item }) => (
@@ -185,7 +197,11 @@ const AddPantry = (props) => {
                 onSubtractAmount={() => subtractAmount(item.ingredientName)}
               />
             )}
-            ListEmptyComponent={<Text style={styles.emptyText}>No ingredients found :c</Text>}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>
+                {isLoadingIngredients ? "Loading ingredients..." : "No ingredients found :c"}
+              </Text>
+            }
           />
         </View>
       </View>
