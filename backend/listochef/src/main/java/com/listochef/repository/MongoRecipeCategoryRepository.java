@@ -15,7 +15,7 @@ public class MongoRecipeCategoryRepository implements RecipeCategoryRepository {
     private final MongoCollection<Document> collection;
 
     public MongoRecipeCategoryRepository(MongoDatabase database) {
-        this.collection = database.getCollection("recipe_categories");
+        this.collection = database.getCollection("recipes_categories");
     }
 
     @Override
