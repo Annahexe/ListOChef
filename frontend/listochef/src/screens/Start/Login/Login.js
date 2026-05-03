@@ -12,7 +12,7 @@ import { postDataOnboarding } from "../../../services/services";
 const Login = (props) => {
   const { route, token, setToken } = useContext(Context);
   const { ingredientTags, setIngredientTags } = useContext(Context);
-  const { user, setUser, recipesSaved, setRecipesSaved } = useContext(Context);
+  const { user, setUser, recipesSaved, setRecipesSaved, setSelectedIngredients, setPantryItems } = useContext(Context);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -84,6 +84,8 @@ const Login = (props) => {
       console.log("TOKEN:", jsonResponse.token);
       setToken(jsonResponse.token);
       setRecipesSaved(jsonResponse.recipesSavedList);
+      setSelectedIngredients(jsonResponse.user.myGroceryList);
+      //setPantryItems(jsonResponse.user.myPantryList)
       return true;
     }
 
@@ -124,6 +126,8 @@ const Login = (props) => {
         console.log("TOKEN:" + jsonResponse.token);
         setToken(jsonResponse.token);
         setRecipesSaved(jsonResponse.recipesSavedList);
+        setSelectedIngredients(jsonResponse.user.myGroceryList);
+        //setPantryItems(jsonResponse.user.myPantryList)
         props.navigation.navigate("Home");
       } else {
         Toast.show({
