@@ -15,7 +15,7 @@ public class MongoRecipeTagRepository implements RecipeTagRepository {
     private final MongoCollection<Document> collection;
 
     public MongoRecipeTagRepository(MongoDatabase database) {
-        this.collection = database.getCollection("recipe_tags");
+        this.collection = database.getCollection("tags");
     }
 
     @Override
@@ -24,7 +24,7 @@ public class MongoRecipeTagRepository implements RecipeTagRepository {
         for (Document doc : collection.find()) {
             tags.add(new RecipeTag(
                 doc.getObjectId("_id").toHexString(),
-                doc.getString("name")
+                doc.getString("tag")
             ));
         }
         return tags;
