@@ -1,42 +1,41 @@
-export const buildIngredientsDiff = (initialList, currentList) => {
-  const addedOrUpdated = [];
-  const removed = [];
+export const buildIngredientsDiff = (initialList = [], currentList = []) => {
+  const changes = [];
 
   // Added or updated
   currentList.forEach((currentItem) => {
-    const initialItem = initialList.find(
-      (item) => item.name === currentItem.name
-    );
+    const initialItem = initialList.find((item) => item.ingredientName === currentItem.ingredientName);
 
     if (!initialItem) {
-      addedOrUpdated.push({
-        name: currentItem.name,
-        amount: currentItem.amount,
-        type: "added",
+      changes.push({
+        ingredientName: currentItem.ingredientName,
+        ingredientTag: currentItem.ingredientTag,
+        ingredientAmount: currentItem.ingredientAmount,
       });
-    } else if (initialItem.amount !== currentItem.amount) {
-      addedOrUpdated.push({
-        name: currentItem.name,
-        amount: currentItem.amount,
-        previousAmount: initialItem.amount,
-        type: "updated",
+
+      return;
+    }
+
+    if (initialItem.ingredientAmount !== currentItem.ingredientAmount) {
+      changes.push({
+        ingredientName: currentItem.ingredientName,
+        ingredientTag: currentItem.ingredientTag,
+        ingredientAmount: currentItem.ingredientAmount,
       });
     }
   });
 
   // Removed
   initialList.forEach((initialItem) => {
-    const stillExists = currentList.some(
-      (item) => item.name === initialItem.name
-    );
+    const stillExists = currentList.some((item) => item.ingredientName === initialItem.ingredientName);
 
     if (!stillExists) {
-      removed.push({
-        name: initialItem.name,
-        type: "removed",
+      changes.push({
+        ingredientName: initialItem.ingredientName,
+        ingredientTag: initialItem.ingredientTag,
+        ingredientAmount: 0,
       });
     }
   });
 
-  return { addedOrUpdated, removed };
+  return changes;
 };
