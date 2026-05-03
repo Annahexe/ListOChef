@@ -7,7 +7,7 @@ import { Seeker } from "../../components/Seeker";
 import { TagsCarousel } from "../../components/TagsCarousel";
 import { ListItem } from "../../components/ListItem";
 import { buildIngredientsDiff } from "../../utils/buildIngredientsDiff";
-import { getData } from "../../services/services";
+import { getData, postDataToken } from "../../services/services";
 
 import Context from "../../context/Context";
 
@@ -67,14 +67,40 @@ const AddProduct = (props) => {
     loadIngredients();
   }, [route, token]);
 
-  const syncSelectedIngredients = useCallback(async (changes) => {
-    if (changes.addedOrUpdated.length === 0 && changes.removed.length === 0) {
-      return;
-    }
-    console.log("Sending addProductPetition", changes);
+  const syncSelectedIngredients = useCallback(
+    async (changes) => {
+      if (changes.length === 0) {
+        return;
+      }
 
-    // const response = await addProductPetition(changes);   //body: JSON.stringify(changes),
-  }, []);
+      try {
+        console.log("Sending grocery list changes", changes);
+
+        const response = await postDataToken(route + "/updateGroceryList", changes, token);
+
+        if (!response) {
+          Toast.show({
+            type: "error",
+            text1: "Error syncing grocery list!",
+            text2: "Please try again later.",
+          });
+          console.log(response)
+
+          return;
+        }
+
+      } catch (error) {
+        console.error("Error syncing grocery list:", error);
+
+        Toast.show({
+          type: "error",
+          text1: "Error syncing grocery list!",
+          text2: "Please try again later.",
+        });
+      }
+    },
+    [route, token],
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -104,37 +130,63 @@ const AddProduct = (props) => {
     });
   };
 
-  const selectIngredient = (ingredientName) => {
+  const selectIngredient = (ingredient) => {
     setSelectedIngredients((prev) => {
-      const alreadyExists = prev.find((item) => item.name === ingredientName);
+      const alreadyExists = prev.find((item) => item.ingredientName === ingredient.ingredientName);
 
       if (alreadyExists) return prev;
 
-      return [...prev, { name: ingredientName, amount: 1 }];
+      return [
+        ...prev,
+        {
+          ingredientName: ingredient.ingredientName,
+          ingredientTag: ingredient.ingredientTag,
+          ingredientAmount: 1,
+        },
+      ];
     });
   };
 
   const unselectIngredient = (ingredientName) => {
-    setSelectedIngredients((prev) => prev.filter((item) => item.name !== ingredientName));
+    setSelectedIngredients((prev) => prev.filter((item) => item.ingredientName !== ingredientName));
   };
 
   const addAmount = (ingredientName) => {
-    setSelectedIngredients((prev) => prev.map((item) => (item.name === ingredientName ? { ...item, amount: item.amount + 1 } : item)));
+    setSelectedIngredients((prev) =>
+      prev.map((item) =>
+        item.ingredientName === ingredientName
+          ? {
+              ...item,
+              ingredientAmount: item.ingredientAmount + 1,
+            }
+          : item,
+      ),
+    );
   };
 
   const subtractAmount = (ingredientName) => {
     setSelectedIngredients((prev) =>
-      prev.map((item) => (item.name === ingredientName ? { ...item, amount: item.amount - 1 } : item)).filter((item) => item.amount > 0),
+      prev
+        .map((item) =>
+          item.ingredientName === ingredientName
+            ? {
+                ...item,
+                ingredientAmount: item.ingredientAmount - 1,
+              }
+            : item,
+        )
+        .filter((item) => item.ingredientAmount > 0),
     );
   };
 
   const isIngredientSelected = (ingredientName) => {
-    return selectedIngredients.some((item) => item.name === ingredientName);
+    return selectedIngredients.some((item) => item.ingredientName === ingredientName);
   };
 
   const getIngredientAmount = (ingredientName) => {
-    const ingredient = selectedIngredients.find((item) => item.name === ingredientName);
-    return ingredient ? ingredient.amount : 0;
+    const ingredient = selectedIngredients.find((item) => item.ingredientName === ingredientName);
+
+    return ingredient ? ingredient.ingredientAmount : 0;
   };
 
   //demo data
@@ -205,7 +257,7 @@ const AddProduct = (props) => {
                 ingredient={item.ingredientName}
                 isSelected={isIngredientSelected(item.ingredientName)}
                 amount={getIngredientAmount(item.ingredientName)}
-                onSelect={() => selectIngredient(item.ingredientName)}
+                onSelect={() => selectIngredient(item)}
                 onUnselect={() => unselectIngredient(item.ingredientName)}
                 onAddAmount={() => addAmount(item.ingredientName)}
                 onSubtractAmount={() => subtractAmount(item.ingredientName)}

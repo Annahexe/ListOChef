@@ -25,15 +25,15 @@ const INITIAL_USER = {
 };
 
 const INITIAL_SELECTED_INGREDIENTS = [
-  { name: "Potatoes", amount: 5, ingredientTag: "" },
-  { name: "Tomatoes", amount: 1, ingredientTag: "" },
-  { name: "Water", amount: 3, ingredientTag: "" },
+  { ingredientName: "Potatoes", ingredientAmount: 5, ingredientTag: "" },
+  { ingredientName: "Tomatoes", ingredientAmount: 1, ingredientTag: "" },
+  { ingredientName: "Water", ingredientAmount: 3, ingredientTag: "" },
 ];
 
 const INITIAL_PANTRY_ITEMS = [
-  { name: "Potatoes", amount: 5, ingredientTag: "vegetable" },
-  { name: "Tomatoes", amount: 2, ingredientTag: "vegetable" },
-  { name: "Whole Milk", amount: 4, ingredientTag: "Dairy" },
+  { ingredientName: "Potatoes", ingredientAmount: 5, ingredientTag: "vegetable" },
+  { ingredientName: "Tomatoes", ingredientAmount: 2, ingredientTag: "vegetable" },
+  { ingredientName: "Whole Milk", ingredientAmount: 4, ingredientTag: "Dairy" },
 ];
 
 export const Provider = ({ children }) => {

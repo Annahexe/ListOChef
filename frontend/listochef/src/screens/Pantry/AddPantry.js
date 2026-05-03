@@ -6,8 +6,8 @@ import Toast from "react-native-toast-message";
 import { Seeker } from "../../components/Seeker";
 import { TagsCarousel } from "../../components/TagsCarousel";
 import { ListItem } from "../../components/ListItem";
-import { buildIngredientsDiff } from "../../utils/buildIngredientsDiff";
 import { getData } from "../../services/services";
+import { updatePantryListPetition } from "../../utils/pantryListUtils";
 
 import Context from "../../context/Context";
 import Feather from "@expo/vector-icons/Feather";
@@ -32,42 +32,41 @@ const AddPantry = (props) => {
     latestPantryRef.current = pantryItems;
   }, [pantryItems]);
 
-  const syncPantryItems = useCallback(async (changes) => {
-    if (
-      changes.addedOrUpdated.length === 0 &&
-      changes.removed.length === 0
-    ) {
-      return;
-    }
+  const syncPantryItems = useCallback(
+    async (updatedPantryItems) => {
+      const wasUpdated = await updatePantryListPetition({
+        route,
+        token,
+        pantryItems: updatedPantryItems,
+      });
 
-    try {
-      console.log("Sending addPantryPetition", changes);
+      if (!wasUpdated) {
+        return;
+      }
 
-      // const response = await addPantryPetition(changes);
-      // console.log("addPantryPetition response:", response);
-    } catch (error) {
-      console.error("Error syncing pantry items:", error);
-    }
-  }, []);
+      console.log("Pantry synced from AddPantry");
+    },
+    [route, token],
+  );
 
   useFocusEffect(
     useCallback(() => {
       initialPantryRef.current = [...latestPantryRef.current];
-    }, [])
+
+      return () => {
+        const initialPantry = initialPantryRef.current;
+        const latestPantry = latestPantryRef.current;
+
+        const hasChanged = JSON.stringify(initialPantry) !== JSON.stringify(latestPantry);
+
+        if (!hasChanged) {
+          return;
+        }
+
+        syncPantryItems(latestPantry);
+      };
+    }, [syncPantryItems]),
   );
-
-  useEffect(() => {
-    const unsubscribe = props.navigation.addListener("blur", () => {
-      const changes = buildIngredientsDiff(
-        initialPantryRef.current,
-        latestPantryRef.current
-      );
-
-      syncPantryItems(changes);
-    });
-
-    return unsubscribe;
-  }, [props.navigation, syncPantryItems]);
 
   const toggleTag = (selectedTag) => {
     setSelectedTags((previousSelectedTags) => {
@@ -83,37 +82,56 @@ const AddPantry = (props) => {
     });
   };
 
-  const selectIngredient = (ingredientName) => {
+  const selectIngredient = (ingredient) => {
     setPantryItems((prev) => {
-      const alreadyExists = prev.find((item) => item.name === ingredientName);
+      const alreadyExists = prev.find((item) => item.ingredientName === ingredient.ingredientName);
 
       if (alreadyExists) return prev;
 
-      return [...prev, { name: ingredientName, amount: 1 }];
+      return [
+        ...prev,
+        {
+          ingredientName: ingredient.ingredientName,
+          ingredientTag: ingredient.ingredientTag,
+          ingredientAmount: 1,
+        },
+      ];
     });
   };
 
   const unselectIngredient = (ingredientName) => {
-    setPantryItems((prev) => prev.filter((item) => item.name !== ingredientName));
+    setPantryItems((prev) => prev.filter((item) => item.ingredientName !== ingredientName));
   };
 
   const addAmount = (ingredientName) => {
-    setPantryItems((prev) => prev.map((item) => (item.name === ingredientName ? { ...item, amount: item.amount + 1 } : item)));
+    setPantryItems((prev) =>
+      prev.map((item) =>
+        item.ingredientName === ingredientName
+          ? {
+              ...item,
+              ingredientAmount: item.ingredientAmount + 1,
+            }
+          : item,
+      ),
+    );
   };
 
   const subtractAmount = (ingredientName) => {
     setPantryItems((prev) =>
-      prev.map((item) => (item.name === ingredientName ? { ...item, amount: item.amount - 1 } : item)).filter((item) => item.amount > 0),
+      prev
+        .map((item) => (item.ingredientName === ingredientName ? { ...item, ingredientAmount: item.ingredientAmount - 1 } : item))
+        .filter((item) => item.ingredientAmount > 0),
     );
   };
 
   const isIngredientSelected = (ingredientName) => {
-    return pantryItems.some((item) => item.name === ingredientName);
+    return pantryItems.some((item) => item.ingredientName === ingredientName);
   };
 
   const getIngredientAmount = (ingredientName) => {
-    const ingredient = pantryItems.find((item) => item.name === ingredientName);
-    return ingredient ? ingredient.amount : 0;
+    const ingredient = pantryItems.find((item) => item.ingredientName === ingredientName);
+
+    return ingredient ? ingredient.ingredientAmount : 0;
   };
 
   useEffect(() => {
@@ -159,9 +177,7 @@ const AddPantry = (props) => {
 
     // Filter by text
     if (normalizedSearch !== "") {
-      result = result.filter((ingredient) =>
-        ingredient.ingredientName.toLowerCase().includes(normalizedSearch)
-      );
+      result = result.filter((ingredient) => ingredient.ingredientName.toLowerCase().includes(normalizedSearch));
     }
 
     // Filter by tags
@@ -191,17 +207,13 @@ const AddPantry = (props) => {
                 ingredient={item.ingredientName}
                 isSelected={isIngredientSelected(item.ingredientName)}
                 amount={getIngredientAmount(item.ingredientName)}
-                onSelect={() => selectIngredient(item.ingredientName)}
+                onSelect={() => selectIngredient(item)}
                 onUnselect={() => unselectIngredient(item.ingredientName)}
                 onAddAmount={() => addAmount(item.ingredientName)}
                 onSubtractAmount={() => subtractAmount(item.ingredientName)}
               />
             )}
-            ListEmptyComponent={
-              <Text style={styles.emptyText}>
-                {isLoadingIngredients ? "Loading ingredients..." : "No ingredients found :c"}
-              </Text>
-            }
+            ListEmptyComponent={<Text style={styles.emptyText}>{isLoadingIngredients ? "Loading ingredients..." : "No ingredients found :c"}</Text>}
           />
         </View>
       </View>

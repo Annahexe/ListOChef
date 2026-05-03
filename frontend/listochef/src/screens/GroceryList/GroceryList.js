@@ -1,13 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-  Keyboard,
-  Alert,
-} from "react-native";
+import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Keyboard, Alert } from "react-native";
 import { useState, useContext } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
@@ -17,9 +8,13 @@ import GroceryListTitleIcon from "../../../assets/icons/groceryList_titleIcon.sv
 import { TitleIconPage } from "../../components/TitleIconPage";
 import { Seeker } from "../../components/Seeker";
 import { TagsCarousel } from "../../components/TagsCarousel";
+import { postDataToken } from "../../services/services";
+import Toast from "react-native-toast-message";
+import { buildUpdatedPantryList, updatePantryListPetition } from "../../utils/pantryListUtils";
 
 import Context from "../../context/Context";
 const GroceryList = (props) => {
+  const { route, token } = useContext(Context);
   //Para tags
   const { ingredientTags, setIngredientTags } = useContext(Context);
   const [selectedTags, setSelectedTags] = useState(["All"]);
@@ -43,13 +38,9 @@ const GroceryList = (props) => {
       if (selectedTag == "All") {
         return ["All"];
       }
-      const tagsWithoutAll = previousSelectedTags.filter(
-        (element) => element !== "All",
-      );
+      const tagsWithoutAll = previousSelectedTags.filter((element) => element !== "All");
       if (tagsWithoutAll.includes(selectedTag)) {
-        const selectedTagsList = tagsWithoutAll.filter(
-          (element) => element !== selectedTag,
-        );
+        const selectedTagsList = tagsWithoutAll.filter((element) => element !== selectedTag);
         return selectedTagsList.length === 0 ? ["All"] : selectedTagsList;
       }
       return [...tagsWithoutAll, selectedTag];
@@ -69,99 +60,95 @@ const GroceryList = (props) => {
 
   //Quita ingrediente de la lista de seleccionados
   const unSelect = (item) => {
-    setIngredientsToPantry((prev) => prev.filter((i) => i.name !== item.name));
+    setIngredientsToPantry((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
   };
 
   //Comprueba si el ingrediente esta seleccionado
   const isItemSelected = (item) => {
-    return ingredientsToPantry.some((i) => i.name === item.name);
+    return ingredientsToPantry.some((i) => i.ingredientName === item.ingredientName);
   };
 
   //Añade a la lista que tenemos en Context. Elimina el ingrediente de la lista de ingredientes y borra los ingredientes seleccionados.
-  const addToPantry = () => {
-    //Añade a la lista de Context
-    setPantryItems((prev) => {
-      const updated = [...prev];
+  const addToPantry = async () => {
+    const updatedPantryItems = buildUpdatedPantryList(pantryItems, ingredientsToPantry);
 
-      ingredientsToPantry.forEach((newItem) => {
-        const existingIndex = updated.findIndex(
-          (item) => item.name === newItem.name,
-        );
-
-        if (existingIndex !== -1) {
-          // Si existe, sumamos cantidad
-          updated[existingIndex] = {
-            ...updated[existingIndex],
-            amount:
-              (updated[existingIndex].amount || 0) + (newItem.amount || 0),
-          };
-        } else {
-          // Si no existe, lo añadimos
-          updated.push(newItem);
-        }
-      });
-      return updated;
+    const wasPantryUpdated = await updatePantryListPetition({
+      route,
+      token,
+      pantryItems: updatedPantryItems,
     });
+
+    if (!wasPantryUpdated) {
+      return;
+    }
+
+    //Añade a la lista de Context
+    setPantryItems(updatedPantryItems);
+
     //Elimino de la lista el ingrediente
-    setSelectedIngredients((prev) =>
-      prev.filter(
-        (item) => !ingredientsToPantry.some((i) => i.name === item.name),
-      ),
-    );
+    setSelectedIngredients((prev) => prev.filter((item) => !ingredientsToPantry.some((i) => i.ingredientName === item.ingredientName)));
     //vacia los seleccionados
     setIngredientsToPantry([]);
+
+    Toast.show({
+      type: "success",
+      text1: "Added to pantry!",
+    });
   };
 
   //Permite borrar ingredientes. Para ello los borra de la lista de los ingredientes y tambien de la lista si estuviese seleccionado. Salta alerta por si es un error.
   const onDelete = (item) => {
-    Alert.alert("Delete ingredient", `Remove ${item.name}?`, [
+    Alert.alert("Delete ingredient", `Remove ${item.ingredientName}?`, [
       { text: "Cancel", style: "cancel" },
       {
         text: "Delete",
         style: "destructive",
-        onPress: () => {
-          setSelectedIngredients((prev) =>
-            prev.filter((i) => i.name !== item.name),
-          );
-          setIngredientsToPantry((prev) =>
-            prev.filter((i) => i.name !== item.name),
-          );
+        onPress: async () => {
+          setSelectedIngredients((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
+
+          setIngredientsToPantry((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
+          const respone = await removeFromGroceryListPetition(item.ingredientName);
         },
       },
     ]);
   };
 
+  const removeFromGroceryListPetition = async (ingredientName) => {
+    const data = { ingredientName: ingredientName };
+
+    const response = await postDataToken(route + "/removeFromGroceryList", data, token);
+
+    if (!response) {
+      Toast.show({
+        type: "error",
+        text1: "Error removing ingredient!",
+        text2: "Please try again later.",
+      });
+
+      return false;
+    }
+
+    console.log("Ingredient removed from grocery list:", response);
+    return true;
+  };
+
   return (
-    <ImageBackground
-      source={require("../../../assets/fondoApp.png")}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <View style={styles.container}>
           <TitleIconPage titleText="Grocery List" icon={GroceryListTitleIcon} />
 
-          <Seeker
-            placeholderText="Search new products..."
-            onPress={goAddProduct}
-            editable={false}
-          ></Seeker>
-          <TagsCarousel
-            tagsList={ingredientTags}
-            selectedTags={selectedTags}
-            onToggleTag={toggleTag}
-          />
+          <Seeker placeholderText="Search new products..." onPress={goAddProduct} editable={false}></Seeker>
+          <TagsCarousel tagsList={ingredientTags} selectedTags={selectedTags} onToggleTag={toggleTag} />
 
-          <Text style={styles.resumeText}>
-            {selectedIngredients.length} products
-          </Text>
+          <Text style={styles.resumeText}>{selectedIngredients.length} products</Text>
           <View style={{ flex: 1, width: "100%", maxHeight: "55%" }}>
             <ScrollView>
               {selectedIngredients.map((item, index) => (
                 <GroceryListItem
-                  key={index}
-                  ingredient={item.name}
-                  amount={item.amount}
+                  key={item.ingredientName}
+                  ingredient={item.ingredientName}
+                  amount={item.ingredientAmount}
                   isSelected={isItemSelected(item)}
                   onSelect={() => onSelect(item)}
                   onUnselect={() => unSelect(item)}
@@ -173,14 +160,7 @@ const GroceryList = (props) => {
 
           <View style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}>
             <Pressable onPress={addToPantry} disabled={isDisabled}>
-              <Text
-                style={[
-                  styles.buttonPantry,
-                  isDisabled && styles.buttonDisabled,
-                ]}
-              >
-                Add to Pantry
-              </Text>
+              <Text style={[styles.buttonPantry, isDisabled && styles.buttonDisabled]}>Add to Pantry</Text>
             </Pressable>
             <Pressable onPress={goAddProduct}>
               <AddCircleButton />
