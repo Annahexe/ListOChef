@@ -73,10 +73,31 @@ const AddProduct = (props) => {
         return;
       }
 
-      console.log("Sending grocery list changes", changes);
+      try {
+        console.log("Sending grocery list changes", changes);
 
-      // Example:
-      // const response = await postDataToken(route + "/grocery-list", changes, token);
+        const response = await postDataToken(route + "/updateGroceryList", changes, token);
+
+        if (!response) {
+          Toast.show({
+            type: "error",
+            text1: "Error syncing grocery list!",
+            text2: "Please try again later.",
+          });
+          console.log(response)
+
+          return;
+        }
+
+      } catch (error) {
+        console.error("Error syncing grocery list:", error);
+
+        Toast.show({
+          type: "error",
+          text1: "Error syncing grocery list!",
+          text2: "Please try again later.",
+        });
+      }
     },
     [route, token],
   );
