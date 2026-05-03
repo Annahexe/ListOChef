@@ -94,7 +94,7 @@ const Login = (props) => {
 
   const debugLogin = async () => {
     const debugCredentials = {
-      email: "Adminpistacho@gmail.com",
+      email: "adminpistacho@gmail.com",
       password: "12345",
     };
     setLoginData(debugCredentials);
