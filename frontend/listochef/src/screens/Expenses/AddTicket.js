@@ -106,7 +106,7 @@ const AddTicket = ({ navigation }) => {
   const addTicketRequest = async (formData) => {
     console.log("SENDING PETITION CREATE_TICKET_REQUEST");
 
-    //const response = await postDataToken(route + "/recipes/createRecipe", formData, token);
+    const response = await postDataToken(route + "/createTicket", formData, token);
 
     if (!response) {
       console.log("NO RESPONSE");
