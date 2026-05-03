@@ -10,6 +10,7 @@ import { Seeker } from "../../components/Seeker";
 import { TagsCarousel } from "../../components/TagsCarousel";
 import { postDataToken } from "../../services/services";
 import Toast from "react-native-toast-message";
+import { buildUpdatedPantryList, updatePantryListPetition } from "../../utils/pantryListUtils";
 
 import Context from "../../context/Context";
 const GroceryList = (props) => {
@@ -68,29 +69,31 @@ const GroceryList = (props) => {
   };
 
   //Añade a la lista que tenemos en Context. Elimina el ingrediente de la lista de ingredientes y borra los ingredientes seleccionados.
-  const addToPantry = () => {
-    //Añade a la lista de Context
-    setPantryItems((prev) => {
-      const updated = [...prev];
+  const addToPantry = async () => {
+    const updatedPantryItems = buildUpdatedPantryList(pantryItems, ingredientsToPantry);
 
-      ingredientsToPantry.forEach((newItem) => {
-        const existingIndex = updated.findIndex((item) => item.ingredientName === newItem.ingredientName);
-
-        if (existingIndex !== -1) {
-          updated[existingIndex] = {
-            ...updated[existingIndex],
-            ingredientAmount: (updated[existingIndex].ingredientAmount || 0) + (newItem.ingredientAmount || 0),
-          };
-        } else {
-          updated.push(newItem);
-        }
-      });
-      return updated;
+    const wasPantryUpdated = await updatePantryListPetition({
+      route,
+      token,
+      pantryItems: updatedPantryItems,
     });
+
+    if (!wasPantryUpdated) {
+      return;
+    }
+
+    //Añade a la lista de Context
+    setPantryItems(updatedPantryItems);
+
     //Elimino de la lista el ingrediente
     setSelectedIngredients((prev) => prev.filter((item) => !ingredientsToPantry.some((i) => i.ingredientName === item.ingredientName)));
     //vacia los seleccionados
     setIngredientsToPantry([]);
+
+    Toast.show({
+      type: "success",
+      text1: "Added to pantry!",
+    });
   };
 
   //Permite borrar ingredientes. Para ello los borra de la lista de los ingredientes y tambien de la lista si estuviese seleccionado. Salta alerta por si es un error.
@@ -104,16 +107,16 @@ const GroceryList = (props) => {
           setSelectedIngredients((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
 
           setIngredientsToPantry((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
-          const respone = await removeFromGroceryListPetition(item.ingredientName)
+          const respone = await removeFromGroceryListPetition(item.ingredientName);
         },
       },
     ]);
   };
 
-const removeFromGroceryListPetition = async (ingredientName) => {
-    const data = {ingredientName: ingredientName,};
+  const removeFromGroceryListPetition = async (ingredientName) => {
+    const data = { ingredientName: ingredientName };
 
-    const response = await postDataToken(route + "/removeFromGroceryList", data, token, );
+    const response = await postDataToken(route + "/removeFromGroceryList", data, token);
 
     if (!response) {
       Toast.show({
@@ -127,7 +130,7 @@ const removeFromGroceryListPetition = async (ingredientName) => {
 
     console.log("Ingredient removed from grocery list:", response);
     return true;
-};
+  };
 
   return (
     <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">

@@ -6,8 +6,8 @@ import Toast from "react-native-toast-message";
 import { Seeker } from "../../components/Seeker";
 import { TagsCarousel } from "../../components/TagsCarousel";
 import { ListItem } from "../../components/ListItem";
-import { buildIngredientsDiff } from "../../utils/buildIngredientsDiff";
 import { getData } from "../../services/services";
+import { updatePantryListPetition } from "../../utils/pantryListUtils";
 
 import Context from "../../context/Context";
 import Feather from "@expo/vector-icons/Feather";
@@ -33,19 +33,18 @@ const AddPantry = (props) => {
   }, [pantryItems]);
 
   const syncPantryItems = useCallback(
-    async (changes) => {
-      if (changes.length === 0) {
+    async (updatedPantryItems) => {
+      const wasUpdated = await updatePantryListPetition({
+        route,
+        token,
+        pantryItems: updatedPantryItems,
+      });
+
+      if (!wasUpdated) {
         return;
       }
 
-      try {
-        console.log("Sending pantry changes", changes);
-
-        // Example:
-        // const response = await postDataToken(route + "/pantry", changes, token);
-      } catch (error) {
-        console.error("Error syncing pantry items:", error);
-      }
+      console.log("Pantry synced from AddPantry");
     },
     [route, token],
   );
@@ -55,9 +54,16 @@ const AddPantry = (props) => {
       initialPantryRef.current = [...latestPantryRef.current];
 
       return () => {
-        const changes = buildIngredientsDiff(initialPantryRef.current, latestPantryRef.current);
+        const initialPantry = initialPantryRef.current;
+        const latestPantry = latestPantryRef.current;
 
-        syncPantryItems(changes);
+        const hasChanged = JSON.stringify(initialPantry) !== JSON.stringify(latestPantry);
+
+        if (!hasChanged) {
+          return;
+        }
+
+        syncPantryItems(latestPantry);
       };
     }, [syncPantryItems]),
   );

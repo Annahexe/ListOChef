@@ -85,7 +85,7 @@ const Login = (props) => {
       setToken(jsonResponse.token);
       setRecipesSaved(jsonResponse.recipesSavedList);
       setSelectedIngredients(jsonResponse.user.myGroceryList);
-      //setPantryItems(jsonResponse.user.myPantryList)
+      setPantryItems(jsonResponse.user.myPantryList)
       return true;
     }
 
@@ -127,7 +127,7 @@ const Login = (props) => {
         setToken(jsonResponse.token);
         setRecipesSaved(jsonResponse.recipesSavedList);
         setSelectedIngredients(jsonResponse.user.myGroceryList);
-        //setPantryItems(jsonResponse.user.myPantryList)
+        setPantryItems(jsonResponse.user.myPantryList)
         props.navigation.navigate("Home");
       } else {
         Toast.show({
