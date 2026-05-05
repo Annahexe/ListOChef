@@ -42,57 +42,52 @@ export const TitleProfile = (props) => {
           <Text style={styles.email}>{props.email}</Text>
         </View>
         <View style={styles.bar}>
-          <Pressable style={{ flex: 1 }} onPress={props.onPressData}>
-            <View
+          <Pressable
+            style={[
+              styles.textStack,
+              { width: "50%" },
+              type === "data" && { backgroundColor: "#D0DDC8" },
+            ]}
+            onPress={props.onPressData}
+          >
+            <FontAwesome
+              name="user-o"
+              size={30}
+              color={type === "data" ? "#2C5818" : "#EEF8E9"}
+            />
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
               style={[
-                styles.textStack,
-                type === "data" && {
-                  backgroundColor: "#D0DDC8",
-                },
+                styles.textStackBar,
+                type === "data" && { color: "#2C5818" },
               ]}
             >
-              <FontAwesome
-                name="user-o"
-                size={30}
-                color={type === "data" ? "#2C5818" : "#EEF8E9"}
-              />
-              <Text
-                style={[
-                  styles.textStackBar,
-                  type === "data" && {
-                    color: "#2C5818",
-                  },
-                ]}
-              >
-                Personal Data
-              </Text>
-            </View>
+              Personal Data
+            </Text>
           </Pressable>
-          <Pressable style={{ flex: 1 }} onPress={props.onPressSubscription}>
-            <View
+
+          <Pressable
+            style={[
+              styles.textStack,
+              { width: "50%" },
+              type === "subscription" && { backgroundColor: "#D0DDC8" },
+            ]}
+            onPress={props.onPressSubscription}
+          >
+            <Ionicons
+              name="card-outline"
+              size={30}
+              color={type === "subscription" ? "#2C5818" : "#EEF8E9"}
+            />
+            <Text
               style={[
-                styles.textStack,
-                type === "subscription" && {
-                  backgroundColor: "#D0DDC8",
-                },
+                styles.textStackBar,
+                type === "subscription" && { color: "#2C5818" },
               ]}
             >
-              <Ionicons
-                name="card-outline"
-                size={30}
-                color={type === "subscription" ? "#2C5818" : "#EEF8E9"}
-              />
-              <Text
-                style={[
-                  styles.textStackBar,
-                  type === "subscription" && {
-                    color: "#2C5818",
-                  },
-                ]}
-              >
-                Subscription
-              </Text>
-            </View>
+              Subscription
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -163,14 +158,17 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     paddingLeft: 5,
     paddingRight: 5,
+    overflow: "hidden",
   },
   textStack: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "center",
+    gap: 8,
     marginVertical: 5,
     padding: 3,
     borderRadius: 100,
+    overflow: "hidden",
   },
   textStackBar: {
     color: "#EEF8E9",
