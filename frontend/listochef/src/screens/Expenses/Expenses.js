@@ -8,6 +8,7 @@ import {
   Alert,
   Platform,
 } from "react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import ExpensesTitleIcon from "../../../assets/icons/expenses_titleIcon.svg";
 import { TitleIconPage } from "../../components/TitleIconPage";
@@ -28,6 +29,7 @@ const Expenses = (props) => {
   const { route, token, ticketsSaved, setTicketsSaved } = useContext(Context);
   const tabBarHeight = useBottomTabBarHeight();
 
+  // Sustituye los estados de show por estos:
   const [showFromPicker, setShowFromPicker] = useState(false);
   const [showUntilPicker, setShowUntilPicker] = useState(false);
 
@@ -100,6 +102,8 @@ const Expenses = (props) => {
   //Las variables para el selector de fecha en el último mes
   const [fromDate, setFromDate] = useState(getLastMonthDate());
   const [untilDate, setUntilDate] = useState(new Date());
+  const [tempFromDate, setTempFromDate] = useState(getLastMonthDate());
+  const [tempUntilDate, setTempUntilDate] = useState(new Date());
 
   //Filtrado por fecha
   const filteredTickets = ticketsSaved.filter((ticket) => {
@@ -203,20 +207,6 @@ const Expenses = (props) => {
                   <Text style={styles.label}>From:</Text>
                   <Text style={styles.value}>{formatDate(fromDate)}</Text>
                 </Pressable>
-
-                {showFromPicker && (
-                  <DateTimePicker
-                    value={fromDate || new Date()}
-                    mode="date"
-                    display="calendar"
-                    onChange={(event, selectedDate) => {
-                      setShowFromPicker(false);
-                      if (event.type === "set" && selectedDate) {
-                        setFromDate(selectedDate);
-                      }
-                    }}
-                  />
-                )}
               </View>
 
               <View style={styles.dateColumn}>
@@ -224,23 +214,32 @@ const Expenses = (props) => {
                   <Text style={styles.label}>Until:</Text>
                   <Text style={styles.value}>{formatDate(untilDate)}</Text>
                 </Pressable>
-
-                {showUntilPicker && (
-                  <DateTimePicker
-                    value={untilDate || new Date()}
-                    mode="date"
-                    display="calendar"
-                    onChange={(event, selectedDate) => {
-                      setShowUntilPicker(false);
-                      if (event.type === "set" && selectedDate) {
-                        setUntilDate(selectedDate);
-                      }
-                    }}
-                  />
-                )}
               </View>
             </View>
           )}
+
+          {/* Modales, fuera de cualquier View */}
+          <DateTimePickerModal
+            isVisible={showFromPicker}
+            mode="date"
+            date={fromDate}
+            onConfirm={(date) => {
+              setShowFromPicker(false);
+              setFromDate(date);
+            }}
+            onCancel={() => setShowFromPicker(false)}
+          />
+
+          <DateTimePickerModal
+            isVisible={showUntilPicker}
+            mode="date"
+            date={untilDate}
+            onConfirm={(date) => {
+              setShowUntilPicker(false);
+              setUntilDate(date);
+            }}
+            onCancel={() => setShowUntilPicker(false)}
+          />
 
           {Platform.OS === "ios" && (
             <View style={styles.filterOrderContainer}>
