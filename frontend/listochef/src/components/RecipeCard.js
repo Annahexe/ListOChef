@@ -1,12 +1,33 @@
 import { Text, View, Image, StyleSheet, Pressable } from "react-native";
 import { useContext } from "react";
 import Context from "../context/Context";
-
 import Heart from "./Heart";
 
+/**
+ * Displays a recipe card with image, title, and optional details.
+ * Supports saving/un-saving recipes and navigating to a detailed view.
+ *
+ * @param {Object} props - Component props.
+ * @param {Object} props.recipe - Recipe data object.
+ * @param {string} props.recipe.photo - Recipe image URL.
+ * @param {string} props.recipe.recipeName - Recipe name.
+ * @param {string} props.recipe.category - Recipe category.
+ * @param {number} props.recipe.time - Cooking time in minutes.
+ * @param {string} props.recipe.difficulty - Recipe difficulty level.
+ * @param {boolean} props.recipe.saved - Whether the recipe is saved.
+ * @param {string|number} props.recipe.id - Recipe ID.
+ * @param {boolean} props.isDetailedBox - If true, shows extended recipe info.
+ * @param {function} props.onViewRecipe - Callback when opening recipe details.
+ * @param {function} props.onToggleSaved - Callback to toggle saved state.
+ * @returns {JSX.Element} Recipe card component.
+ */
 const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe, onToggleSaved }) => {
-  const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
+  const { setLastRecipeSeen } = useContext(Context);
 
+  /**
+   * Handles card press.
+   * Stores last viewed recipe, triggers navigation, and logs image URL.
+   */
   const handlePress = () => {
     setLastRecipeSeen(recipe);
     onViewRecipe();
@@ -99,12 +120,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: "#2C5818",
     fontWeight: "bold",
-  },
-  thumbnail: {
-    width: 50,
-    height: 50,
-    borderRadius: 5,
-    resizeMode: "cover",
   },
   infoLabel: {
     fontFamily: "MontserratSemiBold",

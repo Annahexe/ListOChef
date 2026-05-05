@@ -1,4 +1,13 @@
-import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Alert, Platform } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  Alert,
+  Platform,
+} from "react-native";
 
 import ExpensesTitleIcon from "../../../assets/icons/expenses_titleIcon.svg";
 import { TitleIconPage } from "../../components/TitleIconPage";
@@ -16,8 +25,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { dateBeautify } from "../../utils/dateBeautify";
 
 const Expenses = (props) => {
-  const { route, token } = useContext(Context);
-  const { ticketsSaved, setTicketsSaved } = useContext(Context);
+  const { route, token, ticketsSaved, setTicketsSaved } = useContext(Context);
   const tabBarHeight = useBottomTabBarHeight();
 
   const [showFromPicker, setShowFromPicker] = useState(false);
@@ -28,7 +36,8 @@ const Expenses = (props) => {
     setTicketsSaved([
       {
         id: "1",
-        ticketPictureUri: "https://img.freepik.com/vector-gratis/muestra-ticket-realista_23-2147938550.jpg?semt=ais_hybrid&w=740&q=80",
+        ticketPictureUri:
+          "https://img.freepik.com/vector-gratis/muestra-ticket-realista_23-2147938550.jpg?semt=ais_hybrid&w=740&q=80",
         supermarket: "Mercadona",
         ticketDate: new Date("2025-12-12"),
         amountProducts: 10,
@@ -36,7 +45,8 @@ const Expenses = (props) => {
       },
       {
         id: "2",
-        ticketPictureUri: "https://www.shutterstock.com/image-vector/receipt-bill-realistic-template-paper-260nw-2075467852.jpg",
+        ticketPictureUri:
+          "https://www.shutterstock.com/image-vector/receipt-bill-realistic-template-paper-260nw-2075467852.jpg",
         supermarket: "Consum",
         ticketDate: new Date("2026-01-04"),
         amountProducts: 15,
@@ -44,7 +54,8 @@ const Expenses = (props) => {
       },
       {
         id: "3",
-        ticketPictureUri: "https://c8.alamy.com/comp/BM86C4/single-supermarket-till-receipt-BM86C4.jpg",
+        ticketPictureUri:
+          "https://c8.alamy.com/comp/BM86C4/single-supermarket-till-receipt-BM86C4.jpg",
         supermarket: "Lidl",
         ticketDate: new Date("2026-03-13"),
         amountProducts: 5,
@@ -52,7 +63,8 @@ const Expenses = (props) => {
       },
       {
         id: "4",
-        ticketPictureUri: "https://c8.alamy.com/comp/2M8EKN2/receipt-mockup-realistic-paycheck-supermarket-paper-bill-2M8EKN2.jpg",
+        ticketPictureUri:
+          "https://c8.alamy.com/comp/2M8EKN2/receipt-mockup-realistic-paycheck-supermarket-paper-bill-2M8EKN2.jpg",
         supermarket: "Mercadona",
         ticketDate: new Date("2026-04-21"),
         amountProducts: 10,
@@ -110,9 +122,9 @@ const Expenses = (props) => {
   //Accede a la pantalla de ver ticket
   const onViewTicket = (ticket) => {
     const serializedTicket = {
-    ...ticket,
-    ticketDate: ticket.ticketDate.toISOString(),
-  };
+      ...ticket,
+      ticketDate: ticket.ticketDate.toISOString(),
+    };
     return props.navigation.navigate("ViewTicket", {
       ticket: serializedTicket,
     });
@@ -137,7 +149,10 @@ const Expenses = (props) => {
     return activeTickets.reduce((acc, item) => acc + item.totalPrice, 0);
   };
   const totalMoney = totalPrice().toFixed(2);
-  const average = activeTickets.length > 0 ? (totalPrice() / activeTickets.length).toFixed(2) : 0;
+  const average =
+    activeTickets.length > 0
+      ? (totalPrice() / activeTickets.length).toFixed(2)
+      : 0;
 
   //Calcula el total de productos.
   const totalProducts = () => {
@@ -146,7 +161,11 @@ const Expenses = (props) => {
   const totalAmountProducts = totalProducts();
 
   return (
-    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
+    <ImageBackground
+      source={require("../../../assets/fondoApp.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
       <View style={styles.overlay}>
         <View style={styles.container}>
           <TitleIconPage titleText="Expenses" icon={ExpensesTitleIcon} />
@@ -163,14 +182,18 @@ const Expenses = (props) => {
               </View>
               <View style={styles.summaryTextBox}>
                 <Text style={styles.summaryText}>Tickets</Text>
-                <Text style={styles.summaryTextBig}>{activeTickets.length}</Text>
+                <Text style={styles.summaryTextBig}>
+                  {activeTickets.length}
+                </Text>
               </View>
               <View style={styles.summaryTextBox}>
                 <Text style={styles.summaryText}>Products</Text>
                 <Text style={styles.summaryTextBig}>{totalAmountProducts}</Text>
               </View>
             </View>
-            <Text style={[styles.TittleFeatureTicket, { fontSize: 16 }]}>Average per purchase: {average}€</Text>
+            <Text style={[styles.TittleFeatureTicket, { fontSize: 16 }]}>
+              Average per purchase: {average}€
+            </Text>
           </View>
 
           {Platform.OS === "android" && (
@@ -248,9 +271,9 @@ const Expenses = (props) => {
                       mode="date"
                       display="default"
                       onChange={(event, selectedDate) => {
-                        setShowFromPicker(false);
+                        setShowUntilPicker(false);
                         if (event.type === "set" && selectedDate) {
-                          setFromDate(selectedDate);
+                          setUntilDate(selectedDate);
                         }
                       }}
                     />
@@ -261,7 +284,10 @@ const Expenses = (props) => {
           )}
 
           <View style={{ flex: 1, width: "100%" }}>
-            <ScrollView style={{ width: "100%", marginBottom: 15 }} contentContainerStyle={{ paddingBottom: 5 }}>
+            <ScrollView
+              style={{ width: "100%", marginBottom: 15 }}
+              contentContainerStyle={{ paddingBottom: 5 }}
+            >
               {filteredTickets.map((ticket) => (
                 <ExpensiveCard
                   key={ticket.id}
@@ -274,7 +300,9 @@ const Expenses = (props) => {
                 />
               ))}
             </ScrollView>
-            <View style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}>
+            <View
+              style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}
+            >
               <Pressable onPress={onAddTicket}>
                 <AddCircleButton />
               </Pressable>

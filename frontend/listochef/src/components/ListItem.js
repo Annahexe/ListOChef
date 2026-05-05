@@ -1,15 +1,29 @@
-import { Text, Image, View, Pressable, StyleSheet } from "react-native";
-
-import { useState } from "react";
-
+import { Text, View, Pressable, StyleSheet } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Feather from "@expo/vector-icons/Feather";
 
+/**
+ * Displays a selectable list item with optional quantity controls.
+ *
+ * When selected, allows increasing or decreasing the item amount.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.ingredient - Name of the ingredient.
+ * @param {number} props.amount - Current quantity of the item.
+ * @param {boolean} props.isSelected - Indicates if the item is selected.
+ * @param {function} props.onSelect - Callback when selecting the item.
+ * @param {function} props.onUnselect - Callback when unselecting the item.
+ * @param {function} props.onAddAmount - Callback to increase amount.
+ * @param {function} props.onSubtractAmount - Callback to decrease amount.
+ * @returns {JSX.Element} Selectable list item component.
+ */
 export const ListItem = (props) => {
   return (
     <View style={styles.container}>
-
-      <Pressable onPress={props.isSelected ? props.onUnselect : props.onSelect} style={styles.leftContainer}>
+      <Pressable
+        onPress={props.isSelected ? props.onUnselect : props.onSelect}
+        style={styles.leftContainer}
+      >
         {props.isSelected ? (
           <MaterialIcons name="check-circle" size={28} color="#4B643F" />
         ) : (
@@ -20,12 +34,21 @@ export const ListItem = (props) => {
 
       {props.isSelected && (
         <View style={styles.rightContainer}>
-          <Feather name="minus-square" size={28} color="#4B643F" onPress={props.onSubtractAmount} />
+          <Feather
+            name="minus-square"
+            size={28}
+            color="#4B643F"
+            onPress={props.onSubtractAmount}
+          />
           <Text style={styles.textAmount}>{props.amount}</Text>
-          <Feather name="plus-square" size={28} color="#4B643F" onPress={props.onAddAmount} />
+          <Feather
+            name="plus-square"
+            size={28}
+            color="#4B643F"
+            onPress={props.onAddAmount}
+          />
         </View>
       )}
-      
     </View>
   );
 };

@@ -1,8 +1,22 @@
 import { Text, View, StyleSheet, Pressable, Image } from "react-native";
-
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
+/**
+ * Profile header component that displays user information,
+ * avatar, logout button, and navigation tabs (Personal Data / Subscription).
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.avatar - User profile image URL.
+ * @param {string} props.name - User first name.
+ * @param {string} props.surname - User surname.
+ * @param {string} props.email - User email address.
+ * @param {string} props.type - Active tab ("data" or "subscription").
+ * @param {function} props.onPressLogout - Callback for logout action.
+ * @param {function} props.onPressData - Callback for Personal Data tab.
+ * @param {function} props.onPressSubscription - Callback for Subscription tab.
+ * @returns {JSX.Element} Profile header component.
+ */
 export const TitleProfile = (props) => {
   const type = props.type;
 
@@ -18,7 +32,7 @@ export const TitleProfile = (props) => {
 
         <View style={styles.photo}>
           <Image
-            source={{uri: props.avatar}}
+            source={{ uri: props.avatar }}
             style={styles.image}
             resizeMode="cover"
           />
@@ -92,18 +106,15 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
   },
-
   photoContainer: {
     alignItems: "center",
   },
-
   logoutContainer: {
     width: "100%",
     alignItems: "flex-end",
     paddingRight: 12,
     paddingTop: 10,
   },
-
   button: {
     flexDirection: "row",
     alignItems: "center",
@@ -114,21 +125,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 20,
   },
-
   textButton: {
     fontSize: 15,
     fontFamily: "InterBold",
     color: "white",
     marginLeft: 6,
   },
-
   photo: {
     backgroundColor: "#4B643F",
     borderRadius: 100,
     padding: 3,
     marginTop: -20,
   },
-
   image: {
     width: 120,
     height: 120,

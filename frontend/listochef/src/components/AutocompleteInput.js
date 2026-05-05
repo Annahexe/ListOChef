@@ -1,31 +1,63 @@
-import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, Keyboard } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  StyleSheet,
+  ScrollView,
+  Keyboard,
+} from "react-native";
 import { useState } from "react";
 
+/**
+ * Input component with autocomplete dropdown functionality.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.value - Current input value.
+ * @param {string[]} props.options - List of available options.
+ * @param {function} props.onSelect - Callback when a value is selected or changed.
+ * @returns {JSX.Element} Autocomplete input with dropdown list.
+ */
 const AutocompleteInput = (props) => {
   const [showList, setShowList] = useState(false);
 
   const inputValue = props.value || "";
-  // Filtra las opciones según el texto actual
+  /**
+   * Filter the options based on the current text.
+   */
   const filteredOptions = inputValue
     ? props.options.filter((item) =>
         item.toLowerCase().includes(inputValue.toLowerCase()),
       )
     : props.options;
 
-  // Cuando se pulsa una opción
+  /**
+   * Handles selection of an option from the dropdown.
+   * Updates the value, hides the list, and dismisses the keyboard.
+   *
+   * @param {string} item - Selected option.
+   */
   const handleSelect = (item) => {
     props.onSelect(item);
     setShowList(false);
     Keyboard.dismiss();
   };
 
+  /**
+   * Clears the current input value and shows the full options list.
+   */
   const handleClear = () => {
     props.onSelect("");
     setShowList(true);
   };
-  // Cuando el input pierde foco
+  /**
+   * Handles input blur event.
+   * If the current value does not match any option, it resets the input.
+   */
   const handleBlur = () => {
-    const exists = props.options.some((item) => item.toLowerCase() === inputValue.toLowerCase());
+    const exists = props.options.some(
+      (item) => item.toLowerCase() === inputValue.toLowerCase(),
+    );
 
     if (!exists) {
       props.onSelect("");
@@ -38,7 +70,9 @@ const AutocompleteInput = (props) => {
 
   return (
     <View style={styles.container}>
-      {props.label ? <Text style={styles.labelStyle}>{props.label?.toUpperCase()}</Text> : null}
+      {props.label ? (
+        <Text style={styles.labelStyle}>{props.label?.toUpperCase()}</Text>
+      ) : null}
 
       <View style={[styles.inputContainer, props.error && styles.inputError]}>
         <TextInput
@@ -46,8 +80,8 @@ const AutocompleteInput = (props) => {
           value={props.value}
           placeholder={props.placeholder}
           placeholderTextColor="#ffffff83"
-          editable={true} // permitimos borrar
-          showSoftInputOnFocus={!isDifficulty} // no abre teclado si difficulty
+          editable={true}
+          showSoftInputOnFocus={!isDifficulty}
           onFocus={() => setShowList(true)}
           onBlur={handleBlur}
           onChangeText={(text) => {
@@ -67,9 +101,16 @@ const AutocompleteInput = (props) => {
 
       {showList && filteredOptions.length > 0 && (
         <View style={styles.dropdown}>
-          <ScrollView keyboardShouldPersistTaps="handled" nestedScrollEnabled={true}>
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            nestedScrollEnabled={true}
+          >
             {filteredOptions.map((item, index) => (
-              <Pressable key={index} style={styles.item} onPress={() => handleSelect(item)}>
+              <Pressable
+                key={index}
+                style={styles.item}
+                onPress={() => handleSelect(item)}
+              >
                 <Text style={styles.itemText}>{item}</Text>
               </Pressable>
             ))}

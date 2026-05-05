@@ -1,8 +1,21 @@
 import { View, Text, StyleSheet } from "react-native";
 
+/**
+ * Displays read-only information such as labels, ingredients,
+ * additional info, or time in a styled container.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.label - Section label.
+ * @param {string[]} [props.ingredients] - List of ingredients to display.
+ * @param {string} [props.info] - Additional information text.
+ * @param {number|string} [props.time] - Time value in minutes.
+ * @returns {JSX.Element} Styled information view component.
+ */
 const ItemView = (props) => (
   <View style={{ flex: 1, marginHorizontal: 5 }}>
-    <Text style={styles.labelStyle} numberOfLines={1}>{props.label?.toUpperCase()}</Text>
+    <Text style={styles.labelStyle} numberOfLines={1}>
+      {props.label?.toUpperCase()}
+    </Text>
     <View style={styles.textInfo}>
       {props.ingredients?.map((ingredient, index) => (
         <Text key={index} style={styles.text}>

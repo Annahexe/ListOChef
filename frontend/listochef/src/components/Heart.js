@@ -1,6 +1,15 @@
 import { StyleSheet, Pressable, View } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
+/**
+ * Renders a heart icon button with optional overlay positioning.
+ *
+ * @param {Object} props - Component props.
+ * @param {function} props.onPress - Callback when the heart is pressed.
+ * @param {string} props.colorHeart - Color of the heart icon.
+ * @param {string} [props.stiles] - Optional style modifier (e.g., "onImage").
+ * @returns {JSX.Element} Heart button component.
+ */
 const Heart = (props) => {
   return (
     <Pressable
