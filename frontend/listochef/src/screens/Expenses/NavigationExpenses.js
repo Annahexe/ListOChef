@@ -6,6 +6,13 @@ import ViewTicket from "./ViewTicket";
 
 const Stack = createNativeStackNavigator();
 
+/**
+ * Stack navigator for the Expenses section.
+ * Contains three screens: Expenses (main), AddTicket and ViewTicket.
+ * AddTicket and ViewTicket are presented as transparent bottom-sheet modals.
+ *
+ * @returns {JSX.Element} Expenses stack navigator.
+ */
 const NavigationExpenses = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Group>
@@ -18,8 +25,16 @@ const NavigationExpenses = () => (
         headerShown: false,
       }}
     >
-      <Stack.Screen name="AddTicket" component={AddTicket} options={{ headerShown: false, headerMode: "none" }} />
-      <Stack.Screen name="ViewTicket" component={ViewTicket} options={{ headerShown: false, headerMode: "none" }} />
+      <Stack.Screen
+        name="AddTicket"
+        component={AddTicket}
+        options={{ headerShown: false, headerMode: "none" }}
+      />
+      <Stack.Screen
+        name="ViewTicket"
+        component={ViewTicket}
+        options={{ headerShown: false, headerMode: "none" }}
+      />
     </Stack.Group>
   </Stack.Navigator>
 );

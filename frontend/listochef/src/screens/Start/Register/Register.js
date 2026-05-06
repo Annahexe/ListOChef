@@ -1,12 +1,16 @@
 import { useState, useContext } from "react";
 import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 import Toast from "react-native-toast-message";
-
 import Context from "../../../context/Context";
 import OnboardingCard from "../../../components/OnboardingCard";
 import ItemInput from "../../../components/ItemInput";
 import PrimaryButton from "../../../components/PrimaryButton";
-import { isRequired, isEmail, minLength, matches } from "../../../utils/validators";
+import {
+  isRequired,
+  isEmail,
+  minLength,
+  matches,
+} from "../../../utils/validators";
 import { postData } from "../../../services/services";
 
 const Register = (props) => {
@@ -34,15 +38,27 @@ const Register = (props) => {
       name: isRequired(registerData.name),
       surname: isRequired(registerData.surname),
       email: isRequired(registerData.email) || isEmail(registerData.email),
-      password: isRequired(registerData.password) || minLength(registerData.password, 4),
+      password:
+        isRequired(registerData.password) ||
+        minLength(registerData.password, 4),
       confirmPassword:
         isRequired(registerData.confirmPassword) ||
         minLength(registerData.confirmPassword, 4) ||
-        matches(registerData.password, registerData.confirmPassword, "passwords"),
+        matches(
+          registerData.password,
+          registerData.confirmPassword,
+          "passwords",
+        ),
     };
 
     setErrors(newErrors);
-    return !newErrors.name && !newErrors.surname && !newErrors.email && !newErrors.password && !newErrors.confirmPassword;
+    return (
+      !newErrors.name &&
+      !newErrors.surname &&
+      !newErrors.email &&
+      !newErrors.password &&
+      !newErrors.confirmPassword
+    );
   };
 
   const onCreateAccount = async () => {
@@ -105,7 +121,9 @@ const Register = (props) => {
           label="NAME:"
           placeholder="Name/s"
           value={registerData.name}
-          onChangeText={(text) => setRegisterData((prev) => ({ ...prev, name: text }))}
+          onChangeText={(text) =>
+            setRegisterData((prev) => ({ ...prev, name: text }))
+          }
           keyboardType="default"
           error={errors.name}
         />
@@ -113,7 +131,9 @@ const Register = (props) => {
           label="SURNAME:"
           placeholder="Surname/s"
           value={registerData.surname}
-          onChangeText={(text) => setRegisterData((prev) => ({ ...prev, surname: text }))}
+          onChangeText={(text) =>
+            setRegisterData((prev) => ({ ...prev, surname: text }))
+          }
           keyboardType="default"
           error={errors.surname}
         />
@@ -121,7 +141,9 @@ const Register = (props) => {
           label="E-MAIL:"
           placeholder="E-Mail"
           value={registerData.email}
-          onChangeText={(text) => setRegisterData((prev) => ({ ...prev, email: text }))}
+          onChangeText={(text) =>
+            setRegisterData((prev) => ({ ...prev, email: text }))
+          }
           keyboardType="email-address"
           autoCapitalize="none"
           autoCorrect={false}
@@ -134,7 +156,9 @@ const Register = (props) => {
           eye={true}
           onPressEye={() => setShowPassword(!showPassword)}
           secureTextEntry={!showPassword}
-          onChangeText={(text) => setRegisterData((prev) => ({ ...prev, password: text }))}
+          onChangeText={(text) =>
+            setRegisterData((prev) => ({ ...prev, password: text }))
+          }
           keyboardType="default"
           error={errors.password}
         />
@@ -145,18 +169,26 @@ const Register = (props) => {
           eye={true}
           onPressEye={() => setShowPassword(!showPassword)}
           secureTextEntry={!showPassword}
-          onChangeText={(text) => setRegisterData((prev) => ({ ...prev, confirmPassword: text }))}
+          onChangeText={(text) =>
+            setRegisterData((prev) => ({ ...prev, confirmPassword: text }))
+          }
           keyboardType="default"
           error={errors.confirmPassword}
         />
 
         <Text style={styles.smallText}>By registering you agree to our</Text>
         <Pressable onPress={() => props.navigation.navigate("TermsConditions")}>
-          <Text style={[styles.smallText, { color: "#5A983D" }]}>Terms and Conditions</Text>
+          <Text style={[styles.smallText, { color: "#5A983D" }]}>
+            Terms and Conditions
+          </Text>
         </Pressable>
 
         <View style={styles.buttonContainer}>
-          <PrimaryButton buttonText="Create account" onPress={onCreateAccount} isLoading={isLoading} />
+          <PrimaryButton
+            buttonText="Create account"
+            onPress={onCreateAccount}
+            isLoading={isLoading}
+          />
         </View>
 
         <Text style={styles.smallText}>Do you already have an account?</Text>

@@ -31,7 +31,7 @@ import { postDataToken } from "../../services/services";
 const { height } = Dimensions.get("window");
 
 const AddTicket = ({ navigation }) => {
-  const { token, route } = useContext(Context);
+  const { token, route, setTicketsSaved } = useContext(Context);
 
   const [form, setForm] = useState({
     photo: null,
@@ -132,9 +132,18 @@ const AddTicket = ({ navigation }) => {
       return false;
     }
 
-    const [status] = response;
+    const [status, jsonResponse] = response;
     console.log("STATUS:", status);
 
+    if (status === 200 || status === 201) {
+      setTicketsSaved((prev) => [
+        ...prev,
+        {
+          ...jsonResponse,
+          ticketDate: new Date(jsonResponse.ticketDate),
+        },
+      ]);
+    }
     return status === 200 || status === 201;
   };
 
@@ -221,7 +230,10 @@ const AddTicket = ({ navigation }) => {
             placeholder="0.00"
             value={form.totalPrice}
             onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, totalPrice: text }))
+              setForm((prev) => ({
+                ...prev,
+                totalPrice: text.replace(",", "."),
+              }))
             }
             keyboardType="numeric"
             error={errors.totalPrice}

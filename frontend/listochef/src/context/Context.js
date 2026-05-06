@@ -12,7 +12,8 @@ const INITIAL_LAST_RECIPE_SEEN = {
   difficulty: "Low",
   steps:
     "1. Peel and slice the potatoes. \n2. Heat olive oil in a frying pan over medium heat.  \n3. Add the potatoes and onion and cook slowly until soft.  \n4. Beat the eggs in a bowl and add salt.  \n5. Drain the potatoes and mix them with the eggs.  \n6. Pour the mixture into the pan and cook until set on both sides.",
-  photo: "https://mojo.generalmills.com/api/public/content/9xIHKwJDH0-1wbHPsVCCVQ_gmi_hi_res_jpeg.jpeg?v=2bfc22c6&t=16e3ce250f244648bef28c5949fb99ff",
+  photo:
+    "https://mojo.generalmills.com/api/public/content/9xIHKwJDH0-1wbHPsVCCVQ_gmi_hi_res_jpeg.jpeg?v=2bfc22c6&t=16e3ce250f244648bef28c5949fb99ff",
   creationDate: "17/02/2026",
   isSaved: true,
 };
@@ -31,8 +32,16 @@ const INITIAL_SELECTED_INGREDIENTS = [
 ];
 
 const INITIAL_PANTRY_ITEMS = [
-  { ingredientName: "Potatoes", ingredientAmount: 5, ingredientTag: "vegetable" },
-  { ingredientName: "Tomatoes", ingredientAmount: 2, ingredientTag: "vegetable" },
+  {
+    ingredientName: "Potatoes",
+    ingredientAmount: 5,
+    ingredientTag: "vegetable",
+  },
+  {
+    ingredientName: "Tomatoes",
+    ingredientAmount: 2,
+    ingredientTag: "vegetable",
+  },
   { ingredientName: "Whole Milk", ingredientAmount: 4, ingredientTag: "Dairy" },
 ];
 
@@ -42,10 +51,16 @@ export const Provider = ({ children }) => {
   const [token, setToken] = useState("");
 
   const [recipesSaved, setRecipesSaved] = useState([]);
-  const [lastRecipeSeen, setLastRecipeSeen] = useState(INITIAL_LAST_RECIPE_SEEN);
+  const [lastRecipeSeen, setLastRecipeSeen] = useState(
+    INITIAL_LAST_RECIPE_SEEN,
+  );
 
   const [ingredientTags, setIngredientTags] = useState([]);
-  const [selectedIngredients, setSelectedIngredients] = useState(INITIAL_SELECTED_INGREDIENTS);
+  const [listRecipesTags, setListRecipesTags] = useState([]);
+  const [listRecipesCategories, setListRecipesCategories] = useState([]);
+  const [selectedIngredients, setSelectedIngredients] = useState(
+    INITIAL_SELECTED_INGREDIENTS,
+  );
   const [pantryItems, setPantryItems] = useState(INITIAL_PANTRY_ITEMS);
 
   const [ticketsSaved, setTicketsSaved] = useState([]);
@@ -57,6 +72,10 @@ export const Provider = ({ children }) => {
         setRoute,
         ingredientTags,
         setIngredientTags,
+        listRecipesTags,
+        setListRecipesTags,
+        listRecipesCategories,
+        setListRecipesCategories,
         lastRecipeSeen,
         setLastRecipeSeen,
         user,

@@ -9,80 +9,49 @@ import {
   Platform,
 } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-
 import ExpensesTitleIcon from "../../../assets/icons/expenses_titleIcon.svg";
 import { TitleIconPage } from "../../components/TitleIconPage";
-
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-
 import ExpensiveCard from "../../components/ExpensesCard";
 import AddCircleButton from "../../components/AddCircleButton";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Context from "../../context/Context";
-import { getData } from "../../services/services";
-
+import { postDataToken } from "../../services/services";
+import Toast from "react-native-toast-message";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { dateBeautify } from "../../utils/dateBeautify";
 
+/**
+ * Expenses screen that displays the user's saved tickets with a summary
+ * of total spent, number of tickets, and products. Allows filtering by
+ * date range, and supports adding, viewing, and deleting tickets.
+ *
+ * @param {Object} props - Navigation props.
+ * @returns {JSX.Element} Expenses screen.
+ */
 const Expenses = (props) => {
   const { route, token, ticketsSaved, setTicketsSaved } = useContext(Context);
   const tabBarHeight = useBottomTabBarHeight();
 
-  // Sustituye los estados de show por estos:
   const [showFromPicker, setShowFromPicker] = useState(false);
   const [showUntilPicker, setShowUntilPicker] = useState(false);
 
-  useEffect(() => {
-    console.log("EN Tickets LIST" + ticketsSaved);
-    setTicketsSaved([
-      {
-        id: "1",
-        ticketPictureUri:
-          "https://img.freepik.com/vector-gratis/muestra-ticket-realista_23-2147938550.jpg?semt=ais_hybrid&w=740&q=80",
-        supermarket: "Mercadona",
-        ticketDate: new Date("2025-12-12"),
-        amountProducts: 10,
-        totalPrice: 12.14,
-      },
-      {
-        id: "2",
-        ticketPictureUri:
-          "https://www.shutterstock.com/image-vector/receipt-bill-realistic-template-paper-260nw-2075467852.jpg",
-        supermarket: "Consum",
-        ticketDate: new Date("2026-01-04"),
-        amountProducts: 15,
-        totalPrice: 15.56,
-      },
-      {
-        id: "3",
-        ticketPictureUri:
-          "https://c8.alamy.com/comp/BM86C4/single-supermarket-till-receipt-BM86C4.jpg",
-        supermarket: "Lidl",
-        ticketDate: new Date("2026-03-13"),
-        amountProducts: 5,
-        totalPrice: 30.59,
-      },
-      {
-        id: "4",
-        ticketPictureUri:
-          "https://c8.alamy.com/comp/2M8EKN2/receipt-mockup-realistic-paycheck-supermarket-paper-bill-2M8EKN2.jpg",
-        supermarket: "Mercadona",
-        ticketDate: new Date("2026-04-21"),
-        amountProducts: 10,
-        totalPrice: 12.56,
-      },
-    ]);
-  }, []);
-
-  //Normalizar horas del dia. (Si el back no devuleve horas esto lo hace bien)
+  /**
+   * Normalizes a date to midnight to avoid time-of-day comparison issues.
+   * @param {Date|string} date
+   * @returns {Date}
+   */
   const normalizeDate = (date) => {
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
     return d;
   };
 
-  //Obtener el ultimo mes
+  /**
+   * Returns the date from one month ago, normalized to midnight.
+   * @returns {Date}
+   */
   const getLastMonthDate = () => {
     const d = new Date();
     d.setMonth(d.getMonth() - 1);
@@ -90,7 +59,12 @@ const Expenses = (props) => {
     return d;
   };
 
-  //Fecha en bonita android
+  /**
+   * Formats a date for display in Spanish locale (e.g. "03 may. 2026").
+   * Used for Android date pickers.
+   * @param {Date|string} date
+   * @returns {string}
+   */
   const formatDate = (date) => {
     return new Intl.DateTimeFormat("es-ES", {
       day: "2-digit",
@@ -99,13 +73,11 @@ const Expenses = (props) => {
     }).format(new Date(date));
   };
 
-  //Las variables para el selector de fecha en el último mes
+  // Date range state — defaults to last month until today
   const [fromDate, setFromDate] = useState(getLastMonthDate());
   const [untilDate, setUntilDate] = useState(new Date());
-  const [tempFromDate, setTempFromDate] = useState(getLastMonthDate());
-  const [tempUntilDate, setTempUntilDate] = useState(new Date());
 
-  //Filtrado por fecha
+  // Tickets filtered by the selected date range
   const filteredTickets = ticketsSaved.filter((ticket) => {
     const ticketDate = normalizeDate(ticket.ticketDate);
 
@@ -114,41 +86,75 @@ const Expenses = (props) => {
 
     return true;
   });
-
-  //Array de ticket filtrados
   const activeTickets = filteredTickets;
 
-  //Accede a la pantalla crear ticket
+  /** Navigates to the AddTicket screen. */
   const onAddTicket = () => {
     return props.navigation.navigate("AddTicket");
   };
 
-  //Accede a la pantalla de ver ticket
-  const onViewTicket = (ticket) => {
+  /**
+   * Navigates to ViewTicket, serializing the date to ISO string for safe passing.
+   * @param {Object} ticket
+   */ const onViewTicket = (ticket) => {
     const serializedTicket = {
       ...ticket,
-      ticketDate: ticket.ticketDate.toISOString(),
+      ticketDate: new Date(ticket.ticketDate).toISOString(),
     };
     return props.navigation.navigate("ViewTicket", {
       ticket: serializedTicket,
     });
   };
 
-  //Permite borrar ticket.  Salta alerta por si es un error.
-  const onDelete = (item) => {
+  /**
+   * Shows a confirmation alert before deleting a ticket.
+   * Only removes from context if the backend deletion succeeds.
+   * @param {Object} item - Ticket to delete.
+   */ const onDelete = (item) => {
     Alert.alert("Delete ticket", `Remove ${item.supermarket}?`, [
       { text: "Cancel", style: "cancel" },
       {
         text: "Delete",
         style: "destructive",
-        onPress: () => {
-          setTicketsSaved((prev) => prev.filter((i) => i.id !== item.id));
+        onPress: async () => {
+          const success = await removeFromExpensesListPetition(item.id);
+          if (success) {
+            setTicketsSaved((prev) => prev.filter((i) => i.id !== item.id));
+          }
         },
       },
     ]);
   };
 
-  //Calcula el total de dinero. Lo deja en dos decimal. Calcula la media (si es 0, pone 0 sino es indeterminada(explota))
+  /**
+   * Sends a DELETE request to the backend for the given ticket.
+   * @param {string} ticketId - MongoDB id of the ticket.
+   * @returns {Promise<boolean>} True if successful, false otherwise.
+   */
+  const removeFromExpensesListPetition = async (ticketId) => {
+    const data = { ticketId: ticketId };
+
+    const response = await postDataToken(
+      route + "/deleteTicket/" + ticketId,
+      data,
+      token,
+    );
+
+    if (!response) {
+      Toast.show({
+        type: "error",
+        text1: "Error removing ticket!",
+        text2: "Please try again later.",
+      });
+
+      return false;
+    }
+
+    console.log("Ticket removed from expenses:", response);
+    return true;
+  };
+
+  /** Calculates total price of active (filtered) tickets. */
   const totalPrice = () => {
     return activeTickets.reduce((acc, item) => acc + item.totalPrice, 0);
   };
@@ -158,7 +164,7 @@ const Expenses = (props) => {
       ? (totalPrice() / activeTickets.length).toFixed(2)
       : 0;
 
-  //Calcula el total de productos.
+  /** Calculates total number of products across active tickets. */
   const totalProducts = () => {
     return activeTickets.reduce((acc, item) => acc + item.amountProducts, 0);
   };
@@ -218,7 +224,6 @@ const Expenses = (props) => {
             </View>
           )}
 
-          {/* Modales, fuera de cualquier View */}
           <DateTimePickerModal
             isVisible={showFromPicker}
             mode="date"

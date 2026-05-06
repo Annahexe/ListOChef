@@ -7,6 +7,13 @@ import RecipesList from "./RecipesList";
 
 const Stack = createNativeStackNavigator();
 
+/**
+ * Stack navigator for the Recipes section.
+ * Contains four screens: RecipesList and SearchRecipes as main screens,
+ * and AddRecipe and ViewRecipe presented as transparent bottom-sheet modals.
+ *
+ * @returns {JSX.Element} Recipes stack navigator.
+ */
 const NavigationRecipeList = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Group>

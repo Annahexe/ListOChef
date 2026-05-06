@@ -5,6 +5,12 @@ import AddPantry from "./AddPantry";
 
 const Stack = createNativeStackNavigator();
 
+/**
+ * Stack navigator for the Pantry section.
+ * Contains two screens: Pantry (main) and AddPantry.
+ *
+ * @returns {JSX.Element} Pantry stack navigator.
+ */
 const NavigationPantry = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Group>

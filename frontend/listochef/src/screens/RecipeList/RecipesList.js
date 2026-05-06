@@ -1,4 +1,12 @@
-import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Keyboard } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  Keyboard,
+} from "react-native";
 import { useState, useEffect, useContext } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import Toast from "react-native-toast-message";
@@ -13,7 +21,10 @@ import RecipeListTitleIcon from "../../../assets/icons/recipeList_titleIcon.svg"
 
 import Context from "../../context/Context";
 import { getData } from "../../services/services";
-import { toggleSavedPetition, showToggleSavedToast } from "../../utils/toggleSavedRecipe";
+import {
+  toggleSavedPetition,
+  showToggleSavedToast,
+} from "../../utils/toggleSavedRecipe";
 
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -146,7 +157,11 @@ const RecipesList = (props) => {
   const toggleSaved = async (id) => {
     const previousRecipes = recipesSaved;
 
-    setRecipesSaved((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
+    setRecipesSaved((prev) =>
+      prev.map((recipe) =>
+        recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe,
+      ),
+    );
 
     const result = await toggleSavedPetition({
       route,
@@ -167,15 +182,26 @@ const RecipesList = (props) => {
   };
 
   return (
-    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
+    <ImageBackground
+      source={require("../../../assets/fondoApp.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
       <View style={styles.overlay}>
         <View style={styles.container}>
           <TitleIconPage titleText="My Recipes" icon={RecipeListTitleIcon} />
 
-          <Seeker placeholderText="Search new recipes..." onPress={goSearchRecipe} editable={false}></Seeker>
+          <Seeker
+            placeholderText="Search new recipes..."
+            onPress={goSearchRecipe}
+            editable={false}
+          ></Seeker>
 
           <View style={{ flex: 1, width: "100%" }}>
-            <ScrollView style={{ width: "100%" }} contentContainerStyle={{ paddingBottom: 80 }}>
+            <ScrollView
+              style={{ width: "100%" }}
+              contentContainerStyle={{ paddingBottom: 80 }}
+            >
               <View style={styles.featuredRecipe}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <FontAwesome5 name="history" size={26} color="white" />
@@ -198,7 +224,11 @@ const RecipesList = (props) => {
 
               <View style={styles.filterOrderContainer}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <MaterialCommunityIcons name="calendar-blank-outline" size={28} color="black" />
+                  <MaterialCommunityIcons
+                    name="calendar-blank-outline"
+                    size={28}
+                    color="black"
+                  />
                   <Text
                     style={{
                       fontSize: 15,
@@ -210,16 +240,27 @@ const RecipesList = (props) => {
                     Order by...
                   </Text>
 
-                  <FilterOrderDropdown filterOrderValue={filterOrderValue} setFilterOrderValue={setFilterOrderValue} />
+                  <FilterOrderDropdown
+                    filterOrderValue={filterOrderValue}
+                    setFilterOrderValue={setFilterOrderValue}
+                  />
                 </View>
               </View>
 
               {sortedRecipes.map((recipe, index) => (
-                <RecipeCard key={index} recipe={recipe} isDetailedBox={false} onViewRecipe={onViewRecipe} onToggleSaved={toggleSaved} />
+                <RecipeCard
+                  key={index}
+                  recipe={recipe}
+                  isDetailedBox={false}
+                  onViewRecipe={onViewRecipe}
+                  onToggleSaved={toggleSaved}
+                />
               ))}
             </ScrollView>
 
-            <View style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}>
+            <View
+              style={[styles.floatingButton, { bottom: tabBarHeight - 140 }]}
+            >
               <Pressable onPress={onAddRecipe}>
                 <AddCircleButton />
               </Pressable>

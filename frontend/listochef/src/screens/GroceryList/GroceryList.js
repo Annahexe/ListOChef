@@ -1,4 +1,13 @@
-import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Keyboard, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  Keyboard,
+  Alert,
+} from "react-native";
 import { useState, useContext } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 
@@ -10,67 +19,91 @@ import { Seeker } from "../../components/Seeker";
 import { TagsCarousel } from "../../components/TagsCarousel";
 import { postDataToken } from "../../services/services";
 import Toast from "react-native-toast-message";
-import { buildUpdatedPantryList, updatePantryListPetition } from "../../utils/pantryListUtils";
-
+import {
+  buildUpdatedPantryList,
+  updatePantryListPetition,
+} from "../../utils/pantryListUtils";
 import Context from "../../context/Context";
+
+/**
+ * GroceryList screen that displays the user's grocery list with tag filtering.
+ * Allows adding products, selecting items to move to the pantry, and deleting items.
+ *
+ * @param {Object} props - Navigation props.
+ * @returns {JSX.Element} Grocery List screen.
+ */
 const GroceryList = (props) => {
-  const { route, token } = useContext(Context);
-  //Para tags
-  const { ingredientTags, setIngredientTags } = useContext(Context);
+  const {
+    route,
+    token,
+    ingredientTags,
+    selectedIngredients,
+    setSelectedIngredients,
+    pantryItems,
+    setPantryItems,
+  } = useContext(Context);
   const [selectedTags, setSelectedTags] = useState(["All"]);
 
-  //para la altura de los botones de abajo
   const tabBarHeight = useBottomTabBarHeight();
 
-  //ingredientes seleccionados en mi lista para añadir a pantry
+  // Local list of ingredients selected to be moved to pantry
   const [ingredientsToPantry, setIngredientsToPantry] = useState([]);
 
-  //Ingredientes seleccionados y cantidad desde añadir producto
-  const { selectedIngredients, setSelectedIngredients } = useContext(Context);
-
-  //Ingredientes de pantry mediante context
-  const { pantryItems, setPantryItems } = useContext(Context);
+  /** "Add to Pantry" button is disabled when no ingredients are selected. */
   const isDisabled = ingredientsToPantry.length === 0;
 
-  //Para la barra de tags
   const toggleTag = (selectedTag) => {
     setSelectedTags((previousSelectedTags) => {
       if (selectedTag == "All") {
         return ["All"];
       }
-      const tagsWithoutAll = previousSelectedTags.filter((element) => element !== "All");
+      const tagsWithoutAll = previousSelectedTags.filter(
+        (element) => element !== "All",
+      );
       if (tagsWithoutAll.includes(selectedTag)) {
-        const selectedTagsList = tagsWithoutAll.filter((element) => element !== selectedTag);
+        const selectedTagsList = tagsWithoutAll.filter(
+          (element) => element !== selectedTag,
+        );
         return selectedTagsList.length === 0 ? ["All"] : selectedTagsList;
       }
       return [...tagsWithoutAll, selectedTag];
     });
   };
 
-  //Va a la pantalla de añadir producto
+  /** Navigates to AddProduct screen. */
   const goAddProduct = () => {
     Keyboard.dismiss();
     return props.navigation.navigate("AddProduct");
   };
 
-  //añade ingrediente a la lista de seleccionados
+  /** Adds an ingredient to the pantry selection list. @param {Object} item */
   const onSelect = (item) => {
     setIngredientsToPantry((prev) => [...prev, item]);
   };
 
-  //Quita ingrediente de la lista de seleccionados
+  /** Removes an ingredient from the pantry selection list. @param {Object} item */
   const unSelect = (item) => {
-    setIngredientsToPantry((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
+    setIngredientsToPantry((prev) =>
+      prev.filter((i) => i.ingredientName !== item.ingredientName),
+    );
   };
 
-  //Comprueba si el ingrediente esta seleccionado
+  /** Returns true if the ingredient is currently selected. @param {Object} item */
   const isItemSelected = (item) => {
-    return ingredientsToPantry.some((i) => i.ingredientName === item.ingredientName);
+    return ingredientsToPantry.some(
+      (i) => i.ingredientName === item.ingredientName,
+    );
   };
 
-  //Añade a la lista que tenemos en Context. Elimina el ingrediente de la lista de ingredientes y borra los ingredientes seleccionados.
+  /**
+   * Moves selected ingredients to the pantry, updates context,
+   * removes them from the grocery list, and clears the selection.
+   */
   const addToPantry = async () => {
-    const updatedPantryItems = buildUpdatedPantryList(pantryItems, ingredientsToPantry);
+    const updatedPantryItems = buildUpdatedPantryList(
+      pantryItems,
+      ingredientsToPantry,
+    );
 
     const wasPantryUpdated = await updatePantryListPetition({
       route,
@@ -82,12 +115,16 @@ const GroceryList = (props) => {
       return;
     }
 
-    //Añade a la lista de Context
     setPantryItems(updatedPantryItems);
 
-    //Elimino de la lista el ingrediente
-    setSelectedIngredients((prev) => prev.filter((item) => !ingredientsToPantry.some((i) => i.ingredientName === item.ingredientName)));
-    //vacia los seleccionados
+    setSelectedIngredients((prev) =>
+      prev.filter(
+        (item) =>
+          !ingredientsToPantry.some(
+            (i) => i.ingredientName === item.ingredientName,
+          ),
+      ),
+    );
     setIngredientsToPantry([]);
 
     Toast.show({
@@ -96,7 +133,11 @@ const GroceryList = (props) => {
     });
   };
 
-  //Permite borrar ingredientes. Para ello los borra de la lista de los ingredientes y tambien de la lista si estuviese seleccionado. Salta alerta por si es un error.
+  /**
+   * Shows a confirmation alert before deleting an ingredient.
+   * Removes it from both the grocery list and the pantry selection.
+   * @param {Object} item - Ingredient to delete.
+   */
   const onDelete = (item) => {
     Alert.alert("Delete ingredient", `Remove ${item.ingredientName}?`, [
       { text: "Cancel", style: "cancel" },
@@ -104,19 +145,34 @@ const GroceryList = (props) => {
         text: "Delete",
         style: "destructive",
         onPress: async () => {
-          setSelectedIngredients((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
+          setSelectedIngredients((prev) =>
+            prev.filter((i) => i.ingredientName !== item.ingredientName),
+          );
 
-          setIngredientsToPantry((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
-          const respone = await removeFromGroceryListPetition(item.ingredientName);
+          setIngredientsToPantry((prev) =>
+            prev.filter((i) => i.ingredientName !== item.ingredientName),
+          );
+          const respone = await removeFromGroceryListPetition(
+            item.ingredientName,
+          );
         },
       },
     ]);
   };
 
+  /**
+   * Sends a request to remove an ingredient from the grocery list in the backend.
+   * @param {string} ingredientName
+   * @returns {Promise<boolean>} True if successful, false otherwise.
+   */
   const removeFromGroceryListPetition = async (ingredientName) => {
     const data = { ingredientName: ingredientName };
 
-    const response = await postDataToken(route + "/removeFromGroceryList", data, token);
+    const response = await postDataToken(
+      route + "/removeFromGroceryList",
+      data,
+      token,
+    );
 
     if (!response) {
       Toast.show({
@@ -133,15 +189,29 @@ const GroceryList = (props) => {
   };
 
   return (
-    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
+    <ImageBackground
+      source={require("../../../assets/fondoApp.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
       <View style={styles.overlay}>
         <View style={styles.container}>
           <TitleIconPage titleText="Grocery List" icon={GroceryListTitleIcon} />
 
-          <Seeker placeholderText="Search new products..." onPress={goAddProduct} editable={false}></Seeker>
-          <TagsCarousel tagsList={ingredientTags} selectedTags={selectedTags} onToggleTag={toggleTag} />
+          <Seeker
+            placeholderText="Search new products..."
+            onPress={goAddProduct}
+            editable={false}
+          ></Seeker>
+          <TagsCarousel
+            tagsList={ingredientTags}
+            selectedTags={selectedTags}
+            onToggleTag={toggleTag}
+          />
 
-          <Text style={styles.resumeText}>{selectedIngredients.length} products</Text>
+          <Text style={styles.resumeText}>
+            {selectedIngredients.length} products
+          </Text>
           <View style={{ flex: 1, width: "100%", maxHeight: "55%" }}>
             <ScrollView>
               {selectedIngredients.map((item, index) => (
@@ -158,9 +228,16 @@ const GroceryList = (props) => {
             </ScrollView>
           </View>
 
-          <View style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}>
+          <View style={[styles.floatingButton, { bottom: tabBarHeight - 140 }]}>
             <Pressable onPress={addToPantry} disabled={isDisabled}>
-              <Text style={[styles.buttonPantry, isDisabled && styles.buttonDisabled]}>Add to Pantry</Text>
+              <Text
+                style={[
+                  styles.buttonPantry,
+                  isDisabled && styles.buttonDisabled,
+                ]}
+              >
+                Add to Pantry
+              </Text>
             </Pressable>
             <Pressable onPress={goAddProduct}>
               <AddCircleButton />
@@ -171,6 +248,7 @@ const GroceryList = (props) => {
     </ImageBackground>
   );
 };
+
 const styles = StyleSheet.create({
   background: {
     flex: 1,

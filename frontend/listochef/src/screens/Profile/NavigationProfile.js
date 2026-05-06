@@ -1,10 +1,16 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
 import Profile from "./Profile";
 import EditProfile from "./EditProfile";
 
 const Stack = createNativeStackNavigator();
 
+/**
+ * Stack navigator for the Profile section.
+ * Contains two screens: Profile (main, no animation) and EditProfile,
+ * which is presented as a transparent bottom-sheet modal.
+ *
+ * @returns {JSX.Element} Profile stack navigator.
+ */
 const NavigationProfile = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Group>
