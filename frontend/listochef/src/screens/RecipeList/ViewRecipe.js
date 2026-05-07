@@ -11,6 +11,8 @@ import ItemView from "../../components/ItemView";
 import TitleModalScreen from "../../components/TitleModalScreen";
 import Heart from "../../components/Heart";
 import Context from "../../context/Context";
+import Toast from "react-native-toast-message";
+import { postDataToken, getData } from "../../services/services";
 import {
   toggleSavedPetition,
   showToggleSavedToast,
@@ -25,8 +27,14 @@ import {
  * @returns {JSX.Element} View Recipe modal screen.
  */
 const ViewRecipe = ({ navigation }) => {
-  const { route, token, lastRecipeSeen, setLastRecipeSeen } =
-    useContext(Context);
+  const {
+    route,
+    token,
+    lastRecipeSeen,
+    setLastRecipeSeen,
+    selectedIngredients,
+    setSelectedIngredients,
+  } = useContext(Context);
   const [recipe, setRecipe] = useState();
 
   /** Mirrors the saved state locally for optimistic UI updates. */
@@ -37,8 +45,64 @@ const ViewRecipe = ({ navigation }) => {
     setRecipe(lastRecipeSeen);
   }, []);
 
-  /** Navigates back (used for "Add to grocery list" action). */
-  const onAddGroceryList = () => {
+  /**
+   * Adds the recipe's ingredients to the grocery list.
+   * If an ingredient already exists in the list, increments its amount by 1.
+   * If it doesn't exist, fetches its tag from the backend and adds it as a new entry.
+   * Syncs the updated list with the backend via /updateGroceryList.
+   * Navigates back after the operation completes.
+   *
+   * @returns {Promise<void>}
+   */
+  const onAddGroceryList = async () => {
+    const allIngredients = await getData(route + "/ingredients", token);
+
+    const newIngredients = [];
+    const updatedList = [...selectedIngredients];
+
+    recipe.ingredients.forEach((name) => {
+      const existingIndex = updatedList.findIndex(
+        (i) => i.ingredientName === name,
+      );
+
+      if (existingIndex !== -1) {
+        // Ya existe, le sumamos 1
+        updatedList[existingIndex] = {
+          ...updatedList[existingIndex],
+          ingredientAmount: updatedList[existingIndex].ingredientAmount + 1,
+        };
+      } else {
+        // No existe, lo añadimos nuevo
+        const found = allIngredients?.find((i) => i.ingredientName === name);
+        const newItem = {
+          ingredientName: name,
+          ingredientTag: found?.ingredientTag ?? "",
+          ingredientAmount: 1,
+        };
+        updatedList.push(newItem);
+        newIngredients.push(newItem);
+      }
+    });
+
+    setSelectedIngredients(updatedList);
+
+    const changes = updatedList
+      .filter((i) => recipe.ingredients.includes(i.ingredientName))
+      .map((i) => ({
+        ingredientName: i.ingredientName,
+        ingredientAmount: i.ingredientAmount,
+        action: "add",
+      }));
+
+    if (changes.length > 0) {
+      await postDataToken(route + "/updateGroceryList", changes, token);
+    }
+
+    Toast.show({
+      type: "success",
+      text1: "Ingredients added to grocery list!",
+    });
+
     return navigation.goBack();
   };
 
