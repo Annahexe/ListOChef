@@ -8,31 +8,44 @@ import {
 } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-
 import Context from "../../context/Context";
 import ItemView from "../../components/ItemView";
 import Subscription from "../../components/Subscription";
 import TitleProfile from "../../components/TitleProfile";
-
 import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
+/**
+ * Profile screen that displays user information and subscription details.
+ * Switches between "Personal Data" and "Subscription" tabs via TitleProfile.
+ * Allows navigation to EditProfile and logout to the Start screen.
+ *
+ * @param {Object} props - Navigation props.
+ * @returns {JSX.Element} Profile screen.
+ */
 const Profile = (props) => {
-  const { user, setUser } = useContext(Context);
+  const { user } = useContext(Context);
+
+  /** Controls which tab is active: false = Personal Data, true = Subscription. */
   const [subscription, setSubscription] = useState(false);
+
   const navigation = useNavigation();
 
   useEffect(() => {
     setSubscription(false);
   }, []);
 
+  /** Switches to the Personal Data tab if not already active. */
   const onPressData = () => {
     !subscription ? null : setSubscription(false);
   };
+
+  /** Switches to the Subscription tab if not already active. */
   const onPressSubscription = () => {
     subscription ? null : setSubscription(true);
   };
 
+  /** Navigates to the EditProfile screen. */
   const onEditProfile = () => {
     return props.navigation.navigate("EditProfile");
   };
@@ -117,7 +130,6 @@ const styles = StyleSheet.create({
     position: "relative",
     alignItems: "center",
   },
-
   containerTitle: {
     flexDirection: "row",
     alignItems: "center",
@@ -141,7 +153,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 20,
   },
-
   textButton: {
     fontSize: 15,
     fontFamily: "InterBold",

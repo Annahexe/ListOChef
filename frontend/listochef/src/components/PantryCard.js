@@ -1,10 +1,19 @@
-import { Text, View, Image, StyleSheet, Pressable } from "react-native";
-import { useContext } from "react";
-import Context from "../context/Context";
-
+import { Text, View, StyleSheet, Pressable } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Feather from "@expo/vector-icons/Feather";
 
+/**
+ * Displays a pantry ingredient card with quantity controls and delete option.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.ingredient - Name of the ingredient.
+ * @param {string} props.tag - Category or tag of the ingredient.
+ * @param {number} props.amount - Current quantity of the ingredient.
+ * @param {function} props.onDelete - Callback when delete is pressed.
+ * @param {function} props.onAddAmount - Callback to increase quantity.
+ * @param {function} props.onSubtractAmount - Callback to decrease quantity.
+ * @returns {JSX.Element} Pantry ingredient card component.
+ */
 const PantryCard = (props) => {
   return (
     <View>

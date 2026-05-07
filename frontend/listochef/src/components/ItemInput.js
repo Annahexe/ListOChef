@@ -1,16 +1,40 @@
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
-import { useState, useEffect } from "react";
-
+import { useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
+/**
+ * Custom input component with support for password visibility toggle,
+ * multiline input, and error display.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.label - Input label.
+ * @param {string} props.placeholder - Placeholder text.
+ * @param {string} props.value - Current input value.
+ * @param {function} props.onChangeText - Callback when text changes.
+ * @param {boolean} [props.eye] - If true, shows password visibility toggle.
+ * @param {boolean} [props.multiline] - Enables multiline input.
+ * @param {number} [props.numberOfLines] - Number of visible lines for multiline input.
+ * @param {string} [props.keyboardType] - Keyboard type.
+ * @param {boolean} [props.editable] - Whether the input is editable.
+ * @param {string} [props.error] - Error message to display.
+ * @returns {JSX.Element} Custom input component.
+ */
 const ItemInput = (props) => {
   const [showPassword, setShowPassword] = useState(!props.eye);
 
   return (
     <View>
-      <Text style={[styles.labelStyle, props.style]}>{props.label?.toUpperCase()}</Text>
+      <Text style={[styles.labelStyle, props.style]}>
+        {props.label?.toUpperCase()}
+      </Text>
 
-      <View style={[styles.inputContainer, props.multiline && styles.multilineInput, props.error && styles.inputError]}>
+      <View
+        style={[
+          styles.inputContainer,
+          props.multiline && styles.multilineInput,
+          props.error && styles.inputError,
+        ]}
+      >
         <TextInput
           style={[styles.textInput, props.eye && styles.textInputWithEye]}
           placeholder={props.placeholder}
@@ -26,8 +50,15 @@ const ItemInput = (props) => {
         />
 
         {props.eye && (
-          <Pressable onPress={() => setShowPassword(!showPassword)} style={styles.eyeContainer}>
-            <AntDesign name={showPassword ? "eye-invisible" : "eye"} size={26} color="white" />
+          <Pressable
+            onPress={() => setShowPassword(!showPassword)}
+            style={styles.eyeContainer}
+          >
+            <AntDesign
+              name={showPassword ? "eye-invisible" : "eye"}
+              size={26}
+              color="white"
+            />
           </Pressable>
         )}
       </View>

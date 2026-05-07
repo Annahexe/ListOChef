@@ -1,12 +1,20 @@
-import { Text, View, Image, StyleSheet, Pressable } from "react-native";
-import { useContext } from "react";
-import Context from "../context/Context";
-
+import { Text, View, StyleSheet, Pressable } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import Feather from "@expo/vector-icons/Feather";
 
+/**
+ * Displays a card with pantry/ticket information.
+ * Includes supermarket name, date, number of products, total amount, and delete action.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.super - Supermarket name.
+ * @param {string} props.date - Purchase date.
+ * @param {number} props.amount - Number of products.
+ * @param {number} props.money - Total price.
+ * @param {function} props.onViewTicket - Callback when the card is pressed.
+ * @param {function} props.onDelete - Callback when delete button is pressed.
+ * @returns {JSX.Element} Pantry card component.
+ */
 const PantryCard = (props) => {
   return (
     <View>

@@ -1,8 +1,19 @@
 import { Text, View, Pressable, StyleSheet } from "react-native";
-
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Feather from "@expo/vector-icons/Feather";
 
+/**
+ * Displays a grocery list item with selection and delete actions.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.ingredient - Name of the ingredient.
+ * @param {number|string} props.amount - Quantity of the ingredient.
+ * @param {boolean} props.isSelected - Indicates if the item is selected.
+ * @param {function} props.onSelect - Callback when selecting the item.
+ * @param {function} props.onUnselect - Callback when unselecting the item.
+ * @param {function} props.onDelete - Callback when deleting the item.
+ * @returns {JSX.Element} Grocery list item component.
+ */
 export const GroceryListItem = (props) => {
   return (
     <View style={styles.container}>

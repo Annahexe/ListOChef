@@ -1,4 +1,10 @@
-import { StyleSheet, View, ImageBackground, FlatList, Text } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ImageBackground,
+  FlatList,
+  Text,
+} from "react-native";
 import { useEffect, useState, useContext } from "react";
 
 import { Seeker } from "../../components/Seeker";
@@ -8,27 +14,19 @@ import RecipeCard from "../../components/RecipeCard";
 import Context from "../../context/Context";
 import Toast from "react-native-toast-message";
 import { getData } from "../../services/services";
-import { toggleSavedPetition, showToggleSavedToast } from "../../utils/toggleSavedRecipe";
+import {
+  toggleSavedPetition,
+  showToggleSavedToast,
+} from "../../utils/toggleSavedRecipe";
 
 import Feather from "@expo/vector-icons/Feather";
 
 const SearchRecipes = (props) => {
-  const { route, token } = useContext(Context);
+  const { route, token, listRecipesTags } = useContext(Context);
 
   const [recipeList, setRecipeList] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [searchText, setSearchText] = useState("");
-
-  //THESE TAGS SHOULD BE FROM BACKEND, FOR EXAMPLE const TAGS = ["All", ...listRecipesTags];
-  const TAGS = [
-    { name: "All", icon: "" },
-    { name: "Pasta", icon: "🍝" },
-    { name: "Fish", icon: "🐟" },
-    { name: "Pork", icon: "🐖" },
-    { name: "Beef", icon: "🐄" },
-    { name: "Chicken", icon: "🐔" },
-    { name: "Meat", icon: "🥩" },
-  ];
 
   const [selectedTags, setSelectedTags] = useState(["All"]);
 
@@ -38,10 +36,14 @@ const SearchRecipes = (props) => {
         return ["All"];
       }
 
-      const tagsWithoutAll = previousSelectedTags.filter((tag) => tag !== "All");
+      const tagsWithoutAll = previousSelectedTags.filter(
+        (tag) => tag !== "All",
+      );
 
       if (tagsWithoutAll.includes(selectedTag)) {
-        const selectedTagsList = tagsWithoutAll.filter((tag) => tag !== selectedTag);
+        const selectedTagsList = tagsWithoutAll.filter(
+          (tag) => tag !== selectedTag,
+        );
 
         return selectedTagsList.length === 0 ? ["All"] : selectedTagsList;
       }
@@ -51,7 +53,11 @@ const SearchRecipes = (props) => {
   };
 
   const toggleSaved = async (id) => {
-    setRecipeList((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
+    setRecipeList((prev) =>
+      prev.map((recipe) =>
+        recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe,
+      ),
+    );
 
     const result = await toggleSavedPetition({
       route,
@@ -167,11 +173,17 @@ const SearchRecipes = (props) => {
     // Filter by text
     if (normalizedSearch !== "") {
       result = result.filter((recipe) => {
-        const matchesName = recipe.recipeName.toLowerCase().includes(normalizedSearch);
+        const matchesName = recipe.recipeName
+          .toLowerCase()
+          .includes(normalizedSearch);
 
-        const matchesCategory = recipe.category.toLowerCase().includes(normalizedSearch);
+        const matchesCategory = recipe.category
+          .toLowerCase()
+          .includes(normalizedSearch);
 
-        const matchesIngredients = recipe.ingredients.some((ingredient) => ingredient.toLowerCase().includes(normalizedSearch));
+        const matchesIngredients = recipe.ingredients.some((ingredient) =>
+          ingredient.toLowerCase().includes(normalizedSearch),
+        );
 
         return matchesName || matchesCategory || matchesIngredients;
       });
@@ -179,23 +191,46 @@ const SearchRecipes = (props) => {
 
     // Filter by tags
     if (!selectedTags.includes("All")) {
-      const normalizedSelectedTags = selectedTags.map((tag) => tag.toLowerCase());
+      const normalizedSelectedTags = selectedTags.map((tag) =>
+        tag.toLowerCase(),
+      );
 
-      result = result.filter((recipe) => recipe.tags?.some((recipeTag) => normalizedSelectedTags.includes(recipeTag.toLowerCase())));
+      result = result.filter((recipe) =>
+        recipe.tags?.some((recipeTag) =>
+          normalizedSelectedTags.includes(recipeTag.toLowerCase()),
+        ),
+      );
     }
 
     setFilteredRecipes(result);
   }, [searchText, selectedTags, recipeList]);
 
   return (
-    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
+    <ImageBackground
+      source={require("../../../assets/fondoApp.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
       <View style={styles.overlay}>
         <View style={styles.container}>
           <View style={styles.searchBarContainer}>
-            <Feather name="chevron-left" size={60} color="rgba(75, 100, 63, 0.7)" onPress={() => props.navigation.goBack()} />
-            <Seeker placeholderText="Search recipe..." value={searchText} onChangeText={setSearchText}></Seeker>
+            <Feather
+              name="chevron-left"
+              size={60}
+              color="rgba(75, 100, 63, 0.7)"
+              onPress={() => props.navigation.goBack()}
+            />
+            <Seeker
+              placeholderText="Search recipe..."
+              value={searchText}
+              onChangeText={setSearchText}
+            ></Seeker>
           </View>
-          <TagsCarousel tagsList={TAGS} selectedTags={selectedTags} onToggleTag={toggleTag} />
+          <TagsCarousel
+            tagsList={listRecipesTags}
+            selectedTags={selectedTags}
+            onToggleTag={toggleTag}
+          />
           <FlatList
             data={filteredRecipes}
             keyExtractor={(item) => item.id}
@@ -205,9 +240,16 @@ const SearchRecipes = (props) => {
             style={{ width: "100%", marginBottom: "12%" }}
             contentContainerStyle={{ paddingBottom: 20 }}
             renderItem={({ item }) => (
-              <RecipeCard recipe={item} isDetailedBox={true} onViewRecipe={() => props.navigation.navigate("ViewRecipe")} onToggleSaved={toggleSaved} />
+              <RecipeCard
+                recipe={item}
+                isDetailedBox={true}
+                onViewRecipe={() => props.navigation.navigate("ViewRecipe")}
+                onToggleSaved={toggleSaved}
+              />
             )}
-            ListEmptyComponent={<Text style={styles.emptyText}>No recipes found :c</Text>}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>No recipes found :c</Text>
+            }
           />
         </View>
       </View>

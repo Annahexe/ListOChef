@@ -1,6 +1,16 @@
 import { View, Text, Pressable, Image, StyleSheet } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
+/**
+ * Image picker component that allows selecting and previewing a photo.
+ * If no photo is selected, shows a camera icon and placeholder text.
+ * If a photo exists, displays the selected image.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.photo - URI of the selected image.
+ * @param {function} props.choosePhoto - Callback to open image picker.
+ * @returns {JSX.Element} Photo picker component.
+ */
 const PhotoPicker = (props) => (
   <View style={styles.imageInput}>
     {!props.photo ? (

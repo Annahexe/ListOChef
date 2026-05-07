@@ -1,9 +1,27 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import AutocompleteInput from "./AutocompleteInput";
 
+/**
+ * Renders a dynamic list of autocomplete inputs.
+ * Allows adding new inputs if the previous one is filled.
+ *
+ * @param {Object} props - Component props.
+ * @param {string[]} props.values - Current list of input values.
+ * @param {function} props.setValues - Function to update the values array.
+ * @param {string[]} props.options - Options for autocomplete.
+ * @param {string} props.label - Label for the inputs.
+ * @returns {JSX.Element} List of autocomplete inputs with add button.
+ */
 const AutocompleteList = (props) => {
+  /**
+   * Adds a new empty input to the list.
+   * Prevents adding if the last input is empty.
+   */
   const addItem = () => {
-    if (props.values.length === 0 || props.values[props.values.length - 1] !== "") {
+    if (
+      props.values.length === 0 ||
+      props.values[props.values.length - 1] !== ""
+    ) {
       props.setValues((prev) => [...prev, ""]);
     } else {
       Toast.show({
@@ -35,7 +53,9 @@ const AutocompleteList = (props) => {
       ))}
 
       <Pressable style={styles.addInput} onPress={addItem}>
-        <Text style={styles.textAddInput}>Add {props.label.toLowerCase().slice(0, -1)}</Text>
+        <Text style={styles.textAddInput}>
+          Add {props.label.toLowerCase().slice(0, -1)}
+        </Text>
       </Pressable>
     </View>
   );

@@ -1,4 +1,14 @@
-import { View, Text, Pressable, StyleSheet, Keyboard, Dimensions, Platform } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Keyboard,
+  Dimensions,
+  Platform,
+} from "react-native";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+
 import { useState, useContext } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -10,13 +20,18 @@ import ItemInput from "../../components/ItemInput";
 import TitleModalScreen from "../../components/TitleModalScreen";
 import ModalButtons from "../../components/ModalButtons";
 
-import { isRequired, isPositiveNumber, isPositiveInteger, isValidDate } from "../../utils/validators";
+import {
+  isRequired,
+  isPositiveNumber,
+  isPositiveInteger,
+  isValidDate,
+} from "../../utils/validators";
 import { postDataToken } from "../../services/services";
 
 const { height } = Dimensions.get("window");
 
 const AddTicket = ({ navigation }) => {
-  const { token, route } = useContext(Context);
+  const { token, route, setTicketsSaved } = useContext(Context);
 
   const [form, setForm] = useState({
     photo: null,
@@ -106,16 +121,29 @@ const AddTicket = ({ navigation }) => {
   const addTicketRequest = async (formData) => {
     console.log("SENDING PETITION CREATE_TICKET_REQUEST");
 
-    const response = await postDataToken(route + "/createTicket", formData, token);
+    const response = await postDataToken(
+      route + "/createTicket",
+      formData,
+      token,
+    );
 
     if (!response) {
       console.log("NO RESPONSE");
       return false;
     }
 
-    const [status] = response;
+    const [status, jsonResponse] = response;
     console.log("STATUS:", status);
 
+    if (status === 200 || status === 201) {
+      setTicketsSaved((prev) => [
+        ...prev,
+        {
+          ...jsonResponse,
+          ticketDate: new Date(jsonResponse.ticketDate),
+        },
+      ]);
+    }
     return status === 200 || status === 201;
   };
 
@@ -125,19 +153,30 @@ const AddTicket = ({ navigation }) => {
     const newErrors = {
       supermarket: isRequired(form.supermarket),
       ticketDate: isValidDate(form.ticketDate),
-      amountProducts: isRequired(form.amountProducts) || isPositiveInteger(form.amountProducts),
-      totalPrice: isRequired(form.totalPrice) || isPositiveNumber(form.totalPrice),
+      amountProducts:
+        isRequired(form.amountProducts) ||
+        isPositiveInteger(form.amountProducts),
+      totalPrice:
+        isRequired(form.totalPrice) || isPositiveNumber(form.totalPrice),
     };
 
     setErrors(newErrors);
 
-    return !newErrors.supermarket && !newErrors.ticketDate && !newErrors.amountProducts && !newErrors.totalPrice;
+    return (
+      !newErrors.supermarket &&
+      !newErrors.ticketDate &&
+      !newErrors.amountProducts &&
+      !newErrors.totalPrice
+    );
   };
 
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-        <TitleModalScreen title={"New Ticket"} onPress={() => navigation.goBack()} />
+        <TitleModalScreen
+          title={"New Ticket"}
+          onPress={() => navigation.goBack()}
+        />
 
         <KeyboardAwareScrollView
           style={styles.scrollContainer}
@@ -154,38 +193,48 @@ const AddTicket = ({ navigation }) => {
             label="Supermarket:"
             placeholder="Ex: Mercadona, Consum..."
             value={form.supermarket}
-            onChangeText={(text) => setForm((prev) => ({ ...prev, supermarket: text }))}
+            onChangeText={(text) =>
+              setForm((prev) => ({ ...prev, supermarket: text }))
+            }
             keyboardType="default"
             error={errors.supermarket}
           />
 
           <Pressable onPress={() => setShowDatePicker(true)}>
-            <ItemInput label="Date:" placeholder="Select date" value={formatDate(form.ticketDate)} editable={false} error={errors.ticketDate} />
+            <View pointerEvents="none">
+              <ItemInput
+                label="Date:"
+                placeholder="Select date"
+                value={formatDate(form.ticketDate)}
+                editable={false}
+                error={errors.ticketDate}
+                pointerEvents="none"
+              />
+            </View>
           </Pressable>
 
-          {showDatePicker && (
-            <DateTimePicker
-              value={form.ticketDate}
-              mode="date"
-              display={Platform.OS === "ios" ? "spinner" : "calendar"}
-              onChange={(event, selectedDate) => {
-                setShowDatePicker(false);
-
-                if (selectedDate) {
-                  setForm((prev) => ({
-                    ...prev,
-                    ticketDate: selectedDate,
-                  }));
-                }
-              }}
-            />
-          )}
+          <DateTimePickerModal
+            isVisible={showDatePicker}
+            mode="date"
+            date={form.ticketDate}
+            display={Platform.OS === "ios" ? "inline" : "default"}
+            onConfirm={(date) => {
+              setShowDatePicker(false);
+              setForm((prev) => ({ ...prev, ticketDate: date }));
+            }}
+            onCancel={() => setShowDatePicker(false)}
+          />
 
           <ItemInput
             label="Total:"
             placeholder="0.00"
             value={form.totalPrice}
-            onChangeText={(text) => setForm((prev) => ({ ...prev, totalPrice: text }))}
+            onChangeText={(text) =>
+              setForm((prev) => ({
+                ...prev,
+                totalPrice: text.replace(",", "."),
+              }))
+            }
             keyboardType="numeric"
             error={errors.totalPrice}
           />
@@ -194,13 +243,19 @@ const AddTicket = ({ navigation }) => {
             label="Number of products:"
             placeholder="0"
             value={form.amountProducts}
-            onChangeText={(text) => setForm((prev) => ({ ...prev, amountProducts: text }))}
+            onChangeText={(text) =>
+              setForm((prev) => ({ ...prev, amountProducts: text }))
+            }
             keyboardType="numeric"
             error={errors.amountProducts}
           />
         </KeyboardAwareScrollView>
 
-        <ModalButtons onCancel={() => navigation.goBack()} onSave={onSaved} isFormComplete={isFormComplete} />
+        <ModalButtons
+          onCancel={() => navigation.goBack()}
+          onSave={onSaved}
+          isFormComplete={isFormComplete}
+        />
       </View>
     </View>
   );

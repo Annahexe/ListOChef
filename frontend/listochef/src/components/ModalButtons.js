@@ -1,5 +1,15 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 
+/**
+ * Renders action buttons for a modal (Cancel and Save).
+ * Save button is disabled visually when the form is not complete.
+ *
+ * @param {Object} props - Component props.
+ * @param {function} props.onCancel - Callback when cancel button is pressed.
+ * @param {function} props.onSave - Callback when save button is pressed.
+ * @param {boolean} props.isFormComplete - Indicates if the form is valid and complete.
+ * @returns {JSX.Element} Modal buttons component.
+ */
 const ModalButtons = (props) => {
   return (
     <View style={styles.buttonContainer}>

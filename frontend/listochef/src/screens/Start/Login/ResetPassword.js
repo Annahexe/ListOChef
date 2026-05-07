@@ -1,12 +1,16 @@
 import { useState, useContext } from "react";
 import { StyleSheet, Text, View, Pressable, ScrollView } from "react-native";
 import Toast from "react-native-toast-message";
-
 import Context from "../../../context/Context";
 import OnboardingCard from "../../../components/OnboardingCard";
 import ItemInput from "../../../components/ItemInput";
 import PrimaryButton from "../../../components/PrimaryButton";
-import { isRequired, isEmail, minLength, matches } from "../../../utils/validators";
+import {
+  isRequired,
+  isEmail,
+  minLength,
+  matches,
+} from "../../../utils/validators";
 import { postData } from "../../../services/services";
 
 const ResetPassword = (props) => {
@@ -41,15 +45,23 @@ const ResetPassword = (props) => {
   const validateFormSecondStep = () => {
     const newErrors = {
       code: isRequired(resetPasswordData.code),
-      newPassword: isRequired(resetPasswordData.newPassword) || minLength(resetPasswordData.newPassword, 4),
+      newPassword:
+        isRequired(resetPasswordData.newPassword) ||
+        minLength(resetPasswordData.newPassword, 4),
       confirmNewPassword:
         isRequired(resetPasswordData.confirmNewPassword) ||
         minLength(resetPasswordData.confirmNewPassword, 4) ||
-        matches(resetPasswordData.newPassword, resetPasswordData.confirmNewPassword, "new passwords"),
+        matches(
+          resetPasswordData.newPassword,
+          resetPasswordData.confirmNewPassword,
+          "new passwords",
+        ),
     };
 
     setErrors(newErrors);
-    return !newErrors.code && !newErrors.newPassword && !newErrors.confirmNewPassword;
+    return (
+      !newErrors.code && !newErrors.newPassword && !newErrors.confirmNewPassword
+    );
   };
 
   const onSendEmail = async () => {
@@ -87,7 +99,8 @@ const ResetPassword = (props) => {
     const isValid = validateFormSecondStep();
     if (!isValid) return;
 
-    const { confirmNewPassword, ...resetPasswordWithoutConfirm } = resetPasswordData;
+    const { confirmNewPassword, ...resetPasswordWithoutConfirm } =
+      resetPasswordData;
     const dataToSendResetPassword = {
       ...emailData,
       ...resetPasswordWithoutConfirm,
@@ -128,7 +141,10 @@ const ResetPassword = (props) => {
   };
 
   const sendResetPasswordPetition = async (dataToSendResetPassword) => {
-    const response = await postData(route + "/resetPassword", dataToSendResetPassword);
+    const response = await postData(
+      route + "/resetPassword",
+      dataToSendResetPassword,
+    );
     if (!response) return false;
     console.log("RESPONSE: " + response);
 
@@ -143,15 +159,22 @@ const ResetPassword = (props) => {
 
   return (
     <OnboardingCard pageTitle="Reset Password" titleStyle={{ fontSize: 36 }}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
         {!isSecondStep && (
           <>
-            <Text style={styles.smallText}>We will email you a link to reset your password.</Text>
+            <Text style={styles.smallText}>
+              We will email you a link to reset your password.
+            </Text>
             <ItemInput
               label="E-MAIL:"
               placeholder="E-Mail"
               value={emailData.email}
-              onChangeText={(text) => setEmailData((prev) => ({ ...prev, email: text }))}
+              onChangeText={(text) =>
+                setEmailData((prev) => ({ ...prev, email: text }))
+              }
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
@@ -159,18 +182,25 @@ const ResetPassword = (props) => {
               error={errors.email}
             />
             <View style={styles.buttonContainer}>
-              <PrimaryButton buttonText={"Send email"} onPress={onSendEmail}></PrimaryButton>
+              <PrimaryButton
+                buttonText={"Send email"}
+                onPress={onSendEmail}
+              ></PrimaryButton>
             </View>
           </>
         )}
         {isSecondStep && (
           <>
-            <Text style={styles.smallText}>We have sent you a code to: {emailData.email}</Text>
+            <Text style={styles.smallText}>
+              We have sent you a code to: {emailData.email}
+            </Text>
             <ItemInput
               label="CODE:"
               placeholder="Code"
               value={resetPasswordData.code}
-              onChangeText={(text) => setResetPasswordData((prev) => ({ ...prev, code: text }))}
+              onChangeText={(text) =>
+                setResetPasswordData((prev) => ({ ...prev, code: text }))
+              }
               keyboardType="default"
               style={{ fontSize: 16 }}
               error={errors.code}
@@ -182,7 +212,9 @@ const ResetPassword = (props) => {
               eye={true}
               onPressEye={() => setShowPassword(!showPassword)}
               secureTextEntry={!showPassword}
-              onChangeText={(text) => setResetPasswordData((prev) => ({ ...prev, newPassword: text }))}
+              onChangeText={(text) =>
+                setResetPasswordData((prev) => ({ ...prev, newPassword: text }))
+              }
               keyboardType="default"
               style={{ fontSize: 16 }}
               error={errors.newPassword}
@@ -205,17 +237,24 @@ const ResetPassword = (props) => {
               error={errors.confirmNewPassword}
             />
             <View style={styles.buttonContainer}>
-              <PrimaryButton buttonText={"Confirm"} onPress={onConfirmResetPassword}></PrimaryButton>
+              <PrimaryButton
+                buttonText={"Confirm"}
+                onPress={onConfirmResetPassword}
+              ></PrimaryButton>
             </View>
           </>
         )}
 
         <Pressable onPress={() => props.navigation.navigate("Start")}>
-          <Text style={[styles.smallText, { color: "#5A983D" }]}>Return to home</Text>
+          <Text style={[styles.smallText, { color: "#5A983D" }]}>
+            Return to home
+          </Text>
         </Pressable>
 
         <Pressable onPress={() => props.navigation.navigate("Login")}>
-          <Text style={[styles.smallText, { color: "#5A983D" }]}>Go to Login</Text>
+          <Text style={[styles.smallText, { color: "#5A983D" }]}>
+            Go to Login
+          </Text>
         </Pressable>
       </ScrollView>
     </OnboardingCard>

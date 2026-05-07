@@ -42,6 +42,14 @@ const SCREENS = [
   { name: "NavigationProfile", component: NavigationProfile },
 ];
 
+/**
+ * Main bottom tab navigator for the app.
+ * Contains five tabs: RecipeList, GroceryList, Pantry, Expenses and Profile.
+ * Each tab uses custom SVG icons that change between active and inactive states.
+ * Labels are hidden; icon size adapts to platform (Android/iOS).
+ *
+ * @returns {JSX.Element} Home tab navigator.
+ */
 const Home = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({

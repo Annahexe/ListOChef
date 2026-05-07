@@ -1,8 +1,15 @@
-import { Text, Image, View, Pressable, StyleSheet } from "react-native";
-
+import { Text, View, Pressable, StyleSheet } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
+/**
+ * Displays a subscription plan card (Free or Premium).
+ * Shows plan details, features, and action button.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.details - Plan type ("free" or "premium").
+ * @returns {JSX.Element} Subscription plan component.
+ */
 const Subscription = (props) => {
   const detailsFree = [
     "Basic access to the platform",
@@ -118,7 +125,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 20,
   },
-
   buttonTextFree: {
     fontSize: 15,
     fontFamily: "MontserratRegular",

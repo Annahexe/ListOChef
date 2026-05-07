@@ -5,6 +5,12 @@ import AddProduct from "./AddProduct";
 
 const Stack = createNativeStackNavigator();
 
+/**
+ * Stack navigator for the Grocery List section.
+ * Contains two screens: GroceryList (main) and AddProduct.
+ *
+ * @returns {JSX.Element} Grocery List stack navigator.
+ */
 const NavigationGroceryList = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Group>
