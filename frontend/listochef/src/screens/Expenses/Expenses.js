@@ -305,7 +305,7 @@ const Expenses = (props) => {
               ))}
             </ScrollView>
             <View
-              style={[styles.floatingButton, { bottom: tabBarHeight - 150 }]}
+              style={[styles.floatingButton, { bottom: tabBarHeight - 140 }]}
             >
               <Pressable onPress={onAddTicket}>
                 <AddCircleButton />
