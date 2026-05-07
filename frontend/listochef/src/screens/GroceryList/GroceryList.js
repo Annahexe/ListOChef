@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useState, useContext } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-
+import Feather from "@expo/vector-icons/Feather";
 import AddCircleButton from "../../components/AddCircleButton";
 import { GroceryListItem } from "../../components/GroceryListItem";
 import GroceryListTitleIcon from "../../../assets/icons/groceryList_titleIcon.svg";
@@ -92,6 +92,44 @@ const GroceryList = (props) => {
   const isItemSelected = (item) => {
     return ingredientsToPantry.some(
       (i) => i.ingredientName === item.ingredientName,
+    );
+  };
+  /**
+   * Deletes all currently selected ingredients from the grocery list.
+   * Removes them from both the grocery list context and the pantry selection.
+   */
+  const deleteSelected = () => {
+    Alert.alert(
+      "Delete ingredients",
+      `Remove ${ingredientsToPantry.length} selected ingredients?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            for (const item of ingredientsToPantry) {
+              await removeFromGroceryListPetition(item.ingredientName);
+            }
+
+            setSelectedIngredients((prev) =>
+              prev.filter(
+                (i) =>
+                  !ingredientsToPantry.some(
+                    (s) => s.ingredientName === i.ingredientName,
+                  ),
+              ),
+            );
+
+            setIngredientsToPantry([]);
+
+            Toast.show({
+              type: "success",
+              text1: "Ingredients deleted!",
+            });
+          },
+        },
+      ],
     );
   };
 
@@ -209,9 +247,19 @@ const GroceryList = (props) => {
             onToggleTag={toggleTag}
           />
 
-          <Text style={styles.resumeText}>
-            {selectedIngredients.length} products
-          </Text>
+          <View style={styles.resumeRow}>
+            <Text style={[styles.resumeText, { flex: 1 }]}>
+              {selectedIngredients.length} products
+            </Text>
+            {!isDisabled && (
+              <Feather
+                name="trash-2"
+                size={24}
+                color="#c0392b"
+                onPress={deleteSelected}
+              />
+            )}
+          </View>
           <View style={{ flex: 1, width: "100%", maxHeight: "55%" }}>
             <ScrollView>
               {selectedIngredients.map((item, index) => (
@@ -266,7 +314,6 @@ const styles = StyleSheet.create({
   },
   resumeText: {
     marginVertical: 10,
-    marginHorizontal: 20,
     fontSize: 20,
     fontFamily: "InterBold",
     alignSelf: "flex-start",
@@ -295,6 +342,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#8b9d89",
     opacity: 0.6,
     shadowOpacity: 0,
+  },
+  resumeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 10,
+    marginVertical: 2,
+    marginHorizontal: 10,
+    width: "90%",
   },
 });
 export default GroceryList;
