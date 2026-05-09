@@ -4,13 +4,15 @@ const FilterTag = (props) => {
   const tag = props.tag;
   const isSelected = props.isSelected;
 
+  const tagName = tag.name ?? tag.ingredientCategoryName;
+
   return (
     <Pressable
-      onPress={() => props.onPressTag(tag.name)}
+      onPress={() => props.onPressTag(tagName)}
       style={[styles.tag, isSelected && styles.tagSelected]}
     >
-      <Text style={styles.tagText}>
-        {tag.icon} {tag.name}
+      <Text style={styles.tagText} numberOfLines={1}>
+        {tag.icon ? `${tag.icon} ` : ""}{tagName}
       </Text>
     </Pressable>
   );
