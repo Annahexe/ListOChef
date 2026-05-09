@@ -213,7 +213,7 @@ const AddRecipe = ({ navigation }) => {
 
         <KeyboardAwareScrollView
           style={styles.scrollContainer}
-          nestedScrollEnabled={true} //perimte Scroll dentro de Scroll
+          nestedScrollEnabled={true} //Allows Scroll inside Scroll
           keyboardShouldPersistTaps="handled"
           extraScrollHeight={60}
           enableOnAndroid={true}
