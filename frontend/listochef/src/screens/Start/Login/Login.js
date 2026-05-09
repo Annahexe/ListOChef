@@ -109,7 +109,6 @@ const Login = (props) => {
         })),
       ]);
       setUser(jsonResponse.user);
-      console.log("TOKEN:", jsonResponse.token);
       setToken(jsonResponse.token);
       setRecipesSaved(jsonResponse.recipesSavedList);
       setTicketsSaved(jsonResponse.user.myTicketsList);
@@ -173,7 +172,6 @@ const Login = (props) => {
         ]);
         setListRecipesCategories(jsonResponse.listRecipesCategories);
 
-        console.log("TOKEN:" + jsonResponse.token);
         setToken(jsonResponse.token);
         setRecipesSaved(jsonResponse.recipesSavedList);
         setTicketsSaved(jsonResponse.user.myTicketsList);
