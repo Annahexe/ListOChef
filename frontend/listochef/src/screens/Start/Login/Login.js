@@ -151,7 +151,7 @@ const Login = (props) => {
       console.log("SERVER **OFFLINE**, SETTING UP FAKE INFO FOR QUICK LOGIN");
       props.navigation.navigate("Home");
     } else {
-      console.log("DEBUG RESPONSE: " + response);
+      console.log("DEBUG RESPONSE: ", response);
 
       const [status, jsonResponse] = response;
 
