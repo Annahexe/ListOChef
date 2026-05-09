@@ -27,6 +27,7 @@ const SearchRecipes = (props) => {
   const [recipeList, setRecipeList] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [searchText, setSearchText] = useState("");
+  const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
 
   const [selectedTags, setSelectedTags] = useState(["All"]);
 
@@ -70,7 +71,11 @@ const SearchRecipes = (props) => {
 
   useEffect(() => {
     async function fetchData() {
+      setIsLoadingRecipes(true)
+
       const data = await getRecipesPetition();
+
+      setIsLoadingRecipes(false)
 
       if (data) {
         setRecipeList(data);
@@ -175,7 +180,7 @@ const SearchRecipes = (props) => {
               />
             )}
             ListEmptyComponent={
-              <Text style={styles.emptyText}>No recipes found :c</Text>
+              <Text style={styles.emptyText}>{isLoadingRecipes ? "Loading recipes..." : "No recipes found."}</Text>
             }
           />
         </View>
