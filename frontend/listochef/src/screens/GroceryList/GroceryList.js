@@ -102,17 +102,21 @@ const GroceryList = (props) => {
    */
   const addToPantry = async () => {
     setIsLoading(true);
+
     const updatedPantryItems = buildUpdatedPantryList(pantryItems, ingredientsToPantry);
 
-    const wasPantryUpdated = await updatePantryListPetition({
-      route,
-      token,
-      pantryItems: updatedPantryItems,
-    });
+    const [wasPantryUpdated, wasGroceryListUpdated] = await Promise.all([
+      updatePantryListPetition({
+        route,
+        token,
+        pantryItems: updatedPantryItems,
+      }),
+      removeMovedIngredientsFromGroceryListPetition(ingredientsToPantry),
+    ]);
 
     setIsLoading(false);
 
-    if (!wasPantryUpdated) {
+    if (!wasPantryUpdated || !wasGroceryListUpdated) {
       Toast.show({
         type: "error",
         text1: "Error adding to pantry.",
@@ -124,6 +128,7 @@ const GroceryList = (props) => {
     setPantryItems(updatedPantryItems);
 
     setSelectedIngredients((prev) => prev.filter((item) => !ingredientsToPantry.some((i) => i.ingredientName === item.ingredientName)));
+
     setIngredientsToPantry([]);
 
     Toast.show({
@@ -175,6 +180,46 @@ const GroceryList = (props) => {
 
     console.log("Ingredient removed from grocery list:", response);
     return true;
+  };
+
+  /**
+   * Updates selected grocery list ingredients to 0 amount in the backend.
+   * This uses the same route as AddProduct.
+   * @param {Array} ingredients
+   * @returns {Promise<boolean>}
+   */
+  const removeMovedIngredientsFromGroceryListPetition = async (ingredients) => {
+    const changes = ingredients.map((item) => ({
+      ingredientName: item.ingredientName,
+      ingredientTag: item.ingredientTag,
+      ingredientAmount: 0,
+    }));
+
+    try {
+      const response = await postDataToken(route + "/updateGroceryList", changes, token);
+
+      if (!response) {
+        Toast.show({
+          type: "error",
+          text1: "Error updating grocery list!",
+          text2: "Please try again later.",
+        });
+
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Error updating grocery list:", error);
+
+      Toast.show({
+        type: "error",
+        text1: "Error updating grocery list!",
+        text2: "Please try again later.",
+      });
+
+      return false;
+    }
   };
 
   return (
