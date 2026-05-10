@@ -74,8 +74,6 @@ const AddProduct = (props) => {
       }
 
       try {
-        console.log("Sending grocery list changes", changes);
-
         const response = await postDataToken(route + "/updateGroceryList", changes, token);
 
         if (!response) {
@@ -84,7 +82,6 @@ const AddProduct = (props) => {
             text1: "Error syncing grocery list!",
             text2: "Please try again later.",
           });
-          console.log(response)
 
           return;
         }
@@ -189,34 +186,6 @@ const AddProduct = (props) => {
     return ingredient ? ingredient.ingredientAmount : 0;
   };
 
-  //demo data
-  // useEffect(() => {
-  //   //const ingredientsData = await getIngredients();
-  //   const ingredientsData = [
-  //     { ingredientName: "Whole Milk", ingredientTag: "dairy" },
-  //     { ingredientName: "Eggs", ingredientTag: "protein" },
-  //     { ingredientName: "Wheat Bread", ingredientTag: "bakery" },
-  //     { ingredientName: "Pasta", ingredientTag: "grain" },
-  //     { ingredientName: "Tomatoes", ingredientTag: "vegetables" },
-  //     { ingredientName: "Cereals", ingredientTag: "grain" },
-  //     { ingredientName: "Mayonnaise", ingredientTag: "sauce" },
-  //     { ingredientName: "Maple syrup", ingredientTag: "sweet" },
-  //     { ingredientName: "Macaroni", ingredientTag: "Grains & Starches" },
-  //     { ingredientName: "Mango", ingredientTag: "fruit" },
-  //     { ingredientName: "Marshmallow", ingredientTag: "sweet" },
-  //     { ingredientName: "Macadamia", ingredientTag: "nuts" },
-  //     { ingredientName: "Manchego", ingredientTag: "dairy" },
-  //     { ingredientName: "Margarine", ingredientTag: "dairy" },
-  //     { ingredientName: "Mascarpone", ingredientTag: "dairy" },
-  //     { ingredientName: "Mackerel", ingredientTag: "fish" },
-  //     { ingredientName: "Macaroons", ingredientTag: "dessert" },
-  //     { ingredientName: "Mandarin", ingredientTag: "fruits" },
-  //   ];
-
-  //   setIngredientsList(ingredientsData);
-  //   setFilteredIngredientsList(ingredientsData);
-  // }, []);
-
   //SEARCH USE EFFECT
   useEffect(() => {
     let result = [...ingredientsList];
@@ -263,7 +232,7 @@ const AddProduct = (props) => {
                 onSubtractAmount={() => subtractAmount(item.ingredientName)}
               />
             )}
-            ListEmptyComponent={<Text style={styles.emptyText}>No ingredients found :c</Text>}
+            ListEmptyComponent={<Text style={styles.emptyText}>{isLoadingIngredients ? "Loading ingredients..." : "No ingredients found."}</Text>}
           />
         </View>
       </View>

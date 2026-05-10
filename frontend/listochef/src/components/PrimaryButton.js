@@ -1,11 +1,14 @@
 import { View, Text, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 
-const PrimaryButton = ({ onPress, buttonText, isLoading }) => {
+const PrimaryButton = ({ onPress, buttonText, isLoading, isDisabled = false, buttonStyle, containerStyle }) => {
+  const disabled = isLoading || isDisabled;
+
   return (
-    <View style={styles.buttonContainer}>
-      <Pressable style={styles.buttonStyle} onPress={onPress} disabled={isLoading}>
+    <View style={[styles.buttonContainer, containerStyle]}>
+      <Pressable style={[styles.buttonStyle, isDisabled && styles.buttonDisabled, buttonStyle]} onPress={onPress} disabled={disabled}>
         <View style={styles.content}>
           {isLoading && <ActivityIndicator size="small" color="white" style={styles.loader} />}
+
           <Text style={styles.buttonTextStyle}>{isLoading ? "Loading..." : buttonText}</Text>
         </View>
       </Pressable>
@@ -31,6 +34,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 6,
     elevation: 5,
+  },
+  buttonDisabled: {
+    backgroundColor: "#8b9d89",
+    opacity: 0.6,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   buttonTextStyle: {
     fontSize: 20,

@@ -97,7 +97,6 @@ const Login = (props) => {
   const sendLoginRequest = async () => {
     const response = await postDataOnboarding(route + "/login", loginData);
     if (!response) return false;
-    console.log("RESPONSE: ", response);
 
     const [status, jsonResponse] = response;
     if (status === 200) {
@@ -109,7 +108,6 @@ const Login = (props) => {
         })),
       ]);
       setUser(jsonResponse.user);
-      console.log("TOKEN:", jsonResponse.token);
       setToken(jsonResponse.token);
       setRecipesSaved(jsonResponse.recipesSavedList);
       setTicketsSaved(jsonResponse.user.myTicketsList);
@@ -137,11 +135,13 @@ const Login = (props) => {
     };
     setLoginData(debugCredentials);
 
+    setIsLoading(true);
     const response = await postDataOnboarding(
       route + "/login",
       debugCredentials,
     );
 
+    setIsLoading(false);
     if (!response) {
       Toast.show({
         type: "error",
@@ -151,7 +151,6 @@ const Login = (props) => {
       console.log("SERVER **OFFLINE**, SETTING UP FAKE INFO FOR QUICK LOGIN");
       props.navigation.navigate("Home");
     } else {
-      console.log("DEBUG RESPONSE: " + response);
 
       const [status, jsonResponse] = response;
 
@@ -173,7 +172,6 @@ const Login = (props) => {
         ]);
         setListRecipesCategories(jsonResponse.listRecipesCategories);
 
-        console.log("TOKEN:" + jsonResponse.token);
         setToken(jsonResponse.token);
         setRecipesSaved(jsonResponse.recipesSavedList);
         setTicketsSaved(jsonResponse.user.myTicketsList);

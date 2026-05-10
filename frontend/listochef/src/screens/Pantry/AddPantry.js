@@ -43,8 +43,6 @@ const AddPantry = (props) => {
       if (!wasUpdated) {
         return;
       }
-
-      console.log("Pantry synced from AddPantry");
     },
     [route, token],
   );
@@ -213,7 +211,7 @@ const AddPantry = (props) => {
                 onSubtractAmount={() => subtractAmount(item.ingredientName)}
               />
             )}
-            ListEmptyComponent={<Text style={styles.emptyText}>{isLoadingIngredients ? "Loading ingredients..." : "No ingredients found :c"}</Text>}
+            ListEmptyComponent={<Text style={styles.emptyText}>{isLoadingIngredients ? "Loading ingredients..." : "No ingredients found."}</Text>}
           />
         </View>
       </View>

@@ -33,6 +33,8 @@ const ResetPassword = (props) => {
   });
   const [isSecondStep, setIsSecondStep] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const validateFormFirstStep = () => {
     const newErrors = {
       email: isRequired(emailData.email) || isEmail(emailData.email),
@@ -67,9 +69,10 @@ const ResetPassword = (props) => {
   const onSendEmail = async () => {
     let isValid = validateFormFirstStep();
     if (!isValid) return;
-    console.log(emailData);
+    setIsLoading(true);
     let isSuccess = await sendEmailForgotPassword();
 
+    setIsLoading(false);
     if (isSuccess) {
       setIsSecondStep(true);
     } else {
@@ -84,7 +87,6 @@ const ResetPassword = (props) => {
   const sendEmailForgotPassword = async () => {
     const response = await postData(route + "/forgotPassword", emailData);
     if (!response) return false;
-    console.log("RESPONSE: " + response);
 
     const [status] = response;
 
@@ -99,15 +101,17 @@ const ResetPassword = (props) => {
     const isValid = validateFormSecondStep();
     if (!isValid) return;
 
+    setIsLoading(true);
+
     const { confirmNewPassword, ...resetPasswordWithoutConfirm } =
       resetPasswordData;
     const dataToSendResetPassword = {
       ...emailData,
       ...resetPasswordWithoutConfirm,
     };
-    console.log(dataToSendResetPassword);
 
     let isSuccess = await sendResetPasswordPetition(dataToSendResetPassword);
+    setIsLoading(false);
 
     if (isSuccess) {
       setResetPasswordData({
@@ -146,7 +150,6 @@ const ResetPassword = (props) => {
       dataToSendResetPassword,
     );
     if (!response) return false;
-    console.log("RESPONSE: " + response);
 
     const [status] = response;
 
@@ -185,6 +188,7 @@ const ResetPassword = (props) => {
               <PrimaryButton
                 buttonText={"Send email"}
                 onPress={onSendEmail}
+                isLoading={isLoading}
               ></PrimaryButton>
             </View>
           </>
@@ -240,6 +244,7 @@ const ResetPassword = (props) => {
               <PrimaryButton
                 buttonText={"Confirm"}
                 onPress={onConfirmResetPassword}
+                isLoading={isLoading}
               ></PrimaryButton>
             </View>
           </>

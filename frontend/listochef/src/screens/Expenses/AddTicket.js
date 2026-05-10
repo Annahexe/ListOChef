@@ -1,13 +1,6 @@
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  Keyboard,
-  Dimensions,
-  Platform,
-} from "react-native";
+import { View, Text, Pressable, StyleSheet, Keyboard, Dimensions, Platform } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import Toast from "react-native-toast-message";
 
 import { useState, useContext } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -20,12 +13,7 @@ import ItemInput from "../../components/ItemInput";
 import TitleModalScreen from "../../components/TitleModalScreen";
 import ModalButtons from "../../components/ModalButtons";
 
-import {
-  isRequired,
-  isPositiveNumber,
-  isPositiveInteger,
-  isValidDate,
-} from "../../utils/validators";
+import { isRequired, isPositiveNumber, isPositiveInteger, isValidDate } from "../../utils/validators";
 import { postDataToken } from "../../services/services";
 
 const { height } = Dimensions.get("window");
@@ -49,6 +37,8 @@ const AddTicket = ({ navigation }) => {
   });
 
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -86,6 +76,8 @@ const AddTicket = ({ navigation }) => {
       return;
     }
 
+    setIsLoading(true);
+
     const newTicket = {
       supermarket: form.supermarket,
       ticketDate: form.ticketDate.toISOString(), // THIS IS TO SEND DATE SAFELY
@@ -108,24 +100,29 @@ const AddTicket = ({ navigation }) => {
 
     const isSuccess = await addTicketRequest(formData);
 
+    setIsLoading(false);
     if (isSuccess) {
-      console.log("SAVED CORRECTLY");
       navigation.goBack();
+      setTimeout(() => {
+        Toast.show({
+          type: "success",
+          text1: "Ticket created!",
+          text2: "Your ticket was saved correctly.",
+        });
+      }, 400);
     } else {
-      alert("Failed :(");
+      Toast.show({
+        type: "error",
+        text1: "Ticket creation failed.",
+        text2: "Please try again later.",
+      });
     }
 
     Keyboard.dismiss();
   };
 
   const addTicketRequest = async (formData) => {
-    console.log("SENDING PETITION CREATE_TICKET_REQUEST");
-
-    const response = await postDataToken(
-      route + "/createTicket",
-      formData,
-      token,
-    );
+    const response = await postDataToken(route + "/createTicket", formData, token);
 
     if (!response) {
       console.log("NO RESPONSE");
@@ -133,7 +130,6 @@ const AddTicket = ({ navigation }) => {
     }
 
     const [status, jsonResponse] = response;
-    console.log("STATUS:", status);
 
     if (status === 200 || status === 201) {
       setTicketsSaved((prev) => [
@@ -153,30 +149,19 @@ const AddTicket = ({ navigation }) => {
     const newErrors = {
       supermarket: isRequired(form.supermarket),
       ticketDate: isValidDate(form.ticketDate),
-      amountProducts:
-        isRequired(form.amountProducts) ||
-        isPositiveInteger(form.amountProducts),
-      totalPrice:
-        isRequired(form.totalPrice) || isPositiveNumber(form.totalPrice),
+      amountProducts: isRequired(form.amountProducts) || isPositiveInteger(form.amountProducts),
+      totalPrice: isRequired(form.totalPrice) || isPositiveNumber(form.totalPrice),
     };
 
     setErrors(newErrors);
 
-    return (
-      !newErrors.supermarket &&
-      !newErrors.ticketDate &&
-      !newErrors.amountProducts &&
-      !newErrors.totalPrice
-    );
+    return !newErrors.supermarket && !newErrors.ticketDate && !newErrors.amountProducts && !newErrors.totalPrice;
   };
 
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-        <TitleModalScreen
-          title={"New Ticket"}
-          onPress={() => navigation.goBack()}
-        />
+        <TitleModalScreen title={"New Ticket"} onPress={() => navigation.goBack()} />
 
         <KeyboardAwareScrollView
           style={styles.scrollContainer}
@@ -193,9 +178,7 @@ const AddTicket = ({ navigation }) => {
             label="Supermarket:"
             placeholder="Ex: Mercadona, Consum..."
             value={form.supermarket}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, supermarket: text }))
-            }
+            onChangeText={(text) => setForm((prev) => ({ ...prev, supermarket: text }))}
             keyboardType="default"
             error={errors.supermarket}
           />
@@ -243,19 +226,13 @@ const AddTicket = ({ navigation }) => {
             label="Number of products:"
             placeholder="0"
             value={form.amountProducts}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, amountProducts: text }))
-            }
+            onChangeText={(text) => setForm((prev) => ({ ...prev, amountProducts: text }))}
             keyboardType="numeric"
             error={errors.amountProducts}
           />
         </KeyboardAwareScrollView>
 
-        <ModalButtons
-          onCancel={() => navigation.goBack()}
-          onSave={onSaved}
-          isFormComplete={isFormComplete}
-        />
+        <ModalButtons onCancel={() => navigation.goBack()} onSave={onSaved} isFormComplete={isFormComplete} isLoading={isLoading} />
       </View>
     </View>
   );

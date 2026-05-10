@@ -1,12 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-  Keyboard,
-} from "react-native";
+import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Keyboard } from "react-native";
 import { useState, useEffect, useContext } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import Toast from "react-native-toast-message";
@@ -21,10 +13,7 @@ import RecipeListTitleIcon from "../../../assets/icons/recipeList_titleIcon.svg"
 
 import Context from "../../context/Context";
 import { getData } from "../../services/services";
-import {
-  toggleSavedPetition,
-  showToggleSavedToast,
-} from "../../utils/toggleSavedRecipe";
+import { toggleSavedPetition, showToggleSavedToast } from "../../utils/toggleSavedRecipe";
 
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
@@ -38,86 +27,9 @@ const RecipesList = (props) => {
   const tabBarHeight = useBottomTabBarHeight();
   const [filterOrderValue, setFilterOrderValue] = useState("Oldest");
 
-  const toTime = (ddmmyyyy) => {
-    // "17/02/2026" -> [17, 2, 2026]
-    const [dd, mm, yyyy] = ddmmyyyy.split("/").map(Number);
-    return new Date(yyyy, mm - 1, dd).getTime();
-  }; //used to convert String creationDate to real date value
-
-  useEffect(() => {
-    // setRecipesSaved([
-    //   {
-    //     id: "1",
-    //     recipeName: "Spaghetti",
-    //     ingredients: ["Pasta", "Tomato Sauce", "Minced meat", "Oil", "Spices", "Onion", "Cheese"],
-    //     tag: ["pasta", "meat"],
-    //     category: "Lunch",
-    //     time: 20,
-    //     difficulty: "Low",
-    //     steps:
-    //       "1. Heat water in a pot. \n2. Add oil to a frying pan. Medium heat.  \n3. Add salt and the ground meat. Stir with a spatula.  \n4. Add chopped onion to the frying pan. Stir.  \n5. When the water boils, add salt and your choice of pasta. Don't forget to stir the pasta with a spoon.  \n6. When the meat is cooked and the onion is golden brown, add tomato sauce. Add salt to balance the acidity and spices to taste.  \n7. When the pasta is al dente, drain it in a colander and add it to the frying pan. Stir.",
-    //     photo: "https://supervalu.ie/image/var/files/real-food/recipes/Uploaded-2020/spaghetti-bolognese-recipe.jpg",
-    //     creationDate: "01/02/2026",
-    //     saved: true,
-    //   },
-    //   {
-    //     id: "2",
-    //     recipeName: "Paella",
-    //     ingredients: ["Rice", "Chicken", "Seafood", "Bell pepper", "Onion", "Garlic", "Olive oil", "Paprika", "Saffron", "Salt", "Stock"],
-    //     tag: ["rice", "seafood"],
-    //     category: "Lunch",
-    //     time: 45,
-    //     difficulty: "Medium",
-    //     steps:
-    //       "1. Heat olive oil in a wide pan over medium heat. \n2. Add chopped onion, garlic and bell pepper. Stir until soft.  \n3. Add the chicken and cook until lightly browned.  \n4. Add the rice and stir for one minute.  \n5. Add paprika, saffron, salt and hot stock. Stir gently.  \n6. Cook without stirring for about 15 minutes.  \n7. Add the seafood and cook for another 10 minutes until everything is done.",
-    //     photo: "https://e00-xlk-cooking-elmundo.uecdn.es/files/article_main_microformat_4_3/uploads/2023/02/28/63fe82e0ba614.jpeg",
-    //     creationDate: "19/02/2026",
-    //     saved: false,
-    //   },
-    //   {
-    //     id: "3",
-    //     recipeName: "Bolognese Sauce",
-    //     ingredients: ["Minced meat", "Tomato sauce", "Onion", "Garlic", "Olive oil", "Salt", "Pepper", "Spices"],
-    //     tag: ["sauce", "meat"],
-    //     category: "Lunch",
-    //     time: 40,
-    //     difficulty: "Low",
-    //     steps:
-    //       "1. Heat olive oil in a frying pan over medium heat. \n2. Add chopped onion and garlic. Stir until soft.  \n3. Add the minced meat and cook until browned.  \n4. Add salt, pepper and spices to taste.  \n5. Pour in the tomato sauce and stir well.  \n6. Reduce heat and let it simmer for about 20 minutes, stirring occasionally.",
-    //     photo: "https://www.healthyfood.com/wp-content/uploads/2016/11/Bolognese-sauce-iStock-485714898.jpg",
-    //     creationDate: "18/02/2026",
-    //     saved: false,
-    //   },
-    //   {
-    //     id: "4",
-    //     recipeName: "Gnocchi Bolognese",
-    //     ingredients: ["Gnocchi", "Minced meat", "Tomato sauce", "Onion", "Olive oil", "Salt", "Spices", "Cheese"],
-    //     tag: ["pasta", "meat"],
-    //     category: "Lunch",
-    //     time: 25,
-    //     difficulty: "Low",
-    //     steps:
-    //       "1. Heat olive oil in a frying pan over medium heat. \n2. Add chopped onion and cook until soft.  \n3. Add the minced meat and cook until browned.  \n4. Add tomato sauce, salt and spices. Stir and let it cook for 10 minutes.  \n5. Boil water in a pot and cook the gnocchi according to the package instructions.  \n6. Drain the gnocchi and add them to the frying pan.  \n7. Mix well and serve with cheese on top.",
-    //     photo: "https://www.eatclub.de/wp-content/uploads/2024/01/gnocchi-bolognese.jpg",
-    //     creationDate: "20/02/2026",
-    //     saved: true,
-    //   },
-    //   {
-    //     id: "5",
-    //     recipeName: "Potato Omelette",
-    //     ingredients: ["Potatoes", "Eggs", "Onion", "Olive oil", "Salt"],
-    //     tag: ["eggs", "potato"],
-    //     category: "Dinner",
-    //     time: 20,
-    //     difficulty: "Low",
-    //     steps:
-    //       "1. Peel and slice the potatoes. \n2. Heat olive oil in a frying pan over medium heat.  \n3. Add the potatoes and onion and cook slowly until soft.  \n4. Beat the eggs in a bowl and add salt.  \n5. Drain the potatoes and mix them with the eggs.  \n6. Pour the mixture into the pan and cook until set on both sides.",
-    //     photo: "https://mojo.generalmills.com/api/public/content/9xIHKwJDH0-1wbHPsVCCVQ_gmi_hi_res_jpeg.jpeg?v=2bfc22c6&t=16e3ce250f244648bef28c5949fb99ff",
-    //     creationDate: "19/02/2026",
-    //     saved: true,
-    //   },
-    // ]);
-  }, []);
+  const toTime = (dateString) => {
+    return new Date(dateString).getTime();
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -157,11 +69,7 @@ const RecipesList = (props) => {
   const toggleSaved = async (id) => {
     const previousRecipes = recipesSaved;
 
-    setRecipesSaved((prev) =>
-      prev.map((recipe) =>
-        recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe,
-      ),
-    );
+    setRecipesSaved((prev) => prev.map((recipe) => (recipe.id === id ? { ...recipe, saved: !recipe.saved } : recipe)));
 
     const result = await toggleSavedPetition({
       route,
@@ -182,26 +90,15 @@ const RecipesList = (props) => {
   };
 
   return (
-    <ImageBackground
-      source={require("../../../assets/fondoApp.png")}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <View style={styles.container}>
           <TitleIconPage titleText="My Recipes" icon={RecipeListTitleIcon} />
 
-          <Seeker
-            placeholderText="Search new recipes..."
-            onPress={goSearchRecipe}
-            editable={false}
-          ></Seeker>
+          <Seeker placeholderText="Search new recipes..." onPress={goSearchRecipe} editable={false}></Seeker>
 
           <View style={{ flex: 1, width: "100%" }}>
-            <ScrollView
-              style={{ width: "100%" }}
-              contentContainerStyle={{ paddingBottom: 80 }}
-            >
+            <ScrollView style={{ width: "100%" }} contentContainerStyle={{ paddingBottom: 80 }}>
               <View style={styles.featuredRecipe}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <FontAwesome5 name="history" size={26} color="white" />
@@ -224,11 +121,7 @@ const RecipesList = (props) => {
 
               <View style={styles.filterOrderContainer}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <MaterialCommunityIcons
-                    name="calendar-blank-outline"
-                    size={28}
-                    color="black"
-                  />
+                  <MaterialCommunityIcons name="calendar-blank-outline" size={28} color="black" />
                   <Text
                     style={{
                       fontSize: 15,
@@ -240,27 +133,16 @@ const RecipesList = (props) => {
                     Order by...
                   </Text>
 
-                  <FilterOrderDropdown
-                    filterOrderValue={filterOrderValue}
-                    setFilterOrderValue={setFilterOrderValue}
-                  />
+                  <FilterOrderDropdown filterOrderValue={filterOrderValue} setFilterOrderValue={setFilterOrderValue} />
                 </View>
               </View>
 
               {sortedRecipes.map((recipe, index) => (
-                <RecipeCard
-                  key={index}
-                  recipe={recipe}
-                  isDetailedBox={false}
-                  onViewRecipe={onViewRecipe}
-                  onToggleSaved={toggleSaved}
-                />
+                <RecipeCard key={index} recipe={recipe} isDetailedBox={false} onViewRecipe={onViewRecipe} onToggleSaved={toggleSaved} />
               ))}
             </ScrollView>
 
-            <View
-              style={[styles.floatingButton, { bottom: tabBarHeight - 140 }]}
-            >
+            <View style={[styles.floatingButton, { bottom: tabBarHeight - 140 }]}>
               <Pressable onPress={onAddRecipe}>
                 <AddCircleButton />
               </Pressable>
