@@ -8,6 +8,16 @@ import { dateBeautify } from "../../utils/dateBeautify";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
+/**
+ * TicketInfoRow component used to display one ticket detail row.
+ * Shows an icon, a label and its related value.
+ *
+ * @param {Object} props - Component props.
+ * @param {JSX.Element} props.icon - Icon displayed on the left side of the row.
+ * @param {string} props.label - Text label for the ticket information.
+ * @param {string|number} props.value - Value displayed below the label.
+ * @returns {JSX.Element} Ticket information row.
+ */
 const TicketInfoRow = ({ icon, label, value }) => {
   return (
     <View style={styles.infoRow}>
@@ -21,6 +31,14 @@ const TicketInfoRow = ({ icon, label, value }) => {
   );
 };
 
+/**
+ * ViewTicket modal screen that displays the full details of a saved ticket.
+ * Shows the ticket photo, supermarket name, date, number of products and total price.
+ *
+ * @param {Object} navigation - Navigation prop for closing the modal.
+ * @param {Object} route - Route prop containing the selected ticket data.
+ * @returns {JSX.Element} View Ticket modal screen.
+ */
 const ViewTicket = ({ navigation, route }) => {
   const { ticket } = route.params;
 
@@ -30,14 +48,20 @@ const ViewTicket = ({ navigation, route }) => {
         <TitleModalScreen title={ticket.supermarket} onPress={() => navigation.goBack()} size={30} />
 
         <ScrollView style={styles.scrollContainer}>
-          <Text style={styles.labelStyle} numberOfLines={1}>TICKET PHOTO:</Text>
+          <Text style={styles.labelStyle} numberOfLines={1}>
+            TICKET PHOTO:
+          </Text>
 
           <View style={styles.imageContainer}>
             <Image style={styles.mainImage} source={{ uri: ticket.ticketPictureUri }} />
           </View>
 
           <View style={styles.ticketInfoContainer}>
-            <TicketInfoRow icon={<MaterialCommunityIcons name="calendar-blank-outline" size={28} color="white" />} label="Date:" value={dateBeautify(ticket.ticketDate)} />
+            <TicketInfoRow
+              icon={<MaterialCommunityIcons name="calendar-blank-outline" size={28} color="white" />}
+              label="Date:"
+              value={dateBeautify(ticket.ticketDate)}
+            />
 
             <TicketInfoRow icon={<AntDesign name="shopping-cart" size={28} color="white" />} label="Products:" value={`${ticket.amountProducts} products`} />
 

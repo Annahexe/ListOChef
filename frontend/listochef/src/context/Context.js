@@ -1,7 +1,13 @@
 import { createContext, useState } from "react";
 
+/**
+ * Global app context used to share user data, backend route,
+ * authentication token, recipes, pantry, grocery list and tickets
+ * across the application.
+ */
 const Context = createContext();
 
+/** Default recipe used as initial value for the last recipe seen. */
 const INITIAL_LAST_RECIPE_SEEN = {
   id: "5",
   recipeName: "Potato Omelette",
@@ -18,6 +24,7 @@ const INITIAL_LAST_RECIPE_SEEN = {
   isSaved: true,
 };
 
+/** Default user used before real user data is loaded after login. */
 const INITIAL_USER = {
   name: "John",
   surname: "Doe",
@@ -25,12 +32,14 @@ const INITIAL_USER = {
   password: "micontraseña",
 };
 
+/** Default grocery list ingredients used as initial app data. */
 const INITIAL_SELECTED_INGREDIENTS = [
   { ingredientName: "Potatoes", ingredientAmount: 5, ingredientTag: "" },
   { ingredientName: "Tomatoes", ingredientAmount: 1, ingredientTag: "" },
   { ingredientName: "Water", ingredientAmount: 3, ingredientTag: "" },
 ];
 
+/** Default pantry ingredients used as initial app data. */
 const INITIAL_PANTRY_ITEMS = [
   {
     ingredientName: "Potatoes",
@@ -45,6 +54,15 @@ const INITIAL_PANTRY_ITEMS = [
   { ingredientName: "Whole Milk", ingredientAmount: 4, ingredientTag: "Dairy" },
 ];
 
+/**
+ * Provider component that stores and exposes global app state.
+ * Wraps the application so any screen or component can access shared data
+ * through useContext(Context).
+ *
+ * @param {Object} props - Component props.
+ * @param {JSX.Element} props.children - App content wrapped by the provider.
+ * @returns {JSX.Element} Context provider with shared state values.
+ */
 export const Provider = ({ children }) => {
   const [route, setRoute] = useState("http://32.193.224.11:8080/ListOChef");
   const [user, setUser] = useState(INITIAL_USER);

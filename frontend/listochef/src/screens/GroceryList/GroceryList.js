@@ -178,7 +178,6 @@ const GroceryList = (props) => {
       return false;
     }
 
-    console.log("Ingredient removed from grocery list:", response);
     return true;
   };
 

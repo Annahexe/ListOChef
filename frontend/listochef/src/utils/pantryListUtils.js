@@ -60,7 +60,6 @@ export const updatePantryListPetition = async ({ route, token, pantryItems }) =>
       return false;
     }
 
-    console.log("Pantry updated:", response);
     return true;
   } catch (error) {
     console.error("Error updating pantry:", error);

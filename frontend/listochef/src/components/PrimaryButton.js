@@ -1,5 +1,18 @@
 import { View, Text, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 
+/**
+ * PrimaryButton component used as the main action button across the app.
+ * Supports loading state, disabled state, and custom button/container styles.
+ *
+ * @param {Object} props - Component props.
+ * @param {Function} props.onPress - Function executed when the button is pressed.
+ * @param {string} props.buttonText - Text displayed inside the button.
+ * @param {boolean} props.isLoading - Shows a loading indicator and disables the button.
+ * @param {boolean} props.isDisabled - Disables the button when true.
+ * @param {Object|Array} props.buttonStyle - Custom styles applied to the button.
+ * @param {Object|Array} props.containerStyle - Custom styles applied to the button container.
+ * @returns {JSX.Element} Main reusable button component.
+ */
 const PrimaryButton = ({ onPress, buttonText, isLoading, isDisabled = false, buttonStyle, containerStyle }) => {
   const disabled = isLoading || isDisabled;
 
