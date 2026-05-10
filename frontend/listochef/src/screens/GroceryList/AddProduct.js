@@ -13,6 +13,15 @@ import Context from "../../context/Context";
 
 import Feather from "@expo/vector-icons/Feather";
 
+/**
+ * AddProduct screen that allows the user to add ingredients to the grocery list.
+ * Displays all available ingredients from the backend and allows filtering by
+ * search text and ingredient tags. Grocery list changes are stored locally while
+ * the user is on the screen and synced with the backend when leaving the screen.
+ *
+ * @param {Object} props - Navigation props.
+ * @returns {JSX.Element} Add Product screen.
+ */
 const AddProduct = (props) => {
   const { route, token } = useContext(Context);
 
@@ -26,13 +35,28 @@ const AddProduct = (props) => {
   const [filteredIngredientsList, setFilteredIngredientsList] = useState([]);
   const [searchText, setSearchText] = useState("");
 
+  /**
+   * Stores the grocery list state when entering the screen.
+   * Used later to calculate changes before syncing with the backend.
+   */
   const initialSelectedRef = useRef([]);
+
+  /**
+   * Stores the latest grocery list state without depending directly on focus callbacks.
+   */
   const latestSelectedRef = useRef(selectedIngredients);
 
+  /**
+   * Keeps latestSelectedRef synchronized with the current selectedIngredients context.
+   */
   useEffect(() => {
     latestSelectedRef.current = selectedIngredients;
   }, [selectedIngredients]);
 
+  /**
+   * Loads all available ingredients from the backend when the screen mounts.
+   * Stores the list so it can later be filtered by search text and tags.
+   */
   useEffect(() => {
     const loadIngredients = async () => {
       setIsLoadingIngredients(true);
@@ -67,6 +91,12 @@ const AddProduct = (props) => {
     loadIngredients();
   }, [route, token]);
 
+  /**
+   * Sends grocery list changes to the backend.
+   * If there are no changes, the request is skipped.
+   *
+   * @param {Array} changes - List of added, updated or removed ingredients.
+   */
   const syncSelectedIngredients = useCallback(
     async (changes) => {
       if (changes.length === 0) {
@@ -85,7 +115,6 @@ const AddProduct = (props) => {
 
           return;
         }
-
       } catch (error) {
         console.error("Error syncing grocery list:", error);
 
@@ -99,6 +128,11 @@ const AddProduct = (props) => {
     [route, token],
   );
 
+  /**
+   * Saves a grocery list snapshot when the screen is focused.
+   * When leaving the screen, compares the initial and latest grocery list state
+   * and syncs only the changes with the backend.
+   */
   useFocusEffect(
     useCallback(() => {
       // snapshot when entering / focusing the screen
@@ -113,6 +147,13 @@ const AddProduct = (props) => {
     }, [syncSelectedIngredients]),
   );
 
+  /**
+   * Toggles a selected ingredient tag.
+   * If "All" is selected, clears all other selected tags.
+   * If the last selected tag is removed, returns to "All".
+   *
+   * @param {string} selectedTag - Tag selected by the user.
+   */
   const toggleTag = (selectedTag) => {
     setSelectedTags((previousSelectedTags) => {
       if (selectedTag == "All") {
@@ -127,6 +168,12 @@ const AddProduct = (props) => {
     });
   };
 
+  /**
+   * Adds an ingredient to the grocery list with an initial amount of 1.
+   * If the ingredient already exists in the grocery list, it does not add it again.
+   *
+   * @param {Object} ingredient - Ingredient selected by the user.
+   */
   const selectIngredient = (ingredient) => {
     setSelectedIngredients((prev) => {
       const alreadyExists = prev.find((item) => item.ingredientName === ingredient.ingredientName);
@@ -144,10 +191,20 @@ const AddProduct = (props) => {
     });
   };
 
+  /**
+   * Removes an ingredient from the grocery list.
+   *
+   * @param {string} ingredientName - Name of the ingredient to remove.
+   */
   const unselectIngredient = (ingredientName) => {
     setSelectedIngredients((prev) => prev.filter((item) => item.ingredientName !== ingredientName));
   };
 
+  /**
+   * Increments the amount of a grocery list ingredient by 1.
+   *
+   * @param {string} ingredientName - Name of the ingredient to update.
+   */
   const addAmount = (ingredientName) => {
     setSelectedIngredients((prev) =>
       prev.map((item) =>
@@ -161,6 +218,12 @@ const AddProduct = (props) => {
     );
   };
 
+  /**
+   * Decrements the amount of a grocery list ingredient by 1.
+   * If the amount reaches 0, the ingredient is removed from the grocery list.
+   *
+   * @param {string} ingredientName - Name of the ingredient to update.
+   */
   const subtractAmount = (ingredientName) => {
     setSelectedIngredients((prev) =>
       prev
@@ -176,17 +239,33 @@ const AddProduct = (props) => {
     );
   };
 
+  /**
+   * Checks whether an ingredient is already selected in the grocery list.
+   *
+   * @param {string} ingredientName - Name of the ingredient to check.
+   * @returns {boolean} True if the ingredient exists in the grocery list.
+   */
   const isIngredientSelected = (ingredientName) => {
     return selectedIngredients.some((item) => item.ingredientName === ingredientName);
   };
 
+  /**
+   * Gets the current amount of an ingredient in the grocery list.
+   *
+   * @param {string} ingredientName - Name of the ingredient to check.
+   * @returns {number} Ingredient amount, or 0 if it is not selected.
+   */
   const getIngredientAmount = (ingredientName) => {
     const ingredient = selectedIngredients.find((item) => item.ingredientName === ingredientName);
 
     return ingredient ? ingredient.ingredientAmount : 0;
   };
 
-  //SEARCH USE EFFECT
+  /**
+   * Filters ingredients whenever the search text, selected tags or ingredient list change.
+   * The text filter checks the ingredient name.
+   * The tag filter checks the ingredient category/tag.
+   */
   useEffect(() => {
     let result = [...ingredientsList];
 

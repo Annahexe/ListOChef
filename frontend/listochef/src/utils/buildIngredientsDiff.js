@@ -1,3 +1,16 @@
+/**
+ * Builds a list of changes between the initial grocery list and the current one.
+ * Used to sync only modified ingredients with the backend.
+ *
+ * The returned changes include:
+ * - Added ingredients.
+ * - Ingredients whose amount was updated.
+ * - Removed ingredients, sent with amount 0.
+ *
+ * @param {Array} initialList - Grocery list snapshot when entering the screen.
+ * @param {Array} currentList - Current grocery list when leaving the screen.
+ * @returns {Array} List of ingredient changes to send to the backend.
+ */
 export const buildIngredientsDiff = (initialList = [], currentList = []) => {
   const changes = [];
 
