@@ -240,5 +240,17 @@ public class MongoUserRepository implements UserRepository {
 	public void deleteUser(String userId) {
 	    collection.deleteOne(eq("_id", new ObjectId(userId)));
 	}
+	
+	@Override
+	public List<User> getUsers() {
+
+	    List<User> users = new ArrayList<>();
+
+	    for (Document doc : collection.find()) {
+	        users.add(toUser(doc));
+	    }
+
+	    return users;
+	}
 
 }

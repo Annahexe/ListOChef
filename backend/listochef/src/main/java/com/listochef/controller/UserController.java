@@ -128,11 +128,11 @@ public class UserController {
 	    return ResponseEntity.ok(users);
 	}
 	
-	@DeleteMapping("/deleteUser/{userId}")
+	@DeleteMapping("/deleteUser/{userEmail}")
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<Void> deleteUser(@PathVariable String userId) {
+	public ResponseEntity<Void> deleteUser(@PathVariable String userEmail) {
 
-		service.deleteUser(userId);
+		service.deleteUser(userEmail);
 
 	    return ResponseEntity.noContent().build();
 	}

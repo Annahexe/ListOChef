@@ -38,4 +38,6 @@ public interface UserRepository {
 	void deleteTicket(String email, String ticketId);
 	
 	void deleteUser(String userId);
+	
+	List<User> getUsers();
 	}

@@ -305,7 +305,25 @@ public class UserService {
 	    userRepository.deleteTicket(email, ticketId);
 	};
 	
-	public void deleteUser(String userId) {
+	public void deleteUser(String userEmail) {
 		
+	    User user = userRepository.findByEmail(userEmail)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+	    
+	    // borrar imágenes de tickets
+	    if (user.getMyTicketsList() != null) {
+	        for (UserTicket t : user.getMyTicketsList()) {
+	            if (t.getTicketPicturePublicId() != null) {
+	                cloudinaryService.deleteImage(t.getTicketPicturePublicId());
+	            }
+	        }
+	    }
+	    
+	    userRepository.deleteUser(user.getId());
 	}
+	
+	public List<User> getUsers() {
+	    return userRepository.getUsers();
+	}
+	
 }
