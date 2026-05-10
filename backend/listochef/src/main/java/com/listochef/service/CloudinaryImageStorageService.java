@@ -81,4 +81,33 @@ public class CloudinaryImageStorageService {
 			return "unknown";
 		return s.replaceAll("[^a-zA-Z0-9._-]", "_");
 	}
+	
+	public void deleteImage(String publicId) {
+
+	    if (publicId == null || publicId.isBlank()) {
+	        throw new IllegalArgumentException("Public ID inválido");
+	    }
+
+	    try {
+
+	        Map<?, ?> result = cloudinary.uploader().destroy(
+	            publicId,
+	            ObjectUtils.emptyMap()
+	        );
+
+	        String status = (String) result.get("result");
+
+	        if (!"ok".equals(status) && !"not found".equals(status)) {
+	            throw new RuntimeException(
+	                "No se pudo borrar la imagen: " + status
+	            );
+	        }
+
+	    } catch (Exception e) {
+	        throw new RuntimeException(
+	            "Error eliminando imagen de Cloudinary",
+	            e
+	        );
+	    }
+	}
 }

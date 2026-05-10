@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
@@ -115,6 +116,24 @@ public class UserController {
 	public ResponseEntity<Void> deleteTicket(@PathVariable String ticketId,
 	                                          @AuthenticationPrincipal String email) {
 	    service.deleteTicket(email, ticketId);
+	    return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping("/getUsers")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<List<User>> getUsers() {
+
+	    List<User> users = service.getUsers();
+
+	    return ResponseEntity.ok(users);
+	}
+	
+	@DeleteMapping("/deleteUser/{userEmail}")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<Void> deleteUser(@PathVariable String userEmail) {
+
+		service.deleteUser(userEmail);
+
 	    return ResponseEntity.noContent().build();
 	}
 
