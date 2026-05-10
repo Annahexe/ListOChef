@@ -1,22 +1,13 @@
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  ScrollView,
-  Image,
-} from "react-native";
+import { View, Text, Pressable, StyleSheet, ScrollView, Image } from "react-native";
 import { useState, useEffect, useContext } from "react";
 import ItemView from "../../components/ItemView";
 import TitleModalScreen from "../../components/TitleModalScreen";
 import Heart from "../../components/Heart";
+import PrimaryButton from "../../components/PrimaryButton";
 import Context from "../../context/Context";
 import Toast from "react-native-toast-message";
 import { postDataToken, getData } from "../../services/services";
-import {
-  toggleSavedPetition,
-  showToggleSavedToast,
-} from "../../utils/toggleSavedRecipe";
+import { toggleSavedPetition, showToggleSavedToast } from "../../utils/toggleSavedRecipe";
 
 /**
  * ViewRecipe modal screen that displays the full details of a recipe.
@@ -27,18 +18,14 @@ import {
  * @returns {JSX.Element} View Recipe modal screen.
  */
 const ViewRecipe = ({ navigation }) => {
-  const {
-    route,
-    token,
-    lastRecipeSeen,
-    setLastRecipeSeen,
-    selectedIngredients,
-    setSelectedIngredients,
-  } = useContext(Context);
+  const { route, token, lastRecipeSeen, setLastRecipeSeen, selectedIngredients, setSelectedIngredients } = useContext(Context);
   const [recipe, setRecipe] = useState();
 
   /** Mirrors the saved state locally for optimistic UI updates. */
   const [isSaved, setIsSaved] = useState(recipe?.isSaved ?? false);
+
+  //Sets state loading for saving the ingredients
+  const [isLoading, setIsLoading] = useState(false);
 
   // Loads the last seen recipe from context on mount
   useEffect(() => {
@@ -55,15 +42,14 @@ const ViewRecipe = ({ navigation }) => {
    * @returns {Promise<void>}
    */
   const onAddGroceryList = async () => {
+    setIsLoading(true);
     const allIngredients = await getData(route + "/ingredients", token);
 
     const newIngredients = [];
     const updatedList = [...selectedIngredients];
 
     recipe.ingredients.forEach((name) => {
-      const existingIndex = updatedList.findIndex(
-        (i) => i.ingredientName === name,
-      );
+      const existingIndex = updatedList.findIndex((i) => i.ingredientName === name);
 
       if (existingIndex !== -1) {
         // Ya existe, le sumamos 1
@@ -97,6 +83,7 @@ const ViewRecipe = ({ navigation }) => {
     if (changes.length > 0) {
       await postDataToken(route + "/updateGroceryList", changes, token);
     }
+    setIsLoading(false);
 
     Toast.show({
       type: "success",
@@ -129,11 +116,7 @@ const ViewRecipe = ({ navigation }) => {
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-        <TitleModalScreen
-          title={recipe.recipeName}
-          onPress={() => navigation.goBack()}
-          size={25}
-        />
+        <TitleModalScreen title={recipe.recipeName} onPress={() => navigation.goBack()} size={25} />
 
         <ScrollView style={styles.scrollContainer}>
           <View style={styles.imageContainer}>
@@ -143,40 +126,24 @@ const ViewRecipe = ({ navigation }) => {
                 uri: recipe.photo,
               }}
             ></Image>
-            <Heart
-              colorHeart={recipe.saved ? "red" : "white"}
-              stiles={"onImage"}
-              onPress={() => onToggleSaved()}
+            <Heart colorHeart={recipe.saved ? "red" : "white"} stiles={"onImage"} onPress={() => onToggleSaved()} />
+          </View>
+          <ItemView label={"Ingredients"} ingredients={recipe.ingredients}></ItemView>
+
+          <View style={styles.buttonContainer}>
+            <PrimaryButton
+              buttonText="Add to grocery list"
+              onPress={onAddGroceryList}
+              isLoading={isLoading}
+              buttonStyle={{ width: "100%", margin: 0 }}
+              containerStyle={{ width: "100%" }}
             />
           </View>
-          <ItemView
-            label={"Ingredients"}
-            ingredients={recipe.ingredients}
-          ></ItemView>
-
-          <Pressable
-            onPress={onAddGroceryList}
-            style={[styles.button, { borderRadius: 22 }]}
-          >
-            <Text style={styles.textButton}>Add to grocery list</Text>
-          </Pressable>
 
           <View style={styles.multipleLines}>
-            <ItemView
-              label={"Category"}
-              info={recipe.category}
-              style={{ flex: 1 }}
-            ></ItemView>
-            <ItemView
-              label={"Time"}
-              time={recipe.time}
-              style={{ flex: 1 }}
-            ></ItemView>
-            <ItemView
-              label={"Difficulty"}
-              info={recipe.difficulty}
-              style={{ flex: 1 }}
-            ></ItemView>
+            <ItemView label={"Category"} info={recipe.category} style={{ flex: 1 }}></ItemView>
+            <ItemView label={"Time"} time={recipe.time} style={{ flex: 1 }}></ItemView>
+            <ItemView label={"Difficulty"} info={recipe.difficulty} style={{ flex: 1 }}></ItemView>
           </View>
 
           <ItemView label={"Steps to create"} info={recipe.steps}></ItemView>
@@ -200,17 +167,9 @@ const styles = StyleSheet.create({
     flex: 2,
     overflow: "hidden",
   },
-  button: {
-    margin: 10,
-    backgroundColor: "#4B643F",
-    padding: 10,
-    borderRadius: 8,
-    textAlign: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: -1, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 5,
+  buttonContainer: {
+    marginTop: "auto",
+    marginBottom: "1",
   },
   scrollContainer: {
     paddingLeft: 20,

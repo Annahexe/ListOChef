@@ -1,9 +1,9 @@
 import { View, Text, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 
-const PrimaryButton = ({ onPress, buttonText, isLoading }) => {
+const PrimaryButton = ({ onPress, buttonText, isLoading, buttonStyle, containerStyle}) => {
   return (
-    <View style={styles.buttonContainer}>
-      <Pressable style={styles.buttonStyle} onPress={onPress} disabled={isLoading}>
+    <View style={[styles.buttonContainer, containerStyle]}>
+      <Pressable style={[styles.buttonStyle, buttonStyle]} onPress={onPress} disabled={isLoading}>
         <View style={styles.content}>
           {isLoading && <ActivityIndicator size="small" color="white" style={styles.loader} />}
           <Text style={styles.buttonTextStyle}>{isLoading ? "Loading..." : buttonText}</Text>
