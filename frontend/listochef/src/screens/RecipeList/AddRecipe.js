@@ -1,5 +1,5 @@
 import { View, StyleSheet, Keyboard, Dimensions, Platform } from "react-native";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
 import * as ImagePicker from "expo-image-picker";
@@ -11,7 +11,7 @@ import AutocompleteInput from "../../components/AutocompleteInput";
 import AutocompleteList from "../../components/AutocompleteList";
 import ModalButtons from "../../components/ModalButtons";
 import { isRequired, isRequiredArray } from "../../utils/validators";
-import { postDataToken } from "../../services/services";
+import { getData, postDataToken } from "../../services/services";
 
 const { height, width } = Dimensions.get("window");
 
@@ -24,13 +24,7 @@ const { height, width } = Dimensions.get("window");
  * @returns {JSX.Element} Add Recipe modal screen.
  */
 const AddRecipe = ({ navigation }) => {
-  const {
-    token,
-    route,
-    ingredientTags,
-    listRecipesTags,
-    listRecipesCategories,
-  } = useContext(Context);
+  const { token, route, ingredientTags, listRecipesTags, listRecipesCategories } = useContext(Context);
 
   const [form, setForm] = useState({
     photo: null,
@@ -51,20 +45,42 @@ const AddRecipe = ({ navigation }) => {
     tags: "",
   });
 
-  // Available options for autocomplete fields, mapped from context
-  const [ingredientsList, setIngredientsList] = useState(
-    ingredientTags.map((tag) => tag.name),
-  );
-  const [tagsList, setTagsList] = useState(
-    listRecipesTags.map((tag) => tag.name),
-  );
-  const [categoryList, setCategoryList] = useState(
-    listRecipesCategories.map((tag) => tag.name),
-  );
+  // Available options for autocomplete fields
+  const [ingredientsList, setIngredientsList] = useState([]);
+  const [isLoadingIngredients, setIsLoadingIngredients] = useState(false);
+  const [tagsList, setTagsList] = useState(listRecipesTags.map((tag) => tag.name));
+  const [categoryList, setCategoryList] = useState(listRecipesCategories.map((tag) => tag.name));
 
   // Dynamic lists for ingredients and tags added by the user
   const [ingredients, setIngredients] = useState([""]);
   const [tags, setTags] = useState([""]);
+
+  // Checks if the recipe petition is loading to show a loading state.
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const loadIngredients = async () => {
+      setIsLoadingIngredients(true);
+
+      const ingredients = await getData(route + "/ingredients", token);
+
+      setIsLoadingIngredients(false);
+
+      if (!ingredients) {
+        Toast.show({
+          type: "error",
+          text1: "Error loading ingredients!",
+          text2: "Please try again later.",
+        });
+
+        return;
+      }
+
+      setIngredientsList(ingredients.map((ingredient) => ingredient.ingredientName));
+    };
+
+    loadIngredients();
+  }, [route, token]);
 
   /** Opens the image picker and stores the selected photo in form state. */
   const choosePhoto = async () => {
@@ -92,7 +108,6 @@ const AddRecipe = ({ navigation }) => {
    * Shows a success toast and navigates back on success.
    */
   const onSaved = async () => {
-    console.log("ON SAVED PRESSED");
     const isValid = validateForm();
 
     if (!isValid) {
@@ -104,6 +119,8 @@ const AddRecipe = ({ navigation }) => {
       return;
     }
 
+    setIsLoading(true);
+
     const newRecipe = {
       recipeName: form.name,
       ingredients,
@@ -113,7 +130,7 @@ const AddRecipe = ({ navigation }) => {
       difficulty: form.difficulty,
       tags,
     };
-    console.log("SENDING NEW RECIPE: " + newRecipe);
+    console.log("SENDING NEW RECIPE: ", newRecipe);
 
     const formData = new FormData();
     formData.append("recipe", JSON.stringify(newRecipe));
@@ -128,6 +145,7 @@ const AddRecipe = ({ navigation }) => {
 
     const isSuccess = await createRecipeRequest(formData);
 
+    setIsLoading(false);
     if (isSuccess) {
       navigation.goBack();
       setTimeout(() => {
@@ -154,13 +172,7 @@ const AddRecipe = ({ navigation }) => {
    * @returns {Promise<boolean>} True if status is 200 or 201, false otherwise.
    */
   const createRecipeRequest = async (formData) => {
-    console.log("SENDING PETITION CREATERECIPEREQUEST");
-
-    const response = await postDataToken(
-      route + "/recipes/createRecipe",
-      formData,
-      token,
-    );
+    const response = await postDataToken(route + "/recipes/createRecipe", formData, token);
 
     if (!response) {
       console.log("NO RESPONSE");
@@ -168,16 +180,12 @@ const AddRecipe = ({ navigation }) => {
     }
 
     const [status] = response;
-    console.log("STATUS:", status);
 
     return status === 200 || status === 201;
   };
 
   /** True when all form fields and dynamic lists are filled. */
-  const isFormComplete =
-    Object.values(form).every((value) => value) &&
-    ingredients.every((value) => value) &&
-    tags.every((value) => value);
+  const isFormComplete = Object.values(form).every((value) => value) && ingredients.every((value) => value) && tags.every((value) => value);
 
   /** Validates all form fields and updates error state. @returns {boolean} */
   const validateForm = () => {
@@ -192,24 +200,13 @@ const AddRecipe = ({ navigation }) => {
     };
 
     setErrors(newErrors);
-    return (
-      !newErrors.name &&
-      !newErrors.category &&
-      !newErrors.steps &&
-      !newErrors.time &&
-      !newErrors.difficulty &&
-      !newErrors.ingredients &&
-      !newErrors.tags
-    );
+    return !newErrors.name && !newErrors.category && !newErrors.steps && !newErrors.time && !newErrors.difficulty && !newErrors.ingredients && !newErrors.tags;
   };
 
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-        <TitleModalScreen
-          title={"New Recipe"}
-          onPress={() => navigation.goBack()}
-        />
+        <TitleModalScreen title={"New Recipe"} onPress={() => navigation.goBack()} />
 
         <KeyboardAwareScrollView
           style={styles.scrollContainer}
@@ -225,9 +222,7 @@ const AddRecipe = ({ navigation }) => {
             label="Name:"
             placeholder="Ex: Roast beef"
             value={form.name}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, name: text }))
-            }
+            onChangeText={(text) => setForm((prev) => ({ ...prev, name: text }))}
             keyboardType="default"
             error={errors.name}
           />
@@ -237,7 +232,7 @@ const AddRecipe = ({ navigation }) => {
             values={ingredients}
             setValues={setIngredients}
             options={ingredientsList}
-            placeholder="Ex: Pasta"
+            placeholder={isLoadingIngredients ? "Loading ingredients..." : "Ex: Tomato"}
             error={errors.ingredients}
           />
 
@@ -246,9 +241,7 @@ const AddRecipe = ({ navigation }) => {
             placeholder="Ex: Breakfast"
             value={form.category}
             options={categoryList}
-            onSelect={(text) =>
-              setForm((prev) => ({ ...prev, category: text }))
-            }
+            onSelect={(text) => setForm((prev) => ({ ...prev, category: text }))}
             error={errors.category}
           />
 
@@ -256,9 +249,7 @@ const AddRecipe = ({ navigation }) => {
             label="Steps to make:"
             placeholder="Step 1: ..."
             value={form.steps}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, steps: text }))
-            }
+            onChangeText={(text) => setForm((prev) => ({ ...prev, steps: text }))}
             keyboardType="default"
             multiline
             numberOfLines={6}
@@ -277,9 +268,7 @@ const AddRecipe = ({ navigation }) => {
                 label="Time:"
                 placeholder="Ex: 20 min"
                 value={form.time}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, time: text }))
-                }
+                onChangeText={(text) => setForm((prev) => ({ ...prev, time: text }))}
                 keyboardType="numeric"
                 error={errors.time}
               />
@@ -291,29 +280,16 @@ const AddRecipe = ({ navigation }) => {
                 placeholder="Ex: Low "
                 value={form.difficulty}
                 options={["Low", "Medium", "Hard"]}
-                onSelect={(text) =>
-                  setForm((prev) => ({ ...prev, difficulty: text }))
-                }
+                onSelect={(text) => setForm((prev) => ({ ...prev, difficulty: text }))}
                 error={errors.difficulty}
               />
             </View>
           </View>
 
-          <AutocompleteList
-            label="Tags"
-            values={tags}
-            setValues={setTags}
-            options={tagsList}
-            placeholder="Ex: Pasta"
-            error={errors.tags}
-          />
+          <AutocompleteList label="Tags" values={tags} setValues={setTags} options={tagsList} placeholder="Ex: Pasta" error={errors.tags} />
         </KeyboardAwareScrollView>
 
-        <ModalButtons
-          onCancel={() => navigation.goBack()}
-          onSave={onSaved}
-          isFormComplete={isFormComplete}
-        />
+        <ModalButtons onCancel={() => navigation.goBack()} onSave={onSaved} isFormComplete={isFormComplete} isLoading={isLoading} />
       </View>
     </View>
   );

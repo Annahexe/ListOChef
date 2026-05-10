@@ -43,8 +43,6 @@ const AddPantry = (props) => {
       if (!wasUpdated) {
         return;
       }
-
-      console.log("Pantry synced from AddPantry");
     },
     [route, token],
   );

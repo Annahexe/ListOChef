@@ -74,8 +74,6 @@ const AddProduct = (props) => {
       }
 
       try {
-        console.log("Sending grocery list changes", changes);
-
         const response = await postDataToken(route + "/updateGroceryList", changes, token);
 
         if (!response) {
@@ -84,7 +82,6 @@ const AddProduct = (props) => {
             text1: "Error syncing grocery list!",
             text2: "Please try again later.",
           });
-          console.log(response)
 
           return;
         }
