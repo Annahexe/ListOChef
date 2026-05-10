@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
@@ -48,13 +50,17 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 // 6. Validar el token
                 if (jwtService.validateToken(jwt, userEmail)) {
 
-                    // 7. Crear la autenticación
-                    UsernamePasswordAuthenticationToken authToken =
-                            new UsernamePasswordAuthenticationToken(
-                                    userEmail,
-                                    null,
-                                    new ArrayList<>()  // Sin roles por ahora
-                            );
+                	String role = jwtService.extractRole(jwt);
+
+                	// 7. Crear la autenticación
+                	UsernamePasswordAuthenticationToken authToken =
+                	        new UsernamePasswordAuthenticationToken(
+                	                userEmail,
+                	                null,
+                	                List.of(
+                	                    new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
+                	                )
+                	        );
 
                     // 8. Marcar como autenticado en Spring Security
                     SecurityContextHolder.getContext().setAuthentication(authToken);

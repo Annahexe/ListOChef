@@ -15,12 +15,13 @@ public class User {
 	private List<UserIngredient> myGroceryList;
 	private List<UserIngredient> myPantryList;
 	private List<UserTicket> myTicketsList;
+	private String role;
 	
 	public User() {
 	}
 
 	public User(String id, String name, String surname, String email, String password, String avatar,
-			List<String> recipesSavedIds, List<UserIngredient> myGroceryList, List<UserIngredient> myPantryList, List<UserTicket> myTicketsList) {
+			List<String> recipesSavedIds, List<UserIngredient> myGroceryList, List<UserIngredient> myPantryList, List<UserTicket> myTicketsList, String role) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -32,6 +33,7 @@ public class User {
 		this.myGroceryList = myGroceryList;
 		this.myPantryList = myPantryList;
 		this.myTicketsList = myTicketsList;
+		this.setRole(role);
 	}
 
 	public String getId() {
@@ -113,5 +115,13 @@ public class User {
 
 	public void setMyTicketsList(List<UserTicket> myTicketsList) {
 		this.myTicketsList = myTicketsList;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
 	}
 }

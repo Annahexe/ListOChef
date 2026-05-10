@@ -52,13 +52,14 @@ public class MongoUserRepository implements UserRepository {
 				myPantryList.add(ingredient);
 			}
 		}
-		
+
 		ArrayList<Document> ticketsDocs = (ArrayList<Document>) doc.get("myTicketsList");
 		if (ticketsDocs != null) {
 			for (Document ticketDoc : ticketsDocs) {
 				UserTicket ticket = new UserTicket();
 				ticket.setId(ticketDoc.getObjectId("_id").toHexString());
 				ticket.setTicketPictureUri(ticketDoc.getString("ticketPictureUri"));
+				ticket.setTicketPicturePublicId(ticketDoc.getString("ticketPicturePublicId"));
 				ticket.setSupermarket(ticketDoc.getString("supermarket"));
 				ticket.setTicketDate(ticketDoc.getDate("ticketDate"));
 				ticket.setAmountProducts(ticketDoc.getInteger("amountProducts"));
@@ -66,10 +67,16 @@ public class MongoUserRepository implements UserRepository {
 				myTicketsList.add(ticket);
 			}
 		}
+		
+		String role = doc.getString("role");
+		
+		if (role == null) {
+		    role = "user";
+		}
 
 		return new User(doc.getObjectId("_id").toHexString(), doc.getString("name"), doc.getString("surname"),
 				doc.getString("email"), doc.getString("password"), doc.getString("avatar"),
-				doc.getList("recipesSavedIds", String.class), myGroceryList, myPantryList, myTicketsList);
+				doc.getList("recipesSavedIds", String.class), myGroceryList, myPantryList, myTicketsList, role);
 	}
 
 	@Override
@@ -89,7 +96,7 @@ public class MongoUserRepository implements UserRepository {
 				.append("email", user.getEmail()).append("password", user.getPassword())
 				.append("avatar", user.getAvatar()).append("recipesSavedIds", new ArrayList<>())
 				.append("myGroceryList", new ArrayList<>()).append("myPantryList", new ArrayList<>())
-				.append("myTicketsList", new ArrayList<>());
+				.append("myTicketsList", new ArrayList<>()).append("role", "user");
 
 		collection.insertOne(doc);
 
@@ -140,62 +147,110 @@ public class MongoUserRepository implements UserRepository {
 	public void removeFromPantryList(String email, String ingredientName) {
 		collection.updateOne(eq("email", email), pull("myPantryList", new Document("ingredientName", ingredientName)));
 	}
-    
-    @Override
-    public void updateGroceryList(String email, List<UserIngredient> ingredients) {
-        if (ingredients == null || ingredients.isEmpty()) {
-            return;
-        }
 
-        for (UserIngredient ingredient : ingredients) {
-            if (ingredient.getIngredientName() == null || ingredient.getIngredientName().isBlank()) {
-                continue;
-            }
+	@Override
+	public void updateGroceryList(String email, List<UserIngredient> ingredients) {
+		if (ingredients == null || ingredients.isEmpty()) {
+			return;
+		}
 
-            collection.updateOne(
-                eq("email", email),
-                pull("myGroceryList", new Document("ingredientName", ingredient.getIngredientName()))
-            );
+		for (UserIngredient ingredient : ingredients) {
+			if (ingredient.getIngredientName() == null || ingredient.getIngredientName().isBlank()) {
+				continue;
+			}
 
-            if (ingredient.getIngredientAmount() == 0) {
-                continue;
-            }
+			collection.updateOne(eq("email", email),
+					pull("myGroceryList", new Document("ingredientName", ingredient.getIngredientName())));
 
-            Document ingredientDoc = new Document()
-                .append("ingredientName", ingredient.getIngredientName())
-                .append("ingredientTag", ingredient.getIngredientTag())
-                .append("ingredientAmount", ingredient.getIngredientAmount());
+			if (ingredient.getIngredientAmount() == 0) {
+				continue;
+			}
 
-            collection.updateOne(eq("email", email),push("myGroceryList", ingredientDoc));
-        }
-    }
+			Document ingredientDoc = new Document().append("ingredientName", ingredient.getIngredientName())
+					.append("ingredientTag", ingredient.getIngredientTag())
+					.append("ingredientAmount", ingredient.getIngredientAmount());
+
+			collection.updateOne(eq("email", email), push("myGroceryList", ingredientDoc));
+		}
+	}
 
 	@Override
 	public UserTicket createTicket(String email, UserTicket newTicket) {
 
 		ObjectId id = new ObjectId();
 
-	    newTicket.setId(id.toHexString());
-	    
-		Document newTicketDoc = new Document()
-				.append("_id", id)
+		newTicket.setId(id.toHexString());
+
+		Document newTicketDoc = new Document().append("_id", id)
 				.append("ticketPictureUri", newTicket.getTicketPictureUri())
-				.append("supermarket", newTicket.getSupermarket())
-				.append("ticketDate", newTicket.getTicketDate())
+				.append("ticketPicturePublicId", newTicket.getTicketPicturePublicId())
+				.append("supermarket", newTicket.getSupermarket()).append("ticketDate", newTicket.getTicketDate())
 				.append("amountProducts", newTicket.getAmountProducts())
 				.append("totalPrice", newTicket.getTotalPrice());
-		
-        collection.updateOne(eq("email", email),push("myTicketsList", newTicketDoc));
 
-        return newTicket;
+		collection.updateOne(eq("email", email), push("myTicketsList", newTicketDoc));
+
+		return newTicket;
+	}
+
+	@Override
+	public void deleteTicket(String email, String ticketId) {
+		collection.updateOne(eq("email", email), pull("myTicketsList", eq("_id", new ObjectId(ticketId))));
+	}
+
+	@Override
+	public UserTicket findTicketById(String email, String ticketId) {
+
+		Document userDoc = collection.find(eq("email", email)).first();
+
+		if (userDoc == null) {
+			return null;
+		}
+
+		List<Document> tickets = (List<Document>) userDoc.get("myTicketsList");
+
+		if (tickets == null) {
+			return null;
+		}
+
+		for (Document ticketDoc : tickets) {
+
+			ObjectId id = ticketDoc.getObjectId("_id");
+
+			if (id != null && id.toHexString().equals(ticketId)) {
+
+				UserTicket ticket = new UserTicket();
+
+				ticket.setId(id.toHexString());
+				ticket.setTicketPictureUri(ticketDoc.getString("ticketPictureUri"));
+
+				ticket.setTicketPicturePublicId(ticketDoc.getString("ticketPicturePublicId"));
+				ticket.setSupermarket(ticketDoc.getString("supermarket"));
+				ticket.setTicketDate(ticketDoc.getDate("ticketDate"));
+				ticket.setAmountProducts(ticketDoc.getInteger("amountProducts"));
+				ticket.setTotalPrice(ticketDoc.getDouble("totalPrice"));
+				return ticket;
+			}
+		}
+
+		return null;
 	}
 	
 	@Override
-	public void deleteTicket(String email, String ticketId) {
-	    collection.updateOne(
-	        eq("email", email),
-	        pull("myTicketsList", eq("_id", new ObjectId(ticketId)))
-	    );
+	public void deleteUser(String userId) {
+	    collection.deleteOne(eq("_id", new ObjectId(userId)));
 	}
-    
+	
+	@Override
+	public List<User> getUsers() {
+
+	    List<User> users = new ArrayList<>();
+
+	    for (Document doc : collection.find()) {
+	        users.add(toUser(doc));
+	    }
+
+	    return users;
+	}
+
 }

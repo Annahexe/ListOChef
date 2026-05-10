@@ -268,7 +268,7 @@ public class UserService {
 	    }
 
 	    userRepository.updatePantryList(email, userIngredients);
-	}
+	}	
 
 	public void removeFromPantryList(String email, String ingredientName) {
 	    userRepository.removeFromPantryList(email, ingredientName);
@@ -284,12 +284,46 @@ public class UserService {
         if (photo != null && !photo.isEmpty()) {
             UploadResult res = cloudinaryService.upload(photo, email);
             newTicket.setTicketPictureUri(res.getImageUrl());
+            newTicket.setTicketPicturePublicId(res.getImageKey());
         }
         
         return userRepository.createTicket(email, newTicket);
 	}
 	
 	public void deleteTicket(String email, String ticketId) {
+		
+	    UserTicket ticket = userRepository.findTicketById(email, ticketId);
+
+	    if (ticket == null) {
+	        throw new RuntimeException("Ticket no encontrado");
+	    }
+
+	    if (ticket.getTicketPicturePublicId() != null || ticket.getTicketPicturePublicId() != "") {
+	        cloudinaryService.deleteImage(ticket.getTicketPicturePublicId());
+	    }
+
 	    userRepository.deleteTicket(email, ticketId);
+	};
+	
+	public void deleteUser(String userEmail) {
+		
+	    User user = userRepository.findByEmail(userEmail)
+	            .orElseThrow(() -> new RuntimeException("User not found"));
+	    
+	    // borrar imágenes de tickets
+	    if (user.getMyTicketsList() != null) {
+	        for (UserTicket t : user.getMyTicketsList()) {
+	            if (t.getTicketPicturePublicId() != null) {
+	                cloudinaryService.deleteImage(t.getTicketPicturePublicId());
+	            }
+	        }
+	    }
+	    
+	    userRepository.deleteUser(user.getId());
 	}
+	
+	public List<User> getUsers() {
+	    return userRepository.getUsers();
+	}
+	
 }

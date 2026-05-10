@@ -27,9 +27,10 @@ public class JWTService {
     }
     
     // GENERAR TOKEN
-    public String generateToken(String email) {
+    public String generateToken(String email, String role) {
         return Jwts.builder()
                 .subject(email)  // Guarda el email
+                .claim("role", role) // Guarda rol
                 .issuedAt(new Date())  // Fecha de creación
                 .expiration(new Date(System.currentTimeMillis() + expiration))  // Fecha de expiración
                 .signWith(getSignKey())  // Firma el token
@@ -44,6 +45,11 @@ public class JWTService {
     // EXTRAER FECHA DE EXPIRACIÓN
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+    
+	// EXTRAER ROL
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
     
     // MÉTODO GENÉRICO PARA EXTRAER CUALQUIER CLAIM
