@@ -1,7 +1,17 @@
 import React from "react";
 import { BaseToast, ErrorToast } from "react-native-toast-message";
 
+/**
+ * Custom toast configuration used by react-native-toast-message.
+ * Defines the visual style for success, error and info toast types.
+ */
 const toastConfig = {
+  /**
+   * Success toast style used for completed actions.
+   *
+   * @param {Object} props - Toast props provided by react-native-toast-message.
+   * @returns {JSX.Element} Styled success toast.
+   */
   success: (props) => (
     <BaseToast
       {...props}
@@ -28,6 +38,12 @@ const toastConfig = {
     />
   ),
 
+  /**
+   * Error toast style used for failed actions or validation issues.
+   *
+   * @param {Object} props - Toast props provided by react-native-toast-message.
+   * @returns {JSX.Element} Styled error toast.
+   */
   error: (props) => (
     <BaseToast
       {...props}
@@ -54,6 +70,12 @@ const toastConfig = {
     />
   ),
 
+  /**
+   * Info toast style used for neutral application feedback.
+   *
+   * @param {Object} props - Toast props provided by react-native-toast-message.
+   * @returns {JSX.Element} Styled info toast.
+   */
   info: (props) => (
     <BaseToast
       {...props}

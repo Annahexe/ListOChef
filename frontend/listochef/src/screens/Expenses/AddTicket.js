@@ -18,9 +18,19 @@ import { postDataToken } from "../../services/services";
 
 const { height } = Dimensions.get("window");
 
+/**
+ * AddTicket modal screen for creating a new expense ticket.
+ * Includes fields for ticket photo, supermarket, date, total price,
+ * and number of products. Validates the form before sending it to the backend.
+ * On success, updates the saved tickets context and closes the modal.
+ *
+ * @param {Object} navigation - Navigation prop for going back after saving.
+ * @returns {JSX.Element} Add Ticket modal screen.
+ */
 const AddTicket = ({ navigation }) => {
   const { token, route, setTicketsSaved } = useContext(Context);
 
+  // Stores the ticket form data.
   const [form, setForm] = useState({
     photo: null,
     supermarket: "",
@@ -29,6 +39,7 @@ const AddTicket = ({ navigation }) => {
     totalPrice: "",
   });
 
+  // Stores validation error messages for each form field.
   const [errors, setErrors] = useState({
     supermarket: "",
     ticketDate: "",
@@ -36,10 +47,15 @@ const AddTicket = ({ navigation }) => {
     totalPrice: "",
   });
 
+  // Controls whether the date picker modal is visible.
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  // Checks if the create ticket petition is loading to show a loading state.
   const [isLoading, setIsLoading] = useState(false);
 
+  /**
+   * Opens the image picker and stores the selected ticket photo in form state.
+   */
   const choosePhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -60,6 +76,12 @@ const AddTicket = ({ navigation }) => {
     }
   };
 
+  /**
+   * Formats a date to display it inside the date input.
+   *
+   * @param {Date|string} date - Date to format.
+   * @returns {string} Formatted date in Spanish locale.
+   */
   const formatDate = (date) => {
     return new Intl.DateTimeFormat("es-ES", {
       day: "2-digit",
@@ -68,6 +90,10 @@ const AddTicket = ({ navigation }) => {
     }).format(new Date(date));
   };
 
+  /**
+   * Validates the form and sends the new ticket to the backend.
+   * Shows a success toast and navigates back on success.
+   */
   const onSaved = async () => {
     const isValid = validateForm();
 
@@ -121,6 +147,13 @@ const AddTicket = ({ navigation }) => {
     Keyboard.dismiss();
   };
 
+  /**
+   * Sends a POST request to create the ticket in the backend.
+   * If the request succeeds, adds the created ticket to the ticketsSaved context.
+   *
+   * @param {FormData} formData - Ticket data including optional photo.
+   * @returns {Promise<boolean>} True if status is 200 or 201, false otherwise.
+   */
   const addTicketRequest = async (formData) => {
     const response = await postDataToken(route + "/createTicket", formData, token);
 
@@ -143,8 +176,16 @@ const AddTicket = ({ navigation }) => {
     return status === 200 || status === 201;
   };
 
+  /** True when all ticket form fields are filled. */
   const isFormComplete = Object.values(form).every((value) => value);
 
+  /**
+   * Validates all ticket form fields and updates error state.
+   * Checks required fields, valid date, positive total price,
+   * and positive integer product amount.
+   *
+   * @returns {boolean} True if the form is valid, false otherwise.
+   */
   const validateForm = () => {
     const newErrors = {
       supermarket: isRequired(form.supermarket),

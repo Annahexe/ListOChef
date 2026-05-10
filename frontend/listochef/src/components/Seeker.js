@@ -1,6 +1,20 @@
 import { View, StyleSheet } from "react-native";
 import { TextInput } from "react-native-paper";
 
+/**
+ * Seeker component used as a search input.
+ * It can work as an editable search field or as a pressable input
+ * that redirects the user to another screen.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.value - Current input value.
+ * @param {Function} props.onChangeText - Function executed when the text changes.
+ * @param {Function} props.onPress - Function executed when the input receives focus.
+ * @param {Function} props.onSubmit - Function executed when the search is submitted.
+ * @param {boolean} props.editable - Controls if the keyboard should open on focus.
+ * @param {string} props.placeholderText - Placeholder text displayed in the input.
+ * @returns {JSX.Element} Search input component.
+ */
 export const Seeker = (props) => {
   return (
     <View style={styles.container}>

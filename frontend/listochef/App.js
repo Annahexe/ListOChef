@@ -15,6 +15,13 @@ import Home from "./src/screens/Start/Home";
 
 const Stack = createStackNavigator();
 
+/**
+ * Root component of the ListOChef app.
+ * Loads custom fonts, wraps the app with Paper and global context providers,
+ * sets up the main navigation stack and configures global toast messages.
+ *
+ * @returns {JSX.Element|null} App navigation tree.
+ */
 export default function App() {
   const [fontsLoaded] = useFonts({
     MontserratRegular: require("./assets/fonts/Montserrat-Regular.ttf"),
@@ -27,6 +34,7 @@ export default function App() {
     InterSemiBold: require("./assets/fonts/Inter_24pt-SemiBold.ttf"),
     InterBold: require("./assets/fonts/Inter_24pt-Bold.ttf"),
   });
+
   if (!fontsLoaded) {
     return null;
   }

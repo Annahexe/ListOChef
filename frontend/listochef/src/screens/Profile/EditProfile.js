@@ -11,7 +11,7 @@ import { postDataToken } from "../../services/services";
 
 import { isRequired, minLength, matches } from "../../utils/validators";
 
-//Objeto base para errores del formulario (validaciones)
+/** Base object used to reset and store form validation errors. */
 const INITIAL_ERRORS = {
   name: "",
   surname: "",
@@ -20,13 +20,21 @@ const INITIAL_ERRORS = {
   confirmNewPassword: "",
 };
 
+/**
+ * EditProfile modal screen that allows the user to update profile information.
+ * The user can edit their name and surname, and optionally change their password.
+ * Validates the form before sending profile or password updates to the backend.
+ *
+ * @param {Object} navigation - Navigation prop for closing the modal after saving or cancelling.
+ * @returns {JSX.Element} Edit Profile modal screen.
+ */
 const EditProfile = ({ navigation }) => {
   const { route, token, user, setUser } = useContext(Context);
 
-  //Controla que el usuario quiera cambiar o no la contraseña, para pintar o no campos adicionales
+  // Controls whether the password change fields are displayed.
   const [changePwd, setChangePwd] = useState(false);
 
-  //Guarda los inputs totales del formulario
+  // Stores all profile and password form inputs.
   const [form, setForm] = useState({
     name: "",
     surname: "",
@@ -35,12 +43,16 @@ const EditProfile = ({ navigation }) => {
     confirmNewPassword: "",
   });
 
-  //Guarda los errores de los campos, sincronizado con las validaciones
+  // Stores validation error messages for each form field.
   const [errors, setErrors] = useState(INITIAL_ERRORS);
 
+  // Checks if the update petition is loading to show a loading state.
   const [isLoading, setIsLoading] = useState(false);
 
-  //Si se cambia el user, se recargan los datos
+  /**
+   * Loads the current user data into the form whenever the user context changes.
+   * Password fields are always reset for security.
+   */
   useEffect(() => {
     setForm({
       name: user.name || "",
@@ -51,47 +63,55 @@ const EditProfile = ({ navigation }) => {
     });
   }, [user]);
 
-  //Elimina espacios del nombre y apellido
+  /** Name without extra spaces at the beginning or end. */
   const trimmedName = form.name.trim();
+
+  /** Surname without extra spaces at the beginning or end. */
   const trimmedSurname = form.surname.trim();
 
-  //Comrpueba si se ha modificado algo, evitando llamadas innecesarias al backend
+  /** True if the user changed their name or surname. */
   const hasProfileChanges = trimmedName !== (user.name || "") || trimmedSurname !== (user.surname || "");
 
-  //Comprueba si los campos de password están rellenos
+  /** True when all password fields are filled. */
   const isPasswordFormComplete = form.oldPassword.trim() !== "" && form.newPassword.trim() !== "" && form.confirmNewPassword.trim() !== "";
 
-  //habilita el boton SAVE
+  /** True when there are profile changes or a complete password change form. */
   const isFormComplete = hasProfileChanges || (changePwd && isPasswordFormComplete);
 
-  //Validaciones nombre y apellido
+  /**
+   * Validates the profile fields.
+   * Checks that name and surname are not empty.
+   *
+   * @returns {boolean} True if profile fields are valid, false otherwise.
+   */
   const validateProfileForm = () => {
-    //Devuelve error si nombre o apellido estan vacios
     const newErrors = {
       ...INITIAL_ERRORS,
       name: isRequired(form.name),
       surname: isRequired(form.surname),
     };
 
-    //guarda el error si lo hay
     setErrors((prev) => ({
       ...prev,
       name: newErrors.name,
       surname: newErrors.surname,
     }));
 
-    //Si no hay error devuleve true
     return !newErrors.name && !newErrors.surname;
   };
 
-  //Validaciones contraseña
+  /**
+   * Validates the password fields.
+   * Checks old password, new password length and password confirmation.
+   *
+   * @returns {boolean} True if password fields are valid, false otherwise.
+   */
   const validatePasswordForm = () => {
-    //Devuelve error si contraseña estan vacios
     const newErrors = {
       ...INITIAL_ERRORS,
-      oldPassword: isRequired(form.oldPassword) || minLength(form.oldPassword, 4), //es requerida y minimo 4 de long
+      oldPassword: isRequired(form.oldPassword) || minLength(form.oldPassword, 4),
       newPassword: isRequired(form.newPassword) || minLength(form.newPassword, 4),
-      confirmNewPassword: isRequired(form.confirmNewPassword) || matches(form.confirmNewPassword, form.newPassword, "passwords"), //comprueba que los dos campos de nueva contraseña coinciden
+      confirmNewPassword: isRequired(form.confirmNewPassword) || matches(form.confirmNewPassword, form.newPassword, "passwords"),
     };
 
     setErrors((prev) => ({
@@ -104,7 +124,10 @@ const EditProfile = ({ navigation }) => {
     return !newErrors.oldPassword && !newErrors.newPassword && !newErrors.confirmNewPassword;
   };
 
-  //Activa el cambio de pw y limpia valores o errores
+  /**
+   * Clears all password fields and removes password validation errors.
+   * Used when enabling or cancelling the password change section.
+   */
   const resetPasswordFields = () => {
     setForm((prev) => ({
       ...prev,
@@ -121,13 +144,15 @@ const EditProfile = ({ navigation }) => {
     }));
   };
 
-  //guarda los cambios
+  /**
+   * Validates the form and asks the user to confirm the update.
+   * Sends profile data and/or password data to the backend depending on the changes made.
+   * Updates the local user context and closes the modal on success.
+   */
   const onSaved = () => {
-    //Ejecuta las validaciones
     const profileIsValid = validateProfileForm();
     const passwordIsValid = changePwd ? validatePasswordForm() : true;
 
-    //VALIDACIONES (cuadrito en rojo) Si algo falla ejecuta el toast
     if (!profileIsValid) {
       Toast.show({
         type: "error",
@@ -144,7 +169,6 @@ const EditProfile = ({ navigation }) => {
       return;
     }
 
-    // Si no hay nada que guardar
     if (!hasProfileChanges && !changePwd) {
       Toast.show({
         type: "info",
@@ -153,19 +177,15 @@ const EditProfile = ({ navigation }) => {
       return;
     }
 
-    //Confirmar cambios
     Alert.alert("Attention", "Are you sure you want to save these changes?", [
-      //boton cancelar
       { text: "Cancel", style: "cancel" },
-      //boton guardar
       {
         text: "Save",
         onPress: async () => {
           try {
             setIsLoading(true);
-            // Actualizar todo el perfil
+
             if (hasProfileChanges) {
-              //Los cambios
               const profilePayload = {
                 name: trimmedName,
                 surname: trimmedSurname,
@@ -185,9 +205,7 @@ const EditProfile = ({ navigation }) => {
               }
             }
 
-            // Cambiar contraseña solo
             if (changePwd) {
-              //Los cambios
               const passwordPayload = {
                 currentPassword: form.oldPassword,
                 newPassword: form.newPassword,
@@ -207,7 +225,6 @@ const EditProfile = ({ navigation }) => {
               }
             }
 
-            // Actualizar estado local para recargar página
             setUser((prev) => ({
               ...prev,
               name: trimmedName,
@@ -233,17 +250,28 @@ const EditProfile = ({ navigation }) => {
     ]);
   };
 
+  /**
+   * Enables the password change section and clears previous password values.
+   */
   const onChangePwd = () => {
     setChangePwd(true);
     resetPasswordFields();
   };
 
+  /**
+   * Disables the password change section and clears previous password values.
+   */
   const onCancelChangePwd = () => {
     setChangePwd(false);
     resetPasswordFields();
   };
 
-  //Llamada a back con todo
+  /**
+   * Sends a request to update the user's profile data.
+   *
+   * @param {Object} formData - Profile data containing name and surname.
+   * @returns {Promise<boolean>} True if status is 200 or 201, false otherwise.
+   */
   const changeAllDataRequest = async (formData) => {
     const response = await postDataToken(route + "/editProfile", formData, token);
 
@@ -257,7 +285,12 @@ const EditProfile = ({ navigation }) => {
     return status === 200 || status === 201;
   };
 
-  //Llamada a back solo contraseña
+  /**
+   * Sends a request to update the user's password.
+   *
+   * @param {Object} formData - Password data containing currentPassword and newPassword.
+   * @returns {Promise<boolean>} True if status is 200 or 201, false otherwise.
+   */
   const changePasswordRequest = async (formData) => {
     const response = await postDataToken(route + "/changePassword", formData, token);
 
@@ -278,7 +311,7 @@ const EditProfile = ({ navigation }) => {
 
         <KeyboardAwareScrollView
           style={styles.scrollContainer}
-          nestedScrollEnabled={true} //perimte Scroll dentro de Scroll
+          nestedScrollEnabled={true} // Allows Scroll inside Scroll
           keyboardShouldPersistTaps="handled"
           extraScrollHeight={60}
           enableOnAndroid={true}

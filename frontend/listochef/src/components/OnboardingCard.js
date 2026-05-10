@@ -5,6 +5,17 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import Feather from "@expo/vector-icons/Feather";
 
+/**
+ * OnboardingCard component used as a common layout for onboarding screens.
+ * Displays the app background, gradient overlay, logo, app title, page title,
+ * back button and custom children content.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.pageTitle - Title displayed for the current onboarding page.
+ * @param {Object|Array} props.titleStyle - Optional custom style for the page title.
+ * @param {JSX.Element|JSX.Element[]} props.children - Screen content displayed inside the card.
+ * @returns {JSX.Element} Onboarding card layout.
+ */
 export default function OnboardingCard(props) {
   const navigation = useNavigation();
 
