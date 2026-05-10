@@ -97,7 +97,6 @@ const Login = (props) => {
   const sendLoginRequest = async () => {
     const response = await postDataOnboarding(route + "/login", loginData);
     if (!response) return false;
-    console.log("RESPONSE: ", response);
 
     const [status, jsonResponse] = response;
     if (status === 200) {
@@ -136,11 +135,13 @@ const Login = (props) => {
     };
     setLoginData(debugCredentials);
 
+    setIsLoading(true);
     const response = await postDataOnboarding(
       route + "/login",
       debugCredentials,
     );
 
+    setIsLoading(false);
     if (!response) {
       Toast.show({
         type: "error",
