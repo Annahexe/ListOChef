@@ -1,13 +1,20 @@
 import { Text, View, StyleSheet } from "react-native";
 
+/**
+ * TitleIconPage component that displays a page title with an optional icon.
+ * Used as a reusable header for main app screens.
+ *
+ * @param {Object} props - Component props.
+ * @param {React.ComponentType} props.icon - SVG icon component displayed next to the title.
+ * @param {string} props.titleText - Text displayed as the page title.
+ * @returns {JSX.Element} Page title with icon.
+ */
 export const TitleIconPage = (props) => {
-   const Icon = props.icon;
+  const Icon = props.icon;
 
   return (
     <View style={styles.container}>
-      <View style={styles.iconStyle}>
-      {Icon && <Icon width={60} height={60}/>}
-      </View>
+      <View style={styles.iconStyle}>{Icon && <Icon width={60} height={60} />}</View>
       <Text style={styles.title}>{props.titleText}</Text>
     </View>
   );
@@ -18,10 +25,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     width: "85%",
-    alignItems: "center"
+    alignItems: "center",
   },
   title: {
-    fontFamily:"MontserratBold",
+    fontFamily: "MontserratBold",
     marginLeft: 10,
     marginBottom: 4,
     fontSize: 36,

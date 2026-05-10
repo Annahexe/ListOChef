@@ -18,6 +18,15 @@ import { toggleSavedPetition, showToggleSavedToast } from "../../utils/toggleSav
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+/**
+ * RecipesList screen that displays the user's saved recipes.
+ * Shows the last recipe seen, allows ordering recipes by date,
+ * navigating to the search screen, opening a recipe detail modal,
+ * creating a new recipe and toggling saved recipes.
+ *
+ * @param {Object} props - Navigation props.
+ * @returns {JSX.Element} Recipes list screen.
+ */
 const RecipesList = (props) => {
   const { route, token } = useContext(Context);
   const { lastRecipeSeen, setLastRecipeSeen } = useContext(Context);
@@ -25,12 +34,23 @@ const RecipesList = (props) => {
   const { recipesSaved, setRecipesSaved } = useContext(Context);
 
   const tabBarHeight = useBottomTabBarHeight();
+
+  /** Stores the selected order value used to sort recipes by creation date. */
   const [filterOrderValue, setFilterOrderValue] = useState("Oldest");
 
+  /**
+   * Converts a date string into a timestamp.
+   *
+   * @param {string} dateString - Recipe creation date.
+   * @returns {number} Date converted to milliseconds.
+   */
   const toTime = (dateString) => {
     return new Date(dateString).getTime();
   };
 
+  /**
+   * Loads the user's saved recipes from the backend and stores them in context.
+   */
   useEffect(() => {
     async function fetchData() {
       const data = await getUserRecipesPetition();
@@ -43,14 +63,17 @@ const RecipesList = (props) => {
     fetchData();
   }, [recipesSaved]);
 
+  /** Navigates to the AddRecipe modal screen. */
   const onAddRecipe = () => {
     return props.navigation.navigate("AddRecipe");
   };
 
+  /** Navigates to the ViewRecipe modal screen. */
   const onViewRecipe = () => {
     return props.navigation.navigate("ViewRecipe");
   };
 
+  /** Recipes sorted by creation date depending on the selected order value. */
   const sortedRecipes = [...recipesSaved].sort((a, b) => {
     const timeA = toTime(a.creationDate);
     const timeB = toTime(b.creationDate);
@@ -61,11 +84,20 @@ const RecipesList = (props) => {
     return timeB - timeA;
   });
 
+  /**
+   * Dismisses the keyboard and navigates to the recipe search screen.
+   */
   const goSearchRecipe = () => {
     Keyboard.dismiss();
     return props.navigation.navigate("SearchRecipes");
   };
 
+  /**
+   * Toggles the saved state of a recipe.
+   * If the backend request fails, restores the previous recipes list.
+   *
+   * @param {string|number} id - Recipe id to toggle.
+   */
   const toggleSaved = async (id) => {
     const previousRecipes = recipesSaved;
 
@@ -84,6 +116,11 @@ const RecipesList = (props) => {
     showToggleSavedToast(result);
   };
 
+  /**
+   * Gets the user's saved recipes from the backend.
+   *
+   * @returns {Promise<Array|undefined>} List of saved recipes if the request succeeds.
+   */
   const getUserRecipesPetition = async () => {
     const response = await getData(route + "/recipes/userRecipesSaved", token);
     return response;
