@@ -12,70 +12,138 @@ import java.util.function.Function;
 
 import javax.crypto.SecretKey;
 
+/**
+ * Service responsible for JWT (JSON Web Token) operations.
+ *
+ * This class handles:
+ * - Token generation
+ * - Claim extraction (email, role, expiration, etc.)
+ * - Token validation
+ * - Signature verification
+ */
 @Service
 public class JWTService {
 
     @Value("${jwt.secret}")
     private String SECRET;
-    
+
     @Value("${jwt.expiration}")
     private Long expiration;
-    
-    // Genera la clave de firma desde el SECRET
+
+    /**
+     * Generates the signing key used to sign and verify JWT tokens.
+     *
+     * @return SecretKey used for HMAC SHA signing.
+     */
     private SecretKey getSignKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
-    
-    // GENERAR TOKEN
+
+    /**
+     * Generates a JWT token for a given user.
+     *
+     * The token includes:
+     * - Subject (email)
+     * - Role claim
+     * - Issued date
+     * - Expiration date
+     *
+     * @param email User email (stored as subject).
+     * @param role User role.
+     * @return Generated JWT token as String.
+     */
     public String generateToken(String email, String role) {
         return Jwts.builder()
-                .subject(email)  // Guarda el email
-                .claim("role", role) // Guarda rol
-                .issuedAt(new Date())  // Fecha de creación
-                .expiration(new Date(System.currentTimeMillis() + expiration))  // Fecha de expiración
-                .signWith(getSignKey())  // Firma el token
-                .compact();  // Genera el string
+                .subject(email)
+                .claim("role", role)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(getSignKey())
+                .compact();
     }
-    
-    // EXTRAER EMAIL DEL TOKEN
+
+    /**
+     * Extracts the email (subject) from a JWT token.
+     *
+     * @param token JWT token.
+     * @return Email stored in the token.
+     */
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
-    
-    // EXTRAER FECHA DE EXPIRACIÓN
+
+    /**
+     * Extracts the expiration date from a JWT token.
+     *
+     * @param token JWT token.
+     * @return Expiration date.
+     */
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
-    
-	// EXTRAER ROL
+
+    /**
+     * Extracts the role claim from a JWT token.
+     *
+     * @param token JWT token.
+     * @return Role stored in the token.
+     */
     public String extractRole(String token) {
         return extractClaim(token, claims -> claims.get("role", String.class));
     }
-    
-    // MÉTODO GENÉRICO PARA EXTRAER CUALQUIER CLAIM
+
+    /**
+     * Generic method to extract any claim from a JWT token.
+     *
+     * @param token JWT token.
+     * @param claimsResolver Function used to extract a specific claim.
+     * @param <T> Type of the claim.
+     * @return Extracted claim value.
+     */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-    
-    // EXTRAER TODOS LOS CLAIMS (datos del token)
+
+    /**
+     * Parses and retrieves all claims from a JWT token.
+     *
+     * This method also verifies the token signature.
+     *
+     * @param token JWT token.
+     * @return Claims object containing token data.
+     */
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .verifyWith(getSignKey())  // Verifica la firma
+                .verifyWith(getSignKey())
                 .build()
-                .parseSignedClaims(token)  // Lee el token
-                .getPayload();  // Devuelve los datos
+                .parseSignedClaims(token)
+                .getPayload();
     }
-    
-    // VERIFICAR SI EL TOKEN EXPIRÓ
+
+    /**
+     * Checks if a token has expired.
+     *
+     * @param token JWT token.
+     * @return true if expired, false otherwise.
+     */
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
-    
-    // VALIDAR TOKEN
+
+    /**
+     * Validates a JWT token.
+     *
+     * Validation includes:
+     * - Matching email (subject)
+     * - Checking expiration
+     *
+     * @param token JWT token.
+     * @param email Expected user email.
+     * @return true if token is valid, false otherwise.
+     */
     public Boolean validateToken(String token, String email) {
         final String tokenEmail = extractEmail(token);
         return (tokenEmail.equals(email) && !isTokenExpired(token));
     }
-
 }
