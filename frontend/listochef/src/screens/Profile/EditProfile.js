@@ -1,13 +1,7 @@
-import {
-  View,
-  StyleSheet,
-  Keyboard,
-  Alert,
-  Pressable,
-  Text,
-} from "react-native";
+import { View, StyleSheet, Keyboard, Alert, Pressable, Text } from "react-native";
 import { useState, useContext, useEffect } from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import Toast from "react-native-toast-message";
 
 import Context from "../../context/Context";
 import ItemInput from "../../components/ItemInput";
@@ -44,6 +38,8 @@ const EditProfile = ({ navigation }) => {
   //Guarda los errores de los campos, sincronizado con las validaciones
   const [errors, setErrors] = useState(INITIAL_ERRORS);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   //Si se cambia el user, se recargan los datos
   useEffect(() => {
     setForm({
@@ -60,19 +56,13 @@ const EditProfile = ({ navigation }) => {
   const trimmedSurname = form.surname.trim();
 
   //Comrpueba si se ha modificado algo, evitando llamadas innecesarias al backend
-  const hasProfileChanges =
-    trimmedName !== (user.name || "") ||
-    trimmedSurname !== (user.surname || "");
+  const hasProfileChanges = trimmedName !== (user.name || "") || trimmedSurname !== (user.surname || "");
 
   //Comprueba si los campos de password están rellenos
-  const isPasswordFormComplete =
-    form.oldPassword.trim() !== "" &&
-    form.newPassword.trim() !== "" &&
-    form.confirmNewPassword.trim() !== "";
+  const isPasswordFormComplete = form.oldPassword.trim() !== "" && form.newPassword.trim() !== "" && form.confirmNewPassword.trim() !== "";
 
   //habilita el boton SAVE
-  const isFormComplete =
-    hasProfileChanges || (changePwd && isPasswordFormComplete);
+  const isFormComplete = hasProfileChanges || (changePwd && isPasswordFormComplete);
 
   //Validaciones nombre y apellido
   const validateProfileForm = () => {
@@ -99,13 +89,9 @@ const EditProfile = ({ navigation }) => {
     //Devuelve error si contraseña estan vacios
     const newErrors = {
       ...INITIAL_ERRORS,
-      oldPassword:
-        isRequired(form.oldPassword) || minLength(form.oldPassword, 4), //es requerida y minimo 4 de long
-      newPassword:
-        isRequired(form.newPassword) || minLength(form.newPassword, 4),
-      confirmNewPassword:
-        isRequired(form.confirmNewPassword) ||
-        matches(form.confirmNewPassword, form.newPassword, "passwords"), //comprueba que los dos campos de nueva contraseña coinciden
+      oldPassword: isRequired(form.oldPassword) || minLength(form.oldPassword, 4), //es requerida y minimo 4 de long
+      newPassword: isRequired(form.newPassword) || minLength(form.newPassword, 4),
+      confirmNewPassword: isRequired(form.confirmNewPassword) || matches(form.confirmNewPassword, form.newPassword, "passwords"), //comprueba que los dos campos de nueva contraseña coinciden
     };
 
     setErrors((prev) => ({
@@ -115,11 +101,7 @@ const EditProfile = ({ navigation }) => {
       confirmNewPassword: newErrors.confirmNewPassword,
     }));
 
-    return (
-      !newErrors.oldPassword &&
-      !newErrors.newPassword &&
-      !newErrors.confirmNewPassword
-    );
+    return !newErrors.oldPassword && !newErrors.newPassword && !newErrors.confirmNewPassword;
   };
 
   //Activa el cambio de pw y limpia valores o errores
@@ -145,20 +127,29 @@ const EditProfile = ({ navigation }) => {
     const profileIsValid = validateProfileForm();
     const passwordIsValid = changePwd ? validatePasswordForm() : true;
 
-    //VALIDACIONES (cuadrito en rojo) Si algo falla ejecuta el alert
+    //VALIDACIONES (cuadrito en rojo) Si algo falla ejecuta el toast
     if (!profileIsValid) {
-      Alert.alert("Error", "Please fill in the profile fields correctly");
+      Toast.show({
+        type: "error",
+        text1: "Please fill in the profile fields correctly",
+      });
       return;
     }
 
     if (!passwordIsValid) {
-      Alert.alert("Error", "Please check the password fields");
+      Toast.show({
+        type: "error",
+        text1: "Please check the password field",
+      });
       return;
     }
 
     // Si no hay nada que guardar
     if (!hasProfileChanges && !changePwd) {
-      Alert.alert("Info", "No changes to save");
+      Toast.show({
+        type: "info",
+        text1: "No changes to save",
+      });
       return;
     }
 
@@ -171,6 +162,7 @@ const EditProfile = ({ navigation }) => {
         text: "Save",
         onPress: async () => {
           try {
+            setIsLoading(true);
             // Actualizar todo el perfil
             if (hasProfileChanges) {
               //Los cambios
@@ -184,7 +176,11 @@ const EditProfile = ({ navigation }) => {
               const okProfile = await changeAllDataRequest(profilePayload);
 
               if (!okProfile) {
-                Alert.alert("Error", "Profile update failed");
+                Toast.show({
+                  type: "error",
+                  text1: "Profile update failed",
+                  text2: "Please try again later.",
+                });
                 return;
               }
             }
@@ -202,7 +198,11 @@ const EditProfile = ({ navigation }) => {
               const okPassword = await changePasswordRequest(passwordPayload);
 
               if (!okPassword) {
-                Alert.alert("Error", "Password update failed");
+                Toast.show({
+                  type: "error",
+                  text1: "Password update failed",
+                  text2: "Please try again later.",
+                });
                 return;
               }
             }
@@ -214,20 +214,19 @@ const EditProfile = ({ navigation }) => {
               surname: trimmedSurname,
               ...(changePwd ? { password: form.newPassword } : {}),
             }));
-
-            Alert.alert(
-              "Success",
-              "Your profile has been updated successfully.",
-              [
-                {
-                  text: "OK",
-                  onPress: () => navigation.goBack(),
-                },
-              ],
-            );
+            setIsLoading(false);
+            navigation.goBack();
+            setTimeout(() => {
+              Toast.show({
+                type: "success",
+                text1: "Success.",
+                text2: "Your profile has been updated successfully.",
+              });
+            }, 400);
           } catch (error) {
             console.log(error);
             Alert.alert("Error", "Something went wrong");
+            setIsLoading(false);
           }
         },
       },
@@ -246,13 +245,7 @@ const EditProfile = ({ navigation }) => {
 
   //Llamada a back con todo
   const changeAllDataRequest = async (formData) => {
-    console.log("SENDING PETITION CHANGEALLDATAREQUEST");
-
-    const response = await postDataToken(
-      route + "/editProfile",
-      formData,
-      token,
-    );
+    const response = await postDataToken(route + "/editProfile", formData, token);
 
     if (!response) {
       console.log("NO RESPONSE");
@@ -260,20 +253,13 @@ const EditProfile = ({ navigation }) => {
     }
 
     const [status] = response;
-    console.log("STATUS:", status);
 
     return status === 200 || status === 201;
   };
 
   //Llamada a back solo contraseña
   const changePasswordRequest = async (formData) => {
-    console.log("SENDING PASSWORD REQUEST");
-
-    const response = await postDataToken(
-      route + "/changePassword",
-      formData,
-      token,
-    );
+    const response = await postDataToken(route + "/changePassword", formData, token);
 
     if (!response) {
       console.log("NO RESPONSE");
@@ -281,7 +267,6 @@ const EditProfile = ({ navigation }) => {
     }
 
     const [status] = response;
-    console.log("STATUS PASSWORD:", status);
 
     return status === 200 || status === 201;
   };
@@ -289,10 +274,7 @@ const EditProfile = ({ navigation }) => {
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-        <TitleModalScreen
-          title={"Edit profile"}
-          onPress={() => navigation.goBack()}
-        />
+        <TitleModalScreen title={"Edit profile"} onPress={() => navigation.goBack()} />
 
         <KeyboardAwareScrollView
           style={styles.scrollContainer}
@@ -306,9 +288,7 @@ const EditProfile = ({ navigation }) => {
             label="Name:"
             placeholder="John"
             value={form.name}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, name: text }))
-            }
+            onChangeText={(text) => setForm((prev) => ({ ...prev, name: text }))}
             keyboardType="default"
             error={errors.name}
           />
@@ -317,36 +297,25 @@ const EditProfile = ({ navigation }) => {
             label="Surname:"
             placeholder="Doe"
             value={form.surname}
-            onChangeText={(text) =>
-              setForm((prev) => ({ ...prev, surname: text }))
-            }
+            onChangeText={(text) => setForm((prev) => ({ ...prev, surname: text }))}
             keyboardType="default"
             error={errors.surname}
           />
 
-          <Pressable
-            style={styles.button}
-            onPress={changePwd ? onCancelChangePwd : onChangePwd}
-          >
-            <Text style={styles.textButton}>
-              {changePwd ? "Cancel Change Password" : "Change Password"}
-            </Text>
+          <Pressable style={styles.button} onPress={changePwd ? onCancelChangePwd : onChangePwd}>
+            <Text style={styles.textButton}>{changePwd ? "Cancel Change Password" : "Change Password"}</Text>
           </Pressable>
 
           {changePwd && (
             <>
-              <Text style={styles.sectionText}>
-                Enter your new password and confirm it below.
-              </Text>
+              <Text style={styles.sectionText}>Enter your new password and confirm it below.</Text>
 
               <ItemInput
                 label="Old Password:"
                 placeholder="Old password"
                 value={form.oldPassword}
                 eye={true}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, oldPassword: text }))
-                }
+                onChangeText={(text) => setForm((prev) => ({ ...prev, oldPassword: text }))}
                 keyboardType="default"
                 error={errors.oldPassword}
               />
@@ -356,9 +325,7 @@ const EditProfile = ({ navigation }) => {
                 placeholder="New password"
                 value={form.newPassword}
                 eye={true}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, newPassword: text }))
-                }
+                onChangeText={(text) => setForm((prev) => ({ ...prev, newPassword: text }))}
                 keyboardType="default"
                 error={errors.newPassword}
               />
@@ -368,9 +335,7 @@ const EditProfile = ({ navigation }) => {
                 placeholder="Confirm new password"
                 value={form.confirmNewPassword}
                 eye={true}
-                onChangeText={(text) =>
-                  setForm((prev) => ({ ...prev, confirmNewPassword: text }))
-                }
+                onChangeText={(text) => setForm((prev) => ({ ...prev, confirmNewPassword: text }))}
                 keyboardType="default"
                 error={errors.confirmNewPassword}
               />
@@ -378,11 +343,7 @@ const EditProfile = ({ navigation }) => {
           )}
         </KeyboardAwareScrollView>
 
-        <ModalButtons
-          onCancel={() => navigation.goBack()}
-          onSave={onSaved}
-          isFormComplete={isFormComplete}
-        />
+        <ModalButtons onCancel={() => navigation.goBack()} onSave={onSaved} isFormComplete={isFormComplete} isLoading={isLoading} />
       </View>
     </View>
   );
