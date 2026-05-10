@@ -8,19 +8,36 @@ import org.springframework.web.bind.annotation.*;
 import com.listochef.model.User;
 import com.listochef.service.AuthService;
 
+/**
+ * Controller responsible for user authentication.
+ *
+ * Base URL: /ListOChef
+ */
 @RestController
 @RequestMapping("/ListOChef")
 public class AuthController {
 
-    private final AuthService authService;
+	private final AuthService authService;
 
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
+	/**
+	 * Constructor of the AuthController.
+	 *
+	 * @param authService Service responsible for authentication logic.
+	 */
+	public AuthController(AuthService authService) {
+		this.authService = authService;
+	}
 
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody User user) {
-        return ResponseEntity.ok(authService.login(user));
-    }
-
+	/**
+	 * Authenticates a user and returns login information.
+	 *
+	 * Endpoint: POST /login
+	 *
+	 * @param user User credentials.
+	 * @return Authentication response data.
+	 */
+	@PostMapping("/login")
+	public ResponseEntity<Map<String, Object>> login(@RequestBody User user) {
+		return ResponseEntity.ok(authService.login(user));
+	}
 }

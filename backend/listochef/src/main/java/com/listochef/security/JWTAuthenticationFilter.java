@@ -15,12 +15,40 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+/**
+ * JWT authentication filter that runs once per request.
+ *
+ * This filter is responsible for:
+ * - Extracting the JWT token from the Authorization header
+ * - Validating the token
+ * - Extracting user identity and role
+ * - Setting the Spring Security authentication context
+ */
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private JWTService jwtService;
 
+    /**
+     * Filters each HTTP request to authenticate users based on JWT.
+     *
+     * Process:
+     * - Reads Authorization header
+     * - Checks Bearer token format
+     * - Extracts JWT token
+     * - Validates token and extracts user data
+     * - Creates Spring Security authentication object
+     * - Sets authentication in SecurityContext
+     *
+     * If token is missing or invalid, request proceeds without authentication.
+     *
+     * @param request HTTP request.
+     * @param response HTTP response.
+     * @param filterChain Filter chain.
+     * @throws ServletException If servlet processing fails.
+     * @throws IOException If I/O error occurs.
+     */
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -28,51 +56,43 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // 1. Obtener el header Authorization
         final String authHeader = request.getHeader("Authorization");
 
-        // 2. Si no hay header o no empieza con "Bearer ", continuar sin autenticar
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            // 3. Extraer el token (quitar "Bearer ")
             final String jwt = authHeader.substring(7);
-
-            // 4. Extraer el email del token
             final String userEmail = jwtService.extractEmail(jwt);
 
-            // 5. Si hay email y no está ya autenticado
-            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (userEmail != null &&
+                SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                // 6. Validar el token
                 if (jwtService.validateToken(jwt, userEmail)) {
 
-                	String role = jwtService.extractRole(jwt);
+                    String role = jwtService.extractRole(jwt);
 
-                	// 7. Crear la autenticación
-                	UsernamePasswordAuthenticationToken authToken =
-                	        new UsernamePasswordAuthenticationToken(
-                	                userEmail,
-                	                null,
-                	                List.of(
-                	                    new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())
-                	                )
-                	        );
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userEmail,
+                                    null,
+                                    List.of(
+                                        new SimpleGrantedAuthority(
+                                            "ROLE_" + role.toUpperCase()
+                                        )
+                                    )
+                            );
 
-                    // 8. Marcar como autenticado en Spring Security
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
 
         } catch (Exception e) {
-            // Si hay algún error al validar el token, simplemente no autenticar
-            System.out.println("Error validando token: " + e.getMessage());
+            System.out.println("Error validating token: " + e.getMessage());
         }
 
-        // 9. Continuar con la siguiente etapa
         filterChain.doFilter(request, response);
     }
 }
