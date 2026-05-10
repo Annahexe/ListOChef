@@ -63,7 +63,7 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        String token = jwtService.generateToken(storedUser.getEmail());
+        String token = jwtService.generateToken(storedUser.getEmail(), storedUser.getRole());
 
         // Lookup de objetos completos
         List<Recipe> recipesSavedList = recipeRepository.getUserRecipesSaved(storedUser.getEmail());

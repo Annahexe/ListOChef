@@ -33,5 +33,9 @@ public interface UserRepository {
 	
 	UserTicket createTicket(String email, UserTicket newTicket);
 	
+	UserTicket findTicketById(String email, String ticketId);
+	
 	void deleteTicket(String email, String ticketId);
+	
+	void deleteUser(String userId);
 	}

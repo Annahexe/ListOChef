@@ -6,6 +6,7 @@ public class UserTicket {
 
 	private String id;
 	private String ticketPictureUri;
+	private String ticketPicturePublicId;
 	private String supermarket;
 	private Date ticketDate;
 	private int amountProducts;
@@ -14,11 +15,12 @@ public class UserTicket {
 	public UserTicket() {
 	}
 
-	public UserTicket(String id, String ticketPictureUri, String supermarket, Date ticketDate, int amountProducts,
+	public UserTicket(String id, String ticketPictureUri, String ticketPicturePublicId, String supermarket, Date ticketDate, int amountProducts,
 			int totalPrice) {
 		super();
 		this.id = id;
 		this.ticketPictureUri = ticketPictureUri;
+		this.setTicketPicturePublicId(ticketPicturePublicId);
 		this.supermarket = supermarket;
 		this.ticketDate = ticketDate;
 		this.amountProducts = amountProducts;
@@ -71,6 +73,14 @@ public class UserTicket {
 
 	public void setTotalPrice(double totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+
+	public String getTicketPicturePublicId() {
+		return ticketPicturePublicId;
+	}
+
+	public void setTicketPicturePublicId(String ticketPicturePublicId) {
+		this.ticketPicturePublicId = ticketPicturePublicId;
 	}
 	
 	

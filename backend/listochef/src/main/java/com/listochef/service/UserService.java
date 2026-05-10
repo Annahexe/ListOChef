@@ -268,7 +268,7 @@ public class UserService {
 	    }
 
 	    userRepository.updatePantryList(email, userIngredients);
-	}
+	}	
 
 	public void removeFromPantryList(String email, String ingredientName) {
 	    userRepository.removeFromPantryList(email, ingredientName);
@@ -284,12 +284,28 @@ public class UserService {
         if (photo != null && !photo.isEmpty()) {
             UploadResult res = cloudinaryService.upload(photo, email);
             newTicket.setTicketPictureUri(res.getImageUrl());
+            newTicket.setTicketPicturePublicId(res.getImageKey());
         }
         
         return userRepository.createTicket(email, newTicket);
 	}
 	
 	public void deleteTicket(String email, String ticketId) {
+		
+	    UserTicket ticket = userRepository.findTicketById(email, ticketId);
+
+	    if (ticket == null) {
+	        throw new RuntimeException("Ticket no encontrado");
+	    }
+
+	    if (ticket.getTicketPicturePublicId() != null || ticket.getTicketPicturePublicId() != "") {
+	        cloudinaryService.deleteImage(ticket.getTicketPicturePublicId());
+	    }
+
 	    userRepository.deleteTicket(email, ticketId);
+	};
+	
+	public void deleteUser(String userId) {
+		
 	}
 }
