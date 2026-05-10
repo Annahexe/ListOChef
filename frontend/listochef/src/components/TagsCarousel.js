@@ -1,5 +1,15 @@
 import { View, Pressable, StyleSheet, ScrollView, Text } from "react-native";
 
+/**
+ * FilterTag component used to display a single selectable tag.
+ * Shows the tag name and optional icon, and applies selected styling when active.
+ *
+ * @param {Object} props - Component props.
+ * @param {Object} props.tag - Tag object to display.
+ * @param {boolean} props.isSelected - Indicates if the tag is currently selected.
+ * @param {Function} props.onPressTag - Function executed when the tag is pressed.
+ * @returns {JSX.Element} Selectable tag button.
+ */
 const FilterTag = (props) => {
   const tag = props.tag;
   const isSelected = props.isSelected;
@@ -7,17 +17,25 @@ const FilterTag = (props) => {
   const tagName = tag.name ?? tag.ingredientCategoryName;
 
   return (
-    <Pressable
-      onPress={() => props.onPressTag(tagName)}
-      style={[styles.tag, isSelected && styles.tagSelected]}
-    >
+    <Pressable onPress={() => props.onPressTag(tagName)} style={[styles.tag, isSelected && styles.tagSelected]}>
       <Text style={styles.tagText} numberOfLines={1}>
-        {tag.icon ? `${tag.icon} ` : ""}{tagName}
+        {tag.icon ? `${tag.icon} ` : ""}
+        {tagName}
       </Text>
     </Pressable>
   );
 };
 
+/**
+ * TagsCarousel component that displays a horizontal list of selectable tags.
+ * Used to filter lists by one or multiple selected tags.
+ *
+ * @param {Object} props - Component props.
+ * @param {Array} props.tagsList - List of tags to display.
+ * @param {Array} props.selectedTags - List of currently selected tag names.
+ * @param {Function} props.onToggleTag - Function executed when a tag is selected or unselected.
+ * @returns {JSX.Element} Horizontal carousel of filter tags.
+ */
 export const TagsCarousel = (props) => {
   const tagsList = props.tagsList;
   const selectedTags = props.selectedTags ?? [];
@@ -27,12 +45,7 @@ export const TagsCarousel = (props) => {
     <View style={styles.container}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {tagsList.map((tagItem, index) => (
-          <FilterTag
-            key={`${tagItem.name}-${index}`}
-            tag={tagItem}
-            isSelected={selectedTags.includes(tagItem.name)}
-            onPressTag={onToggleTag}
-          />
+          <FilterTag key={`${tagItem.name}-${index}`} tag={tagItem} isSelected={selectedTags.includes(tagItem.name)} onPressTag={onToggleTag} />
         ))}
       </ScrollView>
     </View>
