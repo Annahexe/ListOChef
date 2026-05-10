@@ -1,0 +1,7 @@
+com.listochef
+com.listochef.config
+com.listochef.controller
+com.listochef.model
+com.listochef.repository
+com.listochef.security
+com.listochef.service

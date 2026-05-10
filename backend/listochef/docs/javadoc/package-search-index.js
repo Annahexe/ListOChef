@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.listochef"},{"l":"com.listochef.config"},{"l":"com.listochef.controller"},{"l":"com.listochef.model"},{"l":"com.listochef.repository"},{"l":"com.listochef.security"},{"l":"com.listochef.service"}];updateSearchResults();
