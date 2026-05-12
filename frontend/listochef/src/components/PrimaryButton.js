@@ -1,4 +1,10 @@
-import { View, Text, Pressable, StyleSheet, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 
 /**
  * PrimaryButton component used as the main action button across the app.
@@ -13,16 +19,39 @@ import { View, Text, Pressable, StyleSheet, ActivityIndicator } from "react-nati
  * @param {Object|Array} props.containerStyle - Custom styles applied to the button container.
  * @returns {JSX.Element} Main reusable button component.
  */
-const PrimaryButton = ({ onPress, buttonText, isLoading, isDisabled = false, buttonStyle, containerStyle }) => {
+const PrimaryButton = ({
+  onPress,
+  buttonText,
+  isLoading,
+  isDisabled = false,
+  buttonStyle,
+  containerStyle,
+}) => {
   const disabled = isLoading || isDisabled;
 
   return (
     <View style={[styles.buttonContainer, containerStyle]}>
-      <Pressable style={[styles.buttonStyle, isDisabled && styles.buttonDisabled, buttonStyle]} onPress={onPress} disabled={disabled}>
+      <Pressable
+        style={[
+          styles.buttonStyle,
+          isDisabled && styles.buttonDisabled,
+          buttonStyle,
+        ]}
+        onPress={onPress}
+        disabled={disabled}
+      >
         <View style={styles.content}>
-          {isLoading && <ActivityIndicator size="small" color="white" style={styles.loader} />}
+          {isLoading && (
+            <ActivityIndicator
+              size="small"
+              color="white"
+              style={styles.loader}
+            />
+          )}
 
-          <Text style={styles.buttonTextStyle}>{isLoading ? "Loading..." : buttonText}</Text>
+          <Text style={styles.buttonTextStyle}>
+            {isLoading ? "Loading..." : buttonText}
+          </Text>
         </View>
       </Pressable>
     </View>

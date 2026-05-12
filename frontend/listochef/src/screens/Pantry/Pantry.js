@@ -207,7 +207,7 @@ const Pantry = (props) => {
             <View
               style={[
                 styles.floatingButton,
-                { bottom: tabBarHeight - (Platform.OS === "ios" ? 142 : 140) },
+                { bottom: tabBarHeight - (Platform.OS === "ios" ? 142 : 146) },
               ]}
             >
               <Pressable onPress={goAddProduct}>
