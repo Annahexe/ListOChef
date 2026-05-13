@@ -13,21 +13,33 @@
       "backgroundColor": "#BAE8A5"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jomote.ListOChef",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "usesCleartextTraffic": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/ListoChefLogo.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.jomote.ListOChef"
     },
     "web": {
       "favicon": "./assets/icons/ListoChefLogo.png"
     },
     "plugins": [
-      "expo-font"
-    ]
+      "expo-font",
+      "./withCleartextTraffic"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "461a1fb2-f1ba-4c9f-8b24-87a7a8093b16"
+      }
+    }
   }
 }

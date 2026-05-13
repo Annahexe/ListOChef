@@ -11,6 +11,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.listochef.security.JWTAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.List;
 
 /**
  * Security configuration class for the application.
@@ -41,12 +45,32 @@ public class SecurityConfig {
 	 */
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().antMatchers("/ListOChef/login").permitAll()
-				.antMatchers("/ListOChef/register").permitAll().antMatchers("/ListOChef/forgotPassword").permitAll()
-				.antMatchers("/ListOChef/resetPassword").permitAll().anyRequest().authenticated().and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
-		return http.build();
+	    http.cors().and()
+	        .csrf().disable()
+	        .authorizeRequests()
+	            .antMatchers("/ListOChef/login").permitAll()
+	            .antMatchers("/ListOChef/register").permitAll()
+	            .antMatchers("/ListOChef/forgotPassword").permitAll()
+	            .antMatchers("/ListOChef/resetPassword").permitAll()
+	            .anyRequest().authenticated()
+	        .and()
+	        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+	        .and()
+	        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+	    return http.build();
 	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+	    CorsConfiguration config = new CorsConfiguration();
+	    config.setAllowedOrigins(List.of("*"));
+	    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+	    config.setAllowedHeaders(List.of("*"));
+	    
+	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	    source.registerCorsConfiguration("/**", config);
+	    return source;
+	}
+	
+	
 }
