@@ -1,14 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-  Keyboard,
-  Alert,
-  Platform,
-} from "react-native";
+import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Keyboard, Alert, Platform } from "react-native";
 import { useState, useContext } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import Feather from "@expo/vector-icons/Feather";
@@ -21,10 +11,7 @@ import PrimaryButton from "../../components/PrimaryButton";
 import { TagsCarousel } from "../../components/TagsCarousel";
 import { postDataToken } from "../../services/services";
 import Toast from "react-native-toast-message";
-import {
-  buildUpdatedPantryList,
-  updatePantryListPetition,
-} from "../../utils/pantryListUtils";
+import { buildUpdatedPantryList, updatePantryListPetition } from "../../utils/pantryListUtils";
 import Context from "../../context/Context";
 
 /**
@@ -35,15 +22,7 @@ import Context from "../../context/Context";
  * @returns {JSX.Element} Grocery List screen.
  */
 const GroceryList = (props) => {
-  const {
-    route,
-    token,
-    ingredientTags,
-    selectedIngredients,
-    setSelectedIngredients,
-    pantryItems,
-    setPantryItems,
-  } = useContext(Context);
+  const { route, token, ingredientTags, selectedIngredients, setSelectedIngredients, pantryItems, setPantryItems } = useContext(Context);
   const [selectedTags, setSelectedTags] = useState(["All"]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -60,18 +39,32 @@ const GroceryList = (props) => {
       if (selectedTag == "All") {
         return ["All"];
       }
-      const tagsWithoutAll = previousSelectedTags.filter(
-        (element) => element !== "All",
-      );
+      const tagsWithoutAll = previousSelectedTags.filter((element) => element !== "All");
       if (tagsWithoutAll.includes(selectedTag)) {
-        const selectedTagsList = tagsWithoutAll.filter(
-          (element) => element !== selectedTag,
-        );
+        const selectedTagsList = tagsWithoutAll.filter((element) => element !== selectedTag);
         return selectedTagsList.length === 0 ? ["All"] : selectedTagsList;
       }
       return [...tagsWithoutAll, selectedTag];
     });
   };
+
+  /**
+   * Selected tags normalized to lowercase for case-insensitive comparison.
+   */
+  const normalizedSelectedTags = selectedTags.map((tag) => tag.toLowerCase());
+
+  /**
+   * Grocery list items filtered by the selected ingredient tags.
+   * If "All" is selected, all pantry items are shown.
+   * Ingredients with null or missing tags are safely handled.
+   */
+  const filteredSelectedIngredients = selectedTags.includes("All")
+    ? selectedIngredients
+    : selectedIngredients.filter((ingredient) => {
+        const ingredientTag = ingredient.ingredientTag?.toLowerCase() ?? "";
+
+        return normalizedSelectedTags.includes(ingredientTag);
+      });
 
   /** Navigates to AddProduct screen. */
   const goAddProduct = () => {
@@ -86,54 +79,39 @@ const GroceryList = (props) => {
 
   /** Removes an ingredient from the pantry selection list. @param {Object} item */
   const unSelect = (item) => {
-    setIngredientsToPantry((prev) =>
-      prev.filter((i) => i.ingredientName !== item.ingredientName),
-    );
+    setIngredientsToPantry((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
   };
 
   /** Returns true if the ingredient is currently selected. @param {Object} item */
   const isItemSelected = (item) => {
-    return ingredientsToPantry.some(
-      (i) => i.ingredientName === item.ingredientName,
-    );
+    return ingredientsToPantry.some((i) => i.ingredientName === item.ingredientName);
   };
   /**
    * Deletes all currently selected ingredients from the grocery list.
    * Removes them from both the grocery list context and the pantry selection.
    */
   const deleteSelected = () => {
-    Alert.alert(
-      "Delete ingredients",
-      `Remove ${ingredientsToPantry.length} selected ingredients?`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            for (const item of ingredientsToPantry) {
-              await removeFromGroceryListPetition(item.ingredientName);
-            }
+    Alert.alert("Delete ingredients", `Remove ${ingredientsToPantry.length} selected ingredients?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          for (const item of ingredientsToPantry) {
+            await removeFromGroceryListPetition(item.ingredientName);
+          }
 
-            setSelectedIngredients((prev) =>
-              prev.filter(
-                (i) =>
-                  !ingredientsToPantry.some(
-                    (s) => s.ingredientName === i.ingredientName,
-                  ),
-              ),
-            );
+          setSelectedIngredients((prev) => prev.filter((i) => !ingredientsToPantry.some((s) => s.ingredientName === i.ingredientName)));
 
-            setIngredientsToPantry([]);
+          setIngredientsToPantry([]);
 
-            Toast.show({
-              type: "success",
-              text1: "Ingredients deleted!",
-            });
-          },
+          Toast.show({
+            type: "success",
+            text1: "Ingredients deleted!",
+          });
         },
-      ],
-    );
+      },
+    ]);
   };
 
   /**
@@ -143,10 +121,7 @@ const GroceryList = (props) => {
   const addToPantry = async () => {
     setIsLoading(true);
 
-    const updatedPantryItems = buildUpdatedPantryList(
-      pantryItems,
-      ingredientsToPantry,
-    );
+    const updatedPantryItems = buildUpdatedPantryList(pantryItems, ingredientsToPantry);
 
     const [wasPantryUpdated, wasGroceryListUpdated] = await Promise.all([
       updatePantryListPetition({
@@ -170,14 +145,7 @@ const GroceryList = (props) => {
 
     setPantryItems(updatedPantryItems);
 
-    setSelectedIngredients((prev) =>
-      prev.filter(
-        (item) =>
-          !ingredientsToPantry.some(
-            (i) => i.ingredientName === item.ingredientName,
-          ),
-      ),
-    );
+    setSelectedIngredients((prev) => prev.filter((item) => !ingredientsToPantry.some((i) => i.ingredientName === item.ingredientName)));
 
     setIngredientsToPantry([]);
 
@@ -199,16 +167,10 @@ const GroceryList = (props) => {
         text: "Delete",
         style: "destructive",
         onPress: async () => {
-          setSelectedIngredients((prev) =>
-            prev.filter((i) => i.ingredientName !== item.ingredientName),
-          );
+          setSelectedIngredients((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
 
-          setIngredientsToPantry((prev) =>
-            prev.filter((i) => i.ingredientName !== item.ingredientName),
-          );
-          const respone = await removeFromGroceryListPetition(
-            item.ingredientName,
-          );
+          setIngredientsToPantry((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
+          const respone = await removeFromGroceryListPetition(item.ingredientName);
         },
       },
     ]);
@@ -222,11 +184,7 @@ const GroceryList = (props) => {
   const removeFromGroceryListPetition = async (ingredientName) => {
     const data = { ingredientName: ingredientName };
 
-    const response = await postDataToken(
-      route + "/removeFromGroceryList",
-      data,
-      token,
-    );
+    const response = await postDataToken(route + "/removeFromGroceryList", data, token);
 
     if (!response) {
       Toast.show({
@@ -255,11 +213,7 @@ const GroceryList = (props) => {
     }));
 
     try {
-      const response = await postDataToken(
-        route + "/updateGroceryList",
-        changes,
-        token,
-      );
+      const response = await postDataToken(route + "/updateGroceryList", changes, token);
 
       if (!response) {
         Toast.show({
@@ -286,42 +240,21 @@ const GroceryList = (props) => {
   };
 
   return (
-    <ImageBackground
-      source={require("../../../assets/fondoApp.png")}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <View style={styles.container}>
           <TitleIconPage titleText="Grocery List" icon={GroceryListTitleIcon} />
 
-          <Seeker
-            placeholderText="Search new products..."
-            onPress={goAddProduct}
-            editable={false}
-          ></Seeker>
-          <TagsCarousel
-            tagsList={ingredientTags}
-            selectedTags={selectedTags}
-            onToggleTag={toggleTag}
-          />
+          <Seeker placeholderText="Search new products..." onPress={goAddProduct} editable={false}></Seeker>
+          <TagsCarousel tagsList={ingredientTags} selectedTags={selectedTags} onToggleTag={toggleTag} />
 
           <View style={styles.resumeRow}>
-            <Text style={[styles.resumeText, { flex: 1 }]}>
-              {selectedIngredients.length} products
-            </Text>
-            {!isDisabled && (
-              <Feather
-                name="trash-2"
-                size={24}
-                color="#c0392b"
-                onPress={deleteSelected}
-              />
-            )}
+            <Text style={[styles.resumeText, { flex: 1 }]}>{filteredSelectedIngredients.length} products</Text>
+            {!isDisabled && <Feather name="trash-2" size={24} color="#c0392b" onPress={deleteSelected} />}
           </View>
           <View style={{ flex: 1, width: "100%", maxHeight: "55%" }}>
             <ScrollView>
-              {selectedIngredients.map((item, index) => (
+              {filteredSelectedIngredients.map((item, index) => (
                 <GroceryListItem
                   key={item.ingredientName}
                   ingredient={item.ingredientName}

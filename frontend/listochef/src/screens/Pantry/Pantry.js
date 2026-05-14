@@ -1,14 +1,4 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-  Keyboard,
-  Alert,
-  Platform,
-} from "react-native";
+import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Keyboard, Alert, Platform } from "react-native";
 import { useState, useContext } from "react";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import AddCircleButton from "../../components/AddCircleButton";
@@ -30,8 +20,7 @@ import Context from "../../context/Context";
  * @returns {JSX.Element} Pantry screen.
  */
 const Pantry = (props) => {
-  const { route, token, ingredientTags, pantryItems, setPantryItems } =
-    useContext(Context);
+  const { route, token, ingredientTags, pantryItems, setPantryItems } = useContext(Context);
 
   const [selectedTags, setSelectedTags] = useState(["All"]);
 
@@ -42,18 +31,32 @@ const Pantry = (props) => {
       if (selectedTag == "All") {
         return ["All"];
       }
-      const tagsWithoutAll = previousSelectedTags.filter(
-        (element) => element !== "All",
-      );
+      const tagsWithoutAll = previousSelectedTags.filter((element) => element !== "All");
       if (tagsWithoutAll.includes(selectedTag)) {
-        const selectedTagsList = tagsWithoutAll.filter(
-          (element) => element !== selectedTag,
-        );
+        const selectedTagsList = tagsWithoutAll.filter((element) => element !== selectedTag);
         return selectedTagsList.length === 0 ? ["All"] : selectedTagsList;
       }
       return [...tagsWithoutAll, selectedTag];
     });
   };
+
+  /**
+   * Selected tags normalized to lowercase for case-insensitive comparison.
+   */
+  const normalizedSelectedTags = selectedTags.map((tag) => tag.toLowerCase());
+
+  /**
+   * Pantry items filtered by the selected ingredient tags.
+   * If "All" is selected, all pantry items are shown.
+   * Ingredients with null or missing tags are safely handled.
+   */
+  const filteredPantryItems = selectedTags.includes("All")
+    ? pantryItems
+    : pantryItems.filter((ingredient) => {
+        const ingredientTag = ingredient.ingredientTag?.toLowerCase() ?? "";
+
+        return normalizedSelectedTags.includes(ingredientTag);
+      });
 
   /** Navigates to AddPantry screen. */
   const goAddProduct = () => {
@@ -72,9 +75,7 @@ const Pantry = (props) => {
         text: "Delete",
         style: "destructive",
         onPress: async () => {
-          setPantryItems((prev) =>
-            prev.filter((i) => i.ingredientName !== item.ingredientName),
-          );
+          setPantryItems((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
           const respone = await removeFromPantryList(item.ingredientName);
         },
       },
@@ -89,11 +90,7 @@ const Pantry = (props) => {
   const removeFromPantryList = async (ingredientName) => {
     const data = { ingredientName: ingredientName };
 
-    const response = await postDataToken(
-      route + "/removeFromPantryList",
-      data,
-      token,
-    );
+    const response = await postDataToken(route + "/removeFromPantryList", data, token);
 
     if (!response) {
       Toast.show({
@@ -162,33 +159,18 @@ const Pantry = (props) => {
   };
 
   return (
-    <ImageBackground
-      source={require("../../../assets/fondoApp.png")}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
       <View style={styles.overlay}>
         <View style={styles.container}>
           <TitleIconPage titleText="My Pantry" icon={PantryTitleIcon} />
 
-          <Seeker
-            placeholderText="Search new products..."
-            onPress={goAddProduct}
-            editable={false}
-          ></Seeker>
-          <TagsCarousel
-            tagsList={ingredientTags}
-            selectedTags={selectedTags}
-            onToggleTag={toggleTag}
-          />
+          <Seeker placeholderText="Search new products..." onPress={goAddProduct} editable={false}></Seeker>
+          <TagsCarousel tagsList={ingredientTags} selectedTags={selectedTags} onToggleTag={toggleTag} />
 
-          <Text style={styles.resumeText}>{pantryItems.length} products</Text>
+          <Text style={styles.resumeText}>{filteredPantryItems.length} products</Text>
           <View style={{ flex: 1, width: "100%", maxHeight: "67%" }}>
-            <ScrollView
-              style={{ width: "100%" }}
-              contentContainerStyle={{ paddingBottom: 80 }}
-            >
-              {pantryItems.map((ingredient, index) => (
+            <ScrollView style={{ width: "100%" }} contentContainerStyle={{ paddingBottom: 80 }}>
+              {filteredPantryItems.map((ingredient, index) => (
                 <PantryCard
                   key={ingredient.ingredientName}
                   ingredient={ingredient.ingredientName}
@@ -196,18 +178,11 @@ const Pantry = (props) => {
                   tag={ingredient.ingredientTag}
                   onDelete={() => onDelete(ingredient)}
                   onAddAmount={() => addAmount(ingredient.ingredientName)}
-                  onSubtractAmount={() =>
-                    subtractAmount(ingredient.ingredientName)
-                  }
+                  onSubtractAmount={() => subtractAmount(ingredient.ingredientName)}
                 />
               ))}
             </ScrollView>
-            <View
-              style={[
-                styles.floatingButton,
-                { bottom: tabBarHeight - (Platform.OS === "ios" ? 142 : 146) },
-              ]}
-            >
+            <View style={[styles.floatingButton, { bottom: tabBarHeight - (Platform.OS === "ios" ? 142 : 146) }]}>
               <Pressable onPress={goAddProduct}>
                 <AddCircleButton />
               </Pressable>
