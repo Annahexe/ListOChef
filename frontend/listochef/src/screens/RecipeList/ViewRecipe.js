@@ -1,4 +1,11 @@
-import { View, Text, Pressable, StyleSheet, ScrollView, Image } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  ScrollView,
+  Image,
+} from "react-native";
 import { useState, useEffect, useContext } from "react";
 import ItemView from "../../components/ItemView";
 import TitleModalScreen from "../../components/TitleModalScreen";
@@ -7,7 +14,10 @@ import PrimaryButton from "../../components/PrimaryButton";
 import Context from "../../context/Context";
 import Toast from "react-native-toast-message";
 import { postDataToken, getData } from "../../services/services";
-import { toggleSavedPetition, showToggleSavedToast } from "../../utils/toggleSavedRecipe";
+import {
+  toggleSavedPetition,
+  showToggleSavedToast,
+} from "../../utils/toggleSavedRecipe";
 
 /**
  * ViewRecipe modal screen that displays the full details of a recipe.
@@ -18,7 +28,14 @@ import { toggleSavedPetition, showToggleSavedToast } from "../../utils/toggleSav
  * @returns {JSX.Element} View Recipe modal screen.
  */
 const ViewRecipe = ({ navigation }) => {
-  const { route, token, lastRecipeSeen, setLastRecipeSeen, selectedIngredients, setSelectedIngredients } = useContext(Context);
+  const {
+    route,
+    token,
+    lastRecipeSeen,
+    setLastRecipeSeen,
+    selectedIngredients,
+    setSelectedIngredients,
+  } = useContext(Context);
   const [recipe, setRecipe] = useState();
 
   /** Mirrors the saved state locally for optimistic UI updates. */
@@ -49,7 +66,9 @@ const ViewRecipe = ({ navigation }) => {
     const updatedList = [...selectedIngredients];
 
     recipe.ingredients.forEach((name) => {
-      const existingIndex = updatedList.findIndex((i) => i.ingredientName === name);
+      const existingIndex = updatedList.findIndex(
+        (i) => i.ingredientName === name,
+      );
 
       if (existingIndex !== -1) {
         // Ya existe, le sumamos 1
@@ -76,6 +95,7 @@ const ViewRecipe = ({ navigation }) => {
       .filter((i) => recipe.ingredients.includes(i.ingredientName))
       .map((i) => ({
         ingredientName: i.ingredientName,
+        ingredientTag: i.ingredientTag,
         ingredientAmount: i.ingredientAmount,
         action: "add",
       }));
@@ -116,7 +136,11 @@ const ViewRecipe = ({ navigation }) => {
   return (
     <View style={styles.backdrop}>
       <View style={styles.container}>
-        <TitleModalScreen title={recipe.recipeName} onPress={() => navigation.goBack()} size={25} />
+        <TitleModalScreen
+          title={recipe.recipeName}
+          onPress={() => navigation.goBack()}
+          size={25}
+        />
 
         <ScrollView style={styles.scrollContainer}>
           <View style={styles.imageContainer}>
@@ -126,9 +150,16 @@ const ViewRecipe = ({ navigation }) => {
                 uri: recipe.photo,
               }}
             ></Image>
-            <Heart colorHeart={recipe.saved ? "red" : "white"} stiles={"onImage"} onPress={() => onToggleSaved()} />
+            <Heart
+              colorHeart={recipe.saved ? "red" : "white"}
+              stiles={"onImage"}
+              onPress={() => onToggleSaved()}
+            />
           </View>
-          <ItemView label={"Ingredients"} ingredients={recipe.ingredients}></ItemView>
+          <ItemView
+            label={"Ingredients"}
+            ingredients={recipe.ingredients}
+          ></ItemView>
 
           <View style={styles.buttonContainer}>
             <PrimaryButton
@@ -141,9 +172,21 @@ const ViewRecipe = ({ navigation }) => {
           </View>
 
           <View style={styles.multipleLines}>
-            <ItemView label={"Category"} info={recipe.category} style={{ flex: 1 }}></ItemView>
-            <ItemView label={"Time"} time={recipe.time} style={{ flex: 1 }}></ItemView>
-            <ItemView label={"Difficulty"} info={recipe.difficulty} style={{ flex: 1 }}></ItemView>
+            <ItemView
+              label={"Category"}
+              info={recipe.category}
+              style={{ flex: 1 }}
+            ></ItemView>
+            <ItemView
+              label={"Time"}
+              time={recipe.time}
+              style={{ flex: 1 }}
+            ></ItemView>
+            <ItemView
+              label={"Difficulty"}
+              info={recipe.difficulty}
+              style={{ flex: 1 }}
+            ></ItemView>
           </View>
 
           <ItemView label={"Steps to create"} info={recipe.steps}></ItemView>
