@@ -64,7 +64,7 @@ const INITIAL_PANTRY_ITEMS = [
  * @returns {JSX.Element} Context provider with shared state values.
  */
 export const Provider = ({ children }) => {
-  const [route, setRoute] = useState("http://32.193.224.11:8080/ListOChef");
+  const [route, setRoute] = useState(process.env.EXPO_PUBLIC_URL);
   const [user, setUser] = useState(INITIAL_USER);
   const [token, setToken] = useState("");
 
