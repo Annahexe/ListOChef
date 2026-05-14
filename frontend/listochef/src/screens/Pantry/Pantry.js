@@ -104,8 +104,6 @@ const Pantry = (props) => {
 
       return false;
     }
-
-    console.log("Ingredient removed from pantry list:", response);
     return true;
   };
 

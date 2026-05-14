@@ -191,8 +191,6 @@ const EditProfile = ({ navigation }) => {
                 surname: trimmedSurname,
               };
 
-              console.log("PROFILE REQUEST:", profilePayload);
-
               const okProfile = await changeAllDataRequest(profilePayload);
 
               if (!okProfile) {
@@ -210,8 +208,6 @@ const EditProfile = ({ navigation }) => {
                 currentPassword: form.oldPassword,
                 newPassword: form.newPassword,
               };
-
-              console.log("PASSWORD REQUEST:", passwordPayload);
 
               const okPassword = await changePasswordRequest(passwordPayload);
 

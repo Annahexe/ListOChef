@@ -149,8 +149,6 @@ const Expenses = (props) => {
 
       return false;
     }
-
-    console.log("Ticket removed from expenses:", response);
     return true;
   };
 

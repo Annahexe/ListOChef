@@ -76,8 +76,6 @@ const Register = (props) => {
   const onCreateAccount = async () => {
     const isValid = validateForm();
 
-    console.log("REGISTER DATA:", registerData);
-
     if (!isValid) {
       Toast.show({
         type: "error",
@@ -120,18 +118,13 @@ const Register = (props) => {
   const sendRegisterRequest = async () => {
     const { confirmPassword, ...dataToSend } = registerData;
 
-    console.log(dataToSend);
-
     const response = await postData(route + "/register", dataToSend);
-
-    console.log(dataToSend);
 
     if (!response) return false;
 
     const [status] = response;
 
     if (status === 200) {
-      console.log("return true");
       return true;
     }
 

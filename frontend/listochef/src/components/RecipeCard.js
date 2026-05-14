@@ -31,7 +31,6 @@ const RecipeCard = ({ recipe, isDetailedBox, onViewRecipe, onToggleSaved }) => {
   const handlePress = () => {
     setLastRecipeSeen(recipe);
     onViewRecipe();
-    console.log(recipe.photo);
   };
 
   return (

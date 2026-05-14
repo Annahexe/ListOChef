@@ -111,8 +111,6 @@ const AddTicket = ({ navigation }) => {
       totalPrice: Number(form.totalPrice),
     };
 
-    console.log("SENDING NEW TICKET: ", newTicket);
-
     const formData = new FormData();
     formData.append("ticket", JSON.stringify(newTicket));
 

@@ -146,9 +146,8 @@ const Login = (props) => {
       Toast.show({
         type: "error",
         text1: "SERVER **OFFLINE**",
-        text2: "SETTING UP FAKE INFO FOR QUICK LOGIN.",
       });
-      console.log("SERVER **OFFLINE**, SETTING UP FAKE INFO FOR QUICK LOGIN");
+      console.log("SERVER **OFFLINE**");
       props.navigation.navigate("Home");
     } else {
 
@@ -182,9 +181,8 @@ const Login = (props) => {
         Toast.show({
           type: "error",
           text1: "SERVER **ERROR**",
-          text2: "SETTING UP FAKE INFO FOR QUICK LOGIN.",
         });
-        console.log("SERVER **ERROR**, SETTING UP FAKE INFO FOR QUICK LOGIN");
+        console.log("SERVER **ERROR**");
         props.navigation.navigate("Home");
         return;
       }

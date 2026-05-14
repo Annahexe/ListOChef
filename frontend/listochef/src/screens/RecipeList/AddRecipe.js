@@ -130,7 +130,6 @@ const AddRecipe = ({ navigation }) => {
       difficulty: form.difficulty,
       tags,
     };
-    console.log("SENDING NEW RECIPE: ", newRecipe);
 
     const formData = new FormData();
     formData.append("recipe", JSON.stringify(newRecipe));
