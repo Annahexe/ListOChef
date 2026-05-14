@@ -8,8 +8,8 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/backgroundSplash.png",
-      "resizeMode": "cover",
+      "image": "./assets/icons/ListoChefLogo.png",
+      "resizeMode": "contain",
       "backgroundColor": "#BAE8A5"
     },
     "ios": {
