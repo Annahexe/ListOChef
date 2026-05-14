@@ -145,7 +145,11 @@ const SearchRecipes = (props) => {
     if (!selectedTags.includes("All")) {
       const normalizedSelectedTags = selectedTags.map((tag) => tag.toLowerCase());
 
-      result = result.filter((recipe) => recipe.tags?.some((recipeTag) => normalizedSelectedTags.includes(recipeTag.toLowerCase())));
+      result = result.filter((recipe) => {
+        const normalizedRecipeTags = recipe.tags?.map((recipeTag) => recipeTag.toLowerCase()) ?? [];
+
+        return normalizedSelectedTags.every((selectedTag) => normalizedRecipeTags.includes(selectedTag));
+      });
     }
 
     setFilteredRecipes(result);
