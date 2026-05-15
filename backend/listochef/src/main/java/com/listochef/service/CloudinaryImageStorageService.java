@@ -64,7 +64,7 @@ public class CloudinaryImageStorageService {
 			String publicId = "recipes/" + safeOwner + "/" + UUID.randomUUID();
 
 			Map options = ObjectUtils.asMap("public_id", publicId, "resource_type", "image", "transformation",
-					"w_1000,h_1000,c_limit", "quality", "auto", "fetch_format", "auto");
+					"w_1600,h_1600,c_limit", "quality", "auto:good", "fetch_format", "auto");
 
 			Map<?, ?> res = cloudinary.uploader().upload(file.getBytes(), options);
 
@@ -100,8 +100,8 @@ public class CloudinaryImageStorageService {
 			throw new IllegalArgumentException("Unsupported image type: " + ct);
 		}
 
-		if (file.getSize() > 10L * 1024 * 1024) {
-			throw new IllegalArgumentException("Image too large (>10MB)");
+		if (file.getSize() > 25L * 1024 * 1024) {
+			throw new IllegalArgumentException("Image too large (>25MB)");
 		}
 	}
 
