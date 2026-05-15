@@ -2,68 +2,45 @@ import {
   View,
   Text,
   TextInput,
+  TouchableOpacity,
   Pressable,
   StyleSheet,
-  ScrollView,
+  FlatList,
   Keyboard,
+  ScrollView,
 } from "react-native";
 import { useState } from "react";
 
-/**
- * Input component with autocomplete dropdown functionality.
- *
- * @param {Object} props - Component props.
- * @param {string} props.value - Current input value.
- * @param {string[]} props.options - List of available options.
- * @param {function} props.onSelect - Callback when a value is selected or changed.
- * @returns {JSX.Element} Autocomplete input with dropdown list.
- */
 const AutocompleteInput = (props) => {
   const [showList, setShowList] = useState(false);
 
   const inputValue = props.value || "";
-  /**
-   * Filter the options based on the current text.
-   */
+
   const filteredOptions = inputValue
     ? props.options.filter((item) =>
         item.toLowerCase().includes(inputValue.toLowerCase()),
       )
     : props.options;
 
-  /**
-   * Handles selection of an option from the dropdown.
-   * Updates the value, hides the list, and dismisses the keyboard.
-   *
-   * @param {string} item - Selected option.
-   */
   const handleSelect = (item) => {
     props.onSelect(item);
     setShowList(false);
     Keyboard.dismiss();
   };
 
-  /**
-   * Clears the current input value and shows the full options list.
-   */
   const handleClear = () => {
     props.onSelect("");
     setShowList(true);
   };
-  /**
-   * Handles input blur event.
-   * If the current value does not match any option, it resets the input.
-   */
+
   const handleBlur = () => {
-    const exists = props.options.some(
-      (item) => item.toLowerCase() === inputValue.toLowerCase(),
-    );
-
-    if (!exists) {
-      props.onSelect("");
-    }
-
-    setShowList(false);
+    setTimeout(() => {
+      const exists = props.options.some(
+        (item) => item.toLowerCase() === inputValue.toLowerCase(),
+      );
+      if (!exists) props.onSelect("");
+      setShowList(false);
+    }, 200);
   };
 
   const isDifficulty = props.label === "Difficulty";
@@ -88,6 +65,7 @@ const AutocompleteInput = (props) => {
             props.onSelect(text);
             setShowList(true);
           }}
+          scrollEnabled={false}
         />
 
         {props.value !== "" && (
@@ -102,17 +80,20 @@ const AutocompleteInput = (props) => {
       {showList && filteredOptions.length > 0 && (
         <View style={styles.dropdown}>
           <ScrollView
-            keyboardShouldPersistTaps="handled"
             nestedScrollEnabled={true}
+            keyboardShouldPersistTaps="always"
+            style={{ maxHeight: 180 }}
           >
             {filteredOptions.map((item, index) => (
-              <Pressable
+              <TouchableOpacity
                 key={index}
                 style={styles.item}
+                activeOpacity={0.7}
+                delayPressIn={0}
                 onPress={() => handleSelect(item)}
               >
                 <Text style={styles.itemText}>{item}</Text>
-              </Pressable>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
@@ -174,7 +155,6 @@ const styles = StyleSheet.create({
   dropdown: {
     backgroundColor: "#a5b19fa1",
     borderRadius: 10,
-    maxHeight: 180,
     marginTop: 5,
   },
   item: {

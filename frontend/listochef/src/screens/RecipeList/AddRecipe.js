@@ -1,7 +1,15 @@
-import { View, StyleSheet, Keyboard, Dimensions, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Keyboard,
+  Dimensions,
+  Platform,
+  Modal,
+  ScrollView,
+} from "react-native";
 import { useState, useContext, useEffect } from "react";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Toast from "react-native-toast-message";
+import toastConfig from "../../components/ToastConfig";
 import * as ImagePicker from "expo-image-picker";
 import Context from "../../context/Context";
 import PhotoPicker from "../../components/PhotoPicker";
@@ -24,7 +32,13 @@ const { height, width } = Dimensions.get("window");
  * @returns {JSX.Element} Add Recipe modal screen.
  */
 const AddRecipe = ({ navigation }) => {
-  const { token, route, ingredientTags, listRecipesTags, listRecipesCategories } = useContext(Context);
+  const {
+    token,
+    route,
+    ingredientTags,
+    listRecipesTags,
+    listRecipesCategories,
+  } = useContext(Context);
 
   const [form, setForm] = useState({
     photo: null,
@@ -48,8 +62,12 @@ const AddRecipe = ({ navigation }) => {
   // Available options for autocomplete fields
   const [ingredientsList, setIngredientsList] = useState([]);
   const [isLoadingIngredients, setIsLoadingIngredients] = useState(false);
-  const [tagsList, setTagsList] = useState(listRecipesTags.map((tag) => tag.name));
-  const [categoryList, setCategoryList] = useState(listRecipesCategories.map((tag) => tag.name));
+  const [tagsList, setTagsList] = useState(
+    listRecipesTags.map((tag) => tag.name),
+  );
+  const [categoryList, setCategoryList] = useState(
+    listRecipesCategories.map((tag) => tag.name),
+  );
 
   // Dynamic lists for ingredients and tags added by the user
   const [ingredients, setIngredients] = useState([""]);
@@ -76,7 +94,9 @@ const AddRecipe = ({ navigation }) => {
         return;
       }
 
-      setIngredientsList(ingredients.map((ingredient) => ingredient.ingredientName));
+      setIngredientsList(
+        ingredients.map((ingredient) => ingredient.ingredientName),
+      );
     };
 
     loadIngredients();
@@ -171,7 +191,11 @@ const AddRecipe = ({ navigation }) => {
    * @returns {Promise<boolean>} True if status is 200 or 201, false otherwise.
    */
   const createRecipeRequest = async (formData) => {
-    const response = await postDataToken(route + "/recipes/createRecipe", formData, token);
+    const response = await postDataToken(
+      route + "/recipes/createRecipe",
+      formData,
+      token,
+    );
 
     if (!response) {
       console.log("NO RESPONSE");
@@ -184,7 +208,10 @@ const AddRecipe = ({ navigation }) => {
   };
 
   /** True when all form fields and dynamic lists are filled. */
-  const isFormComplete = Object.values(form).every((value) => value) && ingredients.every((value) => value) && tags.every((value) => value);
+  const isFormComplete =
+    Object.values(form).every((value) => value) &&
+    ingredients.every((value) => value) &&
+    tags.every((value) => value);
 
   /** Validates all form fields and updates error state. @returns {boolean} */
   const validateForm = () => {
@@ -199,98 +226,139 @@ const AddRecipe = ({ navigation }) => {
     };
 
     setErrors(newErrors);
-    return !newErrors.name && !newErrors.category && !newErrors.steps && !newErrors.time && !newErrors.difficulty && !newErrors.ingredients && !newErrors.tags;
+    return (
+      !newErrors.name &&
+      !newErrors.category &&
+      !newErrors.steps &&
+      !newErrors.time &&
+      !newErrors.difficulty &&
+      !newErrors.ingredients &&
+      !newErrors.tags
+    );
   };
 
   return (
-    <View style={styles.backdrop}>
-      <View style={styles.container}>
-        <TitleModalScreen title={"New Recipe"} onPress={() => navigation.goBack()} />
-
-        <KeyboardAwareScrollView
-          style={styles.scrollContainer}
-          nestedScrollEnabled={true} //Allows Scroll inside Scroll
-          keyboardShouldPersistTaps="handled"
-          extraScrollHeight={60}
-          enableOnAndroid={true}
-          contentContainerStyle={{ paddingBottom: 20 }}
-        >
-          <PhotoPicker photo={form.photo?.uri} choosePhoto={choosePhoto} />
-
-          <ItemInput
-            label="Name:"
-            placeholder="Ex: Roast beef"
-            value={form.name}
-            onChangeText={(text) => setForm((prev) => ({ ...prev, name: text }))}
-            keyboardType="default"
-            error={errors.name}
+    <Modal
+      visible={true}
+      transparent={true}
+      animationType="slide"
+      statusBarTranslucent={true} // ← importante en Android
+    >
+      <View style={styles.backdrop}>
+        <View style={styles.container}>
+          <TitleModalScreen
+            title={"New Recipe"}
+            onPress={() => navigation.goBack()}
           />
 
-          <AutocompleteList
-            label="Ingredients:"
-            values={ingredients}
-            setValues={setIngredients}
-            options={ingredientsList}
-            placeholder={isLoadingIngredients ? "Loading ingredients..." : "Ex: Tomato"}
-            error={errors.ingredients}
-          />
-
-          <AutocompleteInput
-            label="Category:"
-            placeholder="Ex: Breakfast"
-            value={form.category}
-            options={categoryList}
-            onSelect={(text) => setForm((prev) => ({ ...prev, category: text }))}
-            error={errors.category}
-          />
-
-          <ItemInput
-            label="Steps to make:"
-            placeholder="Step 1: ..."
-            value={form.steps}
-            onChangeText={(text) => setForm((prev) => ({ ...prev, steps: text }))}
-            keyboardType="default"
-            multiline
-            numberOfLines={6}
-            error={errors.steps}
-          />
-
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
-            }}
+          <ScrollView
+            style={styles.scrollContainer}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{ paddingBottom: 20 }}
+            showsVerticalScrollIndicator={false}
           >
-            <View style={{ width: "45%" }}>
-              <ItemInput
-                label="Time:"
-                placeholder="Ex: 20 min"
-                value={form.time}
-                onChangeText={(text) => setForm((prev) => ({ ...prev, time: text }))}
-                keyboardType="numeric"
-                error={errors.time}
-              />
+            <PhotoPicker photo={form.photo?.uri} choosePhoto={choosePhoto} />
+
+            <ItemInput
+              label="Name:"
+              placeholder="Ex: Roast beef"
+              value={form.name}
+              onChangeText={(text) =>
+                setForm((prev) => ({ ...prev, name: text }))
+              }
+              keyboardType="default"
+              error={errors.name}
+            />
+
+            <AutocompleteList
+              label="Ingredients:"
+              values={ingredients}
+              setValues={setIngredients}
+              options={ingredientsList}
+              placeholder={
+                isLoadingIngredients ? "Loading ingredients..." : "Ex: Tomato"
+              }
+              error={errors.ingredients}
+            />
+
+            <AutocompleteInput
+              label="Category:"
+              placeholder="Ex: Breakfast"
+              value={form.category}
+              options={categoryList}
+              onSelect={(text) =>
+                setForm((prev) => ({ ...prev, category: text }))
+              }
+              error={errors.category}
+            />
+
+            <ItemInput
+              label="Steps to make:"
+              placeholder="Step 1: ..."
+              value={form.steps}
+              onChangeText={(text) =>
+                setForm((prev) => ({ ...prev, steps: text }))
+              }
+              keyboardType="default"
+              multiline
+              numberOfLines={6}
+              error={errors.steps}
+            />
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+              }}
+            >
+              <View style={{ width: "45%" }}>
+                <ItemInput
+                  label="Time:"
+                  placeholder="Ex: 20 min"
+                  value={form.time}
+                  onChangeText={(text) =>
+                    setForm((prev) => ({ ...prev, time: text }))
+                  }
+                  keyboardType="numeric"
+                  error={errors.time}
+                />
+              </View>
+
+              <View style={{ width: "45%" }}>
+                <AutocompleteInput
+                  label="Difficulty:"
+                  placeholder="Ex: Low "
+                  value={form.difficulty}
+                  options={["Low", "Medium", "Hard"]}
+                  onSelect={(text) =>
+                    setForm((prev) => ({ ...prev, difficulty: text }))
+                  }
+                  error={errors.difficulty}
+                />
+              </View>
             </View>
 
-            <View style={{ width: "45%" }}>
-              <AutocompleteInput
-                label="Difficulty:"
-                placeholder="Ex: Low "
-                value={form.difficulty}
-                options={["Low", "Medium", "Hard"]}
-                onSelect={(text) => setForm((prev) => ({ ...prev, difficulty: text }))}
-                error={errors.difficulty}
-              />
-            </View>
-          </View>
+            <AutocompleteList
+              label="Tags"
+              values={tags}
+              setValues={setTags}
+              options={tagsList}
+              placeholder="Ex: Pasta"
+              error={errors.tags}
+            />
+          </ScrollView>
 
-          <AutocompleteList label="Tags" values={tags} setValues={setTags} options={tagsList} placeholder="Ex: Pasta" error={errors.tags} />
-        </KeyboardAwareScrollView>
-
-        <ModalButtons onCancel={() => navigation.goBack()} onSave={onSaved} isFormComplete={isFormComplete} isLoading={isLoading} />
+          <ModalButtons
+            onCancel={() => navigation.goBack()}
+            onSave={onSaved}
+            isFormComplete={isFormComplete}
+            isLoading={isLoading}
+          />
+        </View>
       </View>
-    </View>
+      <Toast config={toastConfig} topOffset={40} />
+    </Modal>
   );
 };
 

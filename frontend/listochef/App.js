@@ -40,20 +40,31 @@ export default function App() {
   }
 
   return (
-    <PaperProvider>
-      <Provider>
-        <NavigationContainer>
-          <Stack.Navigator id="root-stack" screenOptions={{ animation: "slide_from_right", headerShown: false }}>
-            <Stack.Screen name="Start" component={Start} />
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="ResetPassword" component={ResetPassword} />
-            <Stack.Screen name="Register" component={Register} />
-            <Stack.Screen name="TermsConditions" component={TermsConditions} />
-            <Stack.Screen name="Home" component={Home} />
-          </Stack.Navigator>
-        </NavigationContainer>
-        <Toast config={toastConfig} topOffset={40} />
-      </Provider>
-    </PaperProvider>
+    <>
+      <PaperProvider>
+        <Provider>
+          <NavigationContainer>
+            <Stack.Navigator
+              id="root-stack"
+              screenOptions={{
+                animation: "slide_from_right",
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen name="Start" component={Start} />
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="ResetPassword" component={ResetPassword} />
+              <Stack.Screen name="Register" component={Register} />
+              <Stack.Screen
+                name="TermsConditions"
+                component={TermsConditions}
+              />
+              <Stack.Screen name="Home" component={Home} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </Provider>
+      </PaperProvider>
+      <Toast config={toastConfig} topOffset={40} />
+    </>
   );
 }
