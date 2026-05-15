@@ -225,16 +225,17 @@ public class UserService {
 	 * @throws RuntimeException if code is invalid or user is not found.
 	 */
 	public void resetPassword(String email, String code, String newPassword) {
-		if (!resetCodes.containsKey(email) || !resetCodes.get(email).equals(code)) {
+		String emailLower = email.toLowerCase();
+		if (!resetCodes.containsKey(email) || !resetCodes.get(emailLower).equals(code)) {
 			throw new RuntimeException("Código inválido o expirado");
 		}
 
-		User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		User user = userRepository.findByEmail(emailLower).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
 		user.setPassword(passwordEncoder.encode(newPassword));
 		userRepository.setPassword(user);
 
-		resetCodes.remove(email);
+		resetCodes.remove(emailLower);
 	}
 
 	/**
@@ -245,7 +246,8 @@ public class UserService {
 	 * @param newPassword     New password to set.
 	 */
 	public void changePassword(String email, String currentPassword, String newPassword) {
-		User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		String emailLower = email.toLowerCase();
+		User user = userRepository.findByEmail(emailLower).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
 		if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
 			throw new RuntimeException("La contraseña actual no es correcta");
