@@ -1,4 +1,11 @@
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  Alert,
+  StyleSheet,
+  Platform,
+} from "react-native";
 import Toast from "react-native-toast-message";
 
 import AutocompleteInput from "./AutocompleteInput";
@@ -19,6 +26,7 @@ const AutocompleteList = (props) => {
    * Adds a new empty input to the list.
    * Prevents adding if the last input is empty.
    */
+
   const addItem = () => {
     if (
       props.values.length === 0 ||
@@ -26,11 +34,18 @@ const AutocompleteList = (props) => {
     ) {
       props.setValues((prev) => [...prev, ""]);
     } else {
-      Toast.show({
-        type: "error",
-        text1: `Please fill in the previous ${props.label.toLowerCase()}`,
-        text2: "before adding a new one.",
-      });
+      if (Platform.OS === "android") {
+        Toast.show({
+          type: "error",
+          text1: `Please fill in the previous ${props.label.toLowerCase()}`,
+          text2: "before adding a new one.",
+        });
+      } else {
+        Alert.alert(
+          "Field required",
+          `Please fill in the previous ${props.label.toLowerCase()} before adding a new one.`,
+        );
+      }
     }
   };
 

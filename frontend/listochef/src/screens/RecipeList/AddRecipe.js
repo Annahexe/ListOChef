@@ -4,12 +4,10 @@ import {
   Keyboard,
   Dimensions,
   Platform,
-  Modal,
   ScrollView,
 } from "react-native";
 import { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
-import toastConfig from "../../components/ToastConfig";
 import * as ImagePicker from "expo-image-picker";
 import Context from "../../context/Context";
 import PhotoPicker from "../../components/PhotoPicker";
@@ -238,12 +236,7 @@ const AddRecipe = ({ navigation }) => {
   };
 
   return (
-    <Modal
-      visible={true}
-      transparent={true}
-      animationType="slide"
-      statusBarTranslucent={true} // ← importante en Android
-    >
+    <>
       <View style={styles.backdrop}>
         <View style={styles.container}>
           <TitleModalScreen
@@ -357,8 +350,7 @@ const AddRecipe = ({ navigation }) => {
           />
         </View>
       </View>
-      <Toast config={toastConfig} topOffset={40} />
-    </Modal>
+    </>
   );
 };
 
