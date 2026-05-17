@@ -128,67 +128,6 @@ const Login = (props) => {
     return false;
   };
 
-  const debugLogin = async () => {
-    const debugCredentials = {
-      email: "adminpistacho@gmail.com",
-      password: "12345",
-    };
-    setLoginData(debugCredentials);
-
-    setIsLoading(true);
-    const response = await postDataOnboarding(
-      route + "/login",
-      debugCredentials,
-    );
-
-    setIsLoading(false);
-    if (!response) {
-      Toast.show({
-        type: "error",
-        text1: "SERVER **OFFLINE**",
-      });
-      console.log("SERVER **OFFLINE**");
-      props.navigation.navigate("Home");
-    } else {
-
-      const [status, jsonResponse] = response;
-
-      if (status === 200) {
-        setIngredientTags([
-          { name: "All", icon: "" },
-          ...jsonResponse.listIngredientsTags.map((ingredient) => ({
-            name: ingredient.ingredientCategoryName,
-            icon: ingredient.icon,
-          })),
-        ]);
-        setUser(jsonResponse.user);
-        setListRecipesTags([
-          { name: "All", icon: "" },
-          ...jsonResponse.listRecipesTags.map((tag) => ({
-            name: tag.name,
-            icon: "",
-          })),
-        ]);
-        setListRecipesCategories(jsonResponse.listRecipesCategories);
-
-        setToken(jsonResponse.token);
-        setRecipesSaved(jsonResponse.recipesSavedList);
-        setTicketsSaved(jsonResponse.user.myTicketsList);
-        setSelectedIngredients(jsonResponse.user.myGroceryList);
-        setPantryItems(jsonResponse.user.myPantryList);
-        props.navigation.navigate("Home");
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "SERVER **ERROR**",
-        });
-        console.log("SERVER **ERROR**");
-        props.navigation.navigate("Home");
-        return;
-      }
-    }
-  };
-
   return (
     <OnboardingCard pageTitle="Log in">
       <ScrollView
@@ -229,7 +168,7 @@ const Login = (props) => {
           />
         </View>
 
-        <Text style={styles.smallText} onPress={() => debugLogin()}>
+        <Text style={styles.smallText}>
           Don't remember your password?
         </Text>
         <Pressable onPress={() => props.navigation.navigate("ResetPassword")}>
