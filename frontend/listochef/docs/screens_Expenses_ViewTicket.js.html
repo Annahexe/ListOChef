@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: screens/Expenses/ViewTicket.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,195 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: screens/Expenses/ViewTicket.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 
+import TitleModalScreen from "../../components/TitleModalScreen";
+import PrimaryButton from "../../components/PrimaryButton";
 
-    <h3> </h3>
+import { dateBeautify } from "../../utils/dateBeautify";
 
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
+/**
+ * TicketInfoRow component used to display one ticket detail row.
+ * Shows an icon, a label and its related value.
+ *
+ * @param {Object} props - Component props.
+ * @param {JSX.Element} props.icon - Icon displayed on the left side of the row.
+ * @param {string} props.label - Text label for the ticket information.
+ * @param {string|number} props.value - Value displayed below the label.
+ * @returns {JSX.Element} Ticket information row.
+ */
+const TicketInfoRow = ({ icon, label, value }) => {
+  return (
+    &lt;View style={styles.infoRow}>
+      {icon}
 
+      &lt;View style={styles.infoTextContainer}>
+        &lt;Text style={styles.ticketTextLabel}>{label}&lt;/Text>
+        &lt;Text style={styles.ticketText}>{value}&lt;/Text>
+      &lt;/View>
+    &lt;/View>
+  );
+};
 
+/**
+ * ViewTicket modal screen that displays the full details of a saved ticket.
+ * Shows the ticket photo, supermarket name, date, number of products and total price.
+ *
+ * @param {Object} navigation - Navigation prop for closing the modal.
+ * @param {Object} route - Route prop containing the selected ticket data.
+ * @returns {JSX.Element} View Ticket modal screen.
+ */
+const ViewTicket = ({ navigation, route }) => {
+  const { ticket } = route.params;
 
+  return (
+    &lt;View style={styles.backdrop}>
+      &lt;View style={styles.container}>
+        &lt;TitleModalScreen title={ticket.supermarket} onPress={() => navigation.goBack()} size={30} />
 
+        &lt;ScrollView style={styles.scrollContainer}>
+          &lt;Text style={styles.labelStyle} numberOfLines={1}>
+            TICKET PHOTO:
+          &lt;/Text>
 
+          &lt;View style={styles.imageContainer}>
+            &lt;Image style={styles.mainImage} source={{ uri: ticket.ticketPictureUri }} />
+          &lt;/View>
 
+          &lt;View style={styles.ticketInfoContainer}>
+            &lt;TicketInfoRow
+              icon={&lt;MaterialCommunityIcons name="calendar-blank-outline" size={28} color="white" />}
+              label="Date:"
+              value={dateBeautify(ticket.ticketDate)}
+            />
 
+            &lt;TicketInfoRow icon={&lt;AntDesign name="shopping-cart" size={28} color="white" />} label="Products:" value={`${ticket.amountProducts} products`} />
 
-    
+            &lt;View style={styles.totalRow}>
+              &lt;Text style={styles.ticketText}>Total:&lt;/Text>
+              &lt;Text style={styles.ticketPrice}>{ticket.totalPrice}€&lt;/Text>
+            &lt;/View>
+          &lt;/View>
 
+          &lt;PrimaryButton onPress={() => navigation.goBack()} buttonText="Close" />
+        &lt;/ScrollView>
+      &lt;/View>
+    &lt;/View>
+  );
+};
 
+const styles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    padding: 20,
+    paddingVertical: 50,
+  },
+  container: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    flex: 2,
+    overflow: "hidden",
+  },
+  scrollContainer: {
+    paddingHorizontal: 20,
+    flex: 2,
+    marginVertical: 15,
+    marginBottom: 0,
+  },
+  labelStyle: {
+    fontSize: 16,
+    fontFamily: "InterBold",
+    color: "#2C5818",
+  },
+  imageContainer: {
+    position: "relative",
+    marginBottom: 10,
+    aspectRatio: 0.6,
+    shadowColor: "#000",
+    shadowOffset: { width: -1, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    elevation: 5,
+    backgroundColor: "#DBE0D9",
+    borderRadius: 15,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderColor: "#2C5818",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  mainImage: {
+    width: "92%",
+    height: "95%",
+    resizeMode: "cover",
+  },
+  ticketInfoContainer: {
+    backgroundColor: "#A5B19F",
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: -1, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    marginBottom: 10,
+    elevation: 5,
+    paddingLeft: "4%",
+    padding: "3%",
+  },
+  infoRow: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    borderBottomWidth: 1,
+    borderBottomColor: "#2C5818",
+    width: "100%",
+    alignSelf: "center",
+    alignItems: "center",
+    paddingVertical: 5,
+  },
+  infoTextContainer: {
+    marginLeft: "2%",
+  },
+  totalRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    alignSelf: "center",
+    paddingVertical: "5%",
+  },
+  ticketTextLabel: {
+    color: "white",
+    fontSize: 14,
+    fontFamily: "MontserratSemiBold",
+  },
+  ticketText: {
+    color: "white",
+    fontSize: 16,
+    fontFamily: "MontserratSemiBold",
+  },
+  ticketPrice: {
+    color: "#2C5818",
+    fontSize: 18,
+    fontFamily: "MontserratSemiBold",
+  },
+});
 
-
-
+export default ViewTicket;
+</code></pre>
+        </article>
+    </section>
 
 
 

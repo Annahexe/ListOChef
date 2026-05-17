@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/PrimaryButton.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,120 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/PrimaryButton.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 
+/**
+ * PrimaryButton component used as the main action button across the app.
+ * Supports loading state, disabled state, and custom button/container styles.
+ *
+ * @param {Object} props - Component props.
+ * @param {Function} props.onPress - Function executed when the button is pressed.
+ * @param {string} props.buttonText - Text displayed inside the button.
+ * @param {boolean} props.isLoading - Shows a loading indicator and disables the button.
+ * @param {boolean} props.isDisabled - Disables the button when true.
+ * @param {Object|Array} props.buttonStyle - Custom styles applied to the button.
+ * @param {Object|Array} props.containerStyle - Custom styles applied to the button container.
+ * @returns {JSX.Element} Main reusable button component.
+ */
+const PrimaryButton = ({
+  onPress,
+  buttonText,
+  isLoading,
+  isDisabled = false,
+  buttonStyle,
+  containerStyle,
+}) => {
+  const disabled = isLoading || isDisabled;
 
-    <h3> </h3>
+  return (
+    &lt;View style={[styles.buttonContainer, containerStyle]}>
+      &lt;Pressable
+        style={[
+          styles.buttonStyle,
+          isDisabled &amp;&amp; styles.buttonDisabled,
+          buttonStyle,
+        ]}
+        onPress={onPress}
+        disabled={disabled}
+      >
+        &lt;View style={styles.content}>
+          {isLoading &amp;&amp; (
+            &lt;ActivityIndicator
+              size="small"
+              color="white"
+              style={styles.loader}
+            />
+          )}
 
+          &lt;Text style={styles.buttonTextStyle}>
+            {isLoading ? "Loading..." : buttonText}
+          &lt;/Text>
+        &lt;/View>
+      &lt;/Pressable>
+    &lt;/View>
+  );
+};
 
+const styles = StyleSheet.create({
+  buttonContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonStyle: {
+    margin: "3%",
+    minWidth: 220,
+    paddingTop: 12,
+    padding: 10,
+    borderRadius: 20,
+    textAlign: "center",
+    backgroundColor: "#4B643F",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  buttonDisabled: {
+    backgroundColor: "#8b9d89",
+    opacity: 0.6,
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  buttonTextStyle: {
+    fontSize: 20,
+    fontFamily: "MontserratSemiBold",
+    color: "white",
+    textAlign: "center",
+  },
+  content: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  loader: {
+    marginRight: 10,
+  },
+});
 
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default PrimaryButton;
+</code></pre>
+        </article>
+    </section>
 
 
 

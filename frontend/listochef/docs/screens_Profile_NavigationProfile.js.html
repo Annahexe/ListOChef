@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: screens/Profile/NavigationProfile.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,57 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: screens/Profile/NavigationProfile.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Profile from "./Profile";
+import EditProfile from "./EditProfile";
 
+const Stack = createNativeStackNavigator();
 
-    <h3> </h3>
+/**
+ * Stack navigator for the Profile section.
+ * Contains two screens: Profile (main, no animation) and EditProfile,
+ * which is presented as a transparent bottom-sheet modal.
+ *
+ * @returns {JSX.Element} Profile stack navigator.
+ */
+const NavigationProfile = () => (
+  &lt;Stack.Navigator screenOptions={{ headerShown: false }}>
+    &lt;Stack.Group>
+      &lt;Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={{ animation: "none" }}
+      />
+    &lt;/Stack.Group>
+    &lt;Stack.Group
+      screenOptions={{
+        presentation: "transparentModal",
+        animation: "slide_from_bottom",
+        headerShown: false,
+      }}
+    >
+      &lt;Stack.Screen
+        name="EditProfile"
+        component={EditProfile}
+        options={{ headerShown: false, headerMode: "none" }}
+      />
+    &lt;/Stack.Group>
+  &lt;/Stack.Navigator>
+);
 
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default NavigationProfile;
+</code></pre>
+        </article>
+    </section>
 
 
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: utils/dateBeautify.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,36 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: utils/dateBeautify.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Converts a date into a readable format.
+ * Example output: "10 May 2026".
+ *
+ * @param {Date|string} date - Date value to format.
+ * @returns {string} Beautified date string.
+ */
+export const dateBeautify = (date) => {
+  const d = new Date(date);
 
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    <h3> </h3>
+  const day = d.getDate();
+  const month = months[d.getMonth()];
+  const year = d.getFullYear();
 
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+  return `${day} ${month} ${year}`;
+};
+</code></pre>
+        </article>
+    </section>
 
 
 

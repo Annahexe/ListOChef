@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/Profile/EditProfile.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/Profile/EditProfile.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { View, StyleSheet, Keyboard, Alert, Pressable, Text } from "react-native";
+import { useState, useContext, useEffect } from "react";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import Toast from "react-native-toast-message";
+
+import Context from "../../context/Context";
+import ItemInput from "../../components/ItemInput";
+import TitleModalScreen from "../../components/TitleModalScreen";
+import ModalButtons from "../../components/ModalButtons";
+import { postDataToken } from "../../services/services";
+
+import { isRequired, minLength, matches } from "../../utils/validators";
+
+/** Base object used to reset and store form validation errors. */
+const INITIAL_ERRORS = {
+  name: "",
+  surname: "",
+  oldPassword: "",
+  newPassword: "",
+  confirmNewPassword: "",
+};
+
+/**
+ * EditProfile modal screen that allows the user to update profile information.
+ * The user can edit their name and surname, and optionally change their password.
+ * Validates the form before sending profile or password updates to the backend.
+ *
+ * @param {Object} navigation - Navigation prop for closing the modal after saving or cancelling.
+ * @returns {JSX.Element} Edit Profile modal screen.
+ */
+const EditProfile = ({ navigation }) => {
+  const { route, token, user, setUser } = useContext(Context);
+
+  // Controls whether the password change fields are displayed.
+  const [changePwd, setChangePwd] = useState(false);
+
+  // Stores all profile and password form inputs.
+  const [form, setForm] = useState({
+    name: "",
+    surname: "",
+    oldPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  });
+
+  // Stores validation error messages for each form field.
+  const [errors, setErrors] = useState(INITIAL_ERRORS);
+
+  // Checks if the update petition is loading to show a loading state.
+  const [isLoading, setIsLoading] = useState(false);
+
+  /**
+   * Loads the current user data into the form whenever the user context changes.
+   * Password fields are always reset for security.
+   */
+  useEffect(() => {
+    setForm({
+      name: user.name || "",
+      surname: user.surname || "",
+      oldPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
+    });
+  }, [user]);
+
+  /** Name without extra spaces at the beginning or end. */
+  const trimmedName = form.name.trim();
+
+  /** Surname without extra spaces at the beginning or end. */
+  const trimmedSurname = form.surname.trim();
+
+  /** True if the user changed their name or surname. */
+  const hasProfileChanges = trimmedName !== (user.name || "") || trimmedSurname !== (user.surname || "");
+
+  /** True when all password fields are filled. */
+  const isPasswordFormComplete = form.oldPassword.trim() !== "" &amp;&amp; form.newPassword.trim() !== "" &amp;&amp; form.confirmNewPassword.trim() !== "";
+
+  /** True when there are profile changes or a complete password change form. */
+  const isFormComplete = hasProfileChanges || (changePwd &amp;&amp; isPasswordFormComplete);
+
+  /**
+   * Validates the profile fields.
+   * Checks that name and surname are not empty.
+   *
+   * @returns {boolean} True if profile fields are valid, false otherwise.
+   */
+  const validateProfileForm = () => {
+    const newErrors = {
+      ...INITIAL_ERRORS,
+      name: isRequired(form.name),
+      surname: isRequired(form.surname),
+    };
+
+    setErrors((prev) => ({
+      ...prev,
+      name: newErrors.name,
+      surname: newErrors.surname,
+    }));
+
+    return !newErrors.name &amp;&amp; !newErrors.surname;
+  };
+
+  /**
+   * Validates the password fields.
+   * Checks old password, new password length and password confirmation.
+   *
+   * @returns {boolean} True if password fields are valid, false otherwise.
+   */
+  const validatePasswordForm = () => {
+    const newErrors = {
+      ...INITIAL_ERRORS,
+      oldPassword: isRequired(form.oldPassword) || minLength(form.oldPassword, 4),
+      newPassword: isRequired(form.newPassword) || minLength(form.newPassword, 4),
+      confirmNewPassword: isRequired(form.confirmNewPassword) || matches(form.confirmNewPassword, form.newPassword, "passwords"),
+    };
+
+    setErrors((prev) => ({
+      ...prev,
+      oldPassword: newErrors.oldPassword,
+      newPassword: newErrors.newPassword,
+      confirmNewPassword: newErrors.confirmNewPassword,
+    }));
+
+    return !newErrors.oldPassword &amp;&amp; !newErrors.newPassword &amp;&amp; !newErrors.confirmNewPassword;
+  };
+
+  /**
+   * Clears all password fields and removes password validation errors.
+   * Used when enabling or cancelling the password change section.
+   */
+  const resetPasswordFields = () => {
+    setForm((prev) => ({
+      ...prev,
+      oldPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      oldPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
+    }));
+  };
+
+  /**
+   * Validates the form and asks the user to confirm the update.
+   * Sends profile data and/or password data to the backend depending on the changes made.
+   * Updates the local user context and closes the modal on success.
+   */
+  const onSaved = () => {
+    const profileIsValid = validateProfileForm();
+    const passwordIsValid = changePwd ? validatePasswordForm() : true;
+
+    if (!profileIsValid) {
+      Toast.show({
+        type: "error",
+        text1: "Please fill in the profile fields correctly",
+      });
+      return;
+    }
+
+    if (!passwordIsValid) {
+      Toast.show({
+        type: "error",
+        text1: "Please check the password field",
+      });
+      return;
+    }
+
+    if (!hasProfileChanges &amp;&amp; !changePwd) {
+      Toast.show({
+        type: "info",
+        text1: "No changes to save",
+      });
+      return;
+    }
+
+    Alert.alert("Attention", "Are you sure you want to save these changes?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Save",
+        onPress: async () => {
+          try {
+            setIsLoading(true);
+
+            if (hasProfileChanges) {
+              const profilePayload = {
+                name: trimmedName,
+                surname: trimmedSurname,
+              };
+
+              const okProfile = await changeAllDataRequest(profilePayload);
+
+              if (!okProfile) {
+                Toast.show({
+                  type: "error",
+                  text1: "Profile update failed",
+                  text2: "Please try again later.",
+                });
+                return;
+              }
+            }
+
+            if (changePwd) {
+              const passwordPayload = {
+                currentPassword: form.oldPassword,
+                newPassword: form.newPassword,
+              };
+
+              const okPassword = await changePasswordRequest(passwordPayload);
+
+              if (!okPassword) {
+                Toast.show({
+                  type: "error",
+                  text1: "Password update failed",
+                  text2: "Please try again later.",
+                });
+                return;
+              }
+            }
+
+            setUser((prev) => ({
+              ...prev,
+              name: trimmedName,
+              surname: trimmedSurname,
+              ...(changePwd ? { password: form.newPassword } : {}),
+            }));
+            setIsLoading(false);
+            navigation.goBack();
+            setTimeout(() => {
+              Toast.show({
+                type: "success",
+                text1: "Success.",
+                text2: "Your profile has been updated successfully.",
+              });
+            }, 400);
+          } catch (error) {
+            console.log(error);
+            Alert.alert("Error", "Something went wrong");
+            setIsLoading(false);
+          }
+        },
+      },
+    ]);
+  };
+
+  /**
+   * Enables the password change section and clears previous password values.
+   */
+  const onChangePwd = () => {
+    setChangePwd(true);
+    resetPasswordFields();
+  };
+
+  /**
+   * Disables the password change section and clears previous password values.
+   */
+  const onCancelChangePwd = () => {
+    setChangePwd(false);
+    resetPasswordFields();
+  };
+
+  /**
+   * Sends a request to update the user's profile data.
+   *
+   * @param {Object} formData - Profile data containing name and surname.
+   * @returns {Promise&lt;boolean>} True if status is 200 or 201, false otherwise.
+   */
+  const changeAllDataRequest = async (formData) => {
+    const response = await postDataToken(route + "/editProfile", formData, token);
+
+    if (!response) {
+      console.log("NO RESPONSE");
+      return false;
+    }
+
+    const [status] = response;
+
+    return status === 200 || status === 201;
+  };
+
+  /**
+   * Sends a request to update the user's password.
+   *
+   * @param {Object} formData - Password data containing currentPassword and newPassword.
+   * @returns {Promise&lt;boolean>} True if status is 200 or 201, false otherwise.
+   */
+  const changePasswordRequest = async (formData) => {
+    const response = await postDataToken(route + "/changePassword", formData, token);
+
+    if (!response) {
+      console.log("NO RESPONSE");
+      return false;
+    }
+
+    const [status] = response;
+
+    return status === 200 || status === 201;
+  };
+
+  return (
+    &lt;View style={styles.backdrop}>
+      &lt;View style={styles.container}>
+        &lt;TitleModalScreen title={"Edit profile"} onPress={() => navigation.goBack()} />
+
+        &lt;KeyboardAwareScrollView
+          style={styles.scrollContainer}
+          nestedScrollEnabled={true} // Allows Scroll inside Scroll
+          keyboardShouldPersistTaps="handled"
+          extraScrollHeight={60}
+          enableOnAndroid={true}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        >
+          &lt;ItemInput
+            label="Name:"
+            placeholder="John"
+            value={form.name}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, name: text }))}
+            keyboardType="default"
+            error={errors.name}
+          />
+
+          &lt;ItemInput
+            label="Surname:"
+            placeholder="Doe"
+            value={form.surname}
+            onChangeText={(text) => setForm((prev) => ({ ...prev, surname: text }))}
+            keyboardType="default"
+            error={errors.surname}
+          />
+
+          &lt;Pressable style={styles.button} onPress={changePwd ? onCancelChangePwd : onChangePwd}>
+            &lt;Text style={styles.textButton}>{changePwd ? "Cancel Change Password" : "Change Password"}&lt;/Text>
+          &lt;/Pressable>
+
+          {changePwd &amp;&amp; (
+            &lt;>
+              &lt;Text style={styles.sectionText}>Enter your new password and confirm it below.&lt;/Text>
+
+              &lt;ItemInput
+                label="Old Password:"
+                placeholder="Old password"
+                value={form.oldPassword}
+                eye={true}
+                onChangeText={(text) => setForm((prev) => ({ ...prev, oldPassword: text }))}
+                keyboardType="default"
+                error={errors.oldPassword}
+              />
+
+              &lt;ItemInput
+                label="New Password:"
+                placeholder="New password"
+                value={form.newPassword}
+                eye={true}
+                onChangeText={(text) => setForm((prev) => ({ ...prev, newPassword: text }))}
+                keyboardType="default"
+                error={errors.newPassword}
+              />
+
+              &lt;ItemInput
+                label="Confirm New Password:"
+                placeholder="Confirm new password"
+                value={form.confirmNewPassword}
+                eye={true}
+                onChangeText={(text) => setForm((prev) => ({ ...prev, confirmNewPassword: text }))}
+                keyboardType="default"
+                error={errors.confirmNewPassword}
+              />
+            &lt;/>
+          )}
+        &lt;/KeyboardAwareScrollView>
+
+        &lt;ModalButtons onCancel={() => navigation.goBack()} onSave={onSaved} isFormComplete={isFormComplete} isLoading={isLoading} />
+      &lt;/View>
+    &lt;/View>
+  );
+};
+
+const styles = StyleSheet.create({
+  backdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    padding: 20,
+    paddingVertical: 50,
+  },
+  container: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    flex: 2,
+  },
+  scrollContainer: {
+    paddingLeft: 20,
+    paddingRight: 20,
+    flex: 2,
+    marginVertical: 15,
+    paddingBottom: 50,
+  },
+  button: {
+    alignSelf: "center",
+    width: "80%",
+    backgroundColor: "#4B643F",
+    marginHorizontal: "1%",
+    marginVertical: "3%",
+    padding: 10,
+    borderRadius: 20,
+    textAlign: "center",
+  },
+  textButton: {
+    fontSize: 20,
+    fontFamily: "InterBold",
+    color: "white",
+    textAlign: "center",
+  },
+  sectionText: {
+    fontSize: 16,
+    fontFamily: "InterMedium",
+    color: "#4B643F",
+  },
+});
+
+export default EditProfile;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Start.html">Start</a></li><li><a href="module-TermsConditions.html">TermsConditions</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AddCircleButton">AddCircleButton</a></li><li><a href="global.html#AddPantry">AddPantry</a></li><li><a href="global.html#AddProduct">AddProduct</a></li><li><a href="global.html#AddRecipe">AddRecipe</a></li><li><a href="global.html#AddTicket">AddTicket</a></li><li><a href="global.html#AutocompleteList">AutocompleteList</a></li><li><a href="global.html#Carousel">Carousel</a></li><li><a href="global.html#Context">Context</a></li><li><a href="global.html#EditProfile">EditProfile</a></li><li><a href="global.html#Expenses">Expenses</a></li><li><a href="global.html#FilterOrderDropdown">FilterOrderDropdown</a></li><li><a href="global.html#FilterTag">FilterTag</a></li><li><a href="global.html#GroceryList">GroceryList</a></li><li><a href="global.html#GroceryListItem">GroceryListItem</a></li><li><a href="global.html#Heart">Heart</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#INITIAL_ERRORS">INITIAL_ERRORS</a></li><li><a href="global.html#INITIAL_LAST_RECIPE_SEEN">INITIAL_LAST_RECIPE_SEEN</a></li><li><a href="global.html#INITIAL_PANTRY_ITEMS">INITIAL_PANTRY_ITEMS</a></li><li><a href="global.html#INITIAL_SELECTED_INGREDIENTS">INITIAL_SELECTED_INGREDIENTS</a></li><li><a href="global.html#INITIAL_USER">INITIAL_USER</a></li><li><a href="global.html#ItemInput">ItemInput</a></li><li><a href="global.html#ItemView">ItemView</a></li><li><a href="global.html#ListItem">ListItem</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#ModalButtons">ModalButtons</a></li><li><a href="global.html#NavigationExpenses">NavigationExpenses</a></li><li><a href="global.html#NavigationGroceryList">NavigationGroceryList</a></li><li><a href="global.html#NavigationPantry">NavigationPantry</a></li><li><a href="global.html#NavigationProfile">NavigationProfile</a></li><li><a href="global.html#NavigationRecipeList">NavigationRecipeList</a></li><li><a href="global.html#Pantry">Pantry</a></li><li><a href="global.html#PantryCard">PantryCard</a></li><li><a href="global.html#PhotoPicker">PhotoPicker</a></li><li><a href="global.html#PrimaryButton">PrimaryButton</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#Provider">Provider</a></li><li><a href="global.html#RecipeCard">RecipeCard</a></li><li><a href="global.html#RecipesList">RecipesList</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#ResetPassword">ResetPassword</a></li><li><a href="global.html#SearchRecipes">SearchRecipes</a></li><li><a href="global.html#Seeker">Seeker</a></li><li><a href="global.html#Subscription">Subscription</a></li><li><a href="global.html#TOGGLE_SAVED_STATUS">TOGGLE_SAVED_STATUS</a></li><li><a href="global.html#TagsCarousel">TagsCarousel</a></li><li><a href="global.html#TicketInfoRow">TicketInfoRow</a></li><li><a href="global.html#TitleIconPage">TitleIconPage</a></li><li><a href="global.html#TitleModalScreen">TitleModalScreen</a></li><li><a href="global.html#TitleProfile">TitleProfile</a></li><li><a href="global.html#ViewRecipe">ViewRecipe</a></li><li><a href="global.html#ViewTicket">ViewTicket</a></li><li><a href="global.html#buildIngredientsDiff">buildIngredientsDiff</a></li><li><a href="global.html#buildUpdatedPantryList">buildUpdatedPantryList</a></li><li><a href="global.html#dateBeautify">dateBeautify</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#isEmail">isEmail</a></li><li><a href="global.html#isPositiveInteger">isPositiveInteger</a></li><li><a href="global.html#isPositiveNumber">isPositiveNumber</a></li><li><a href="global.html#isRequired">isRequired</a></li><li><a href="global.html#isRequiredArray">isRequiredArray</a></li><li><a href="global.html#isValidDate">isValidDate</a></li><li><a href="global.html#matches">matches</a></li><li><a href="global.html#minLength">minLength</a></li><li><a href="global.html#postData">postData</a></li><li><a href="global.html#postDataOnboarding">postDataOnboarding</a></li><li><a href="global.html#postDataToken">postDataToken</a></li><li><a href="global.html#showToggleSavedToast">showToggleSavedToast</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#toastConfig">toastConfig</a></li><li><a href="global.html#toggleSavedPetition">toggleSavedPetition</a></li><li><a href="global.html#updatePantryListPetition">updatePantryListPetition</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sun May 17 2026 17:32:12 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
