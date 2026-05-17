@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/ModalButtons.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,76 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/ModalButtons.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { View, Text, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 
+/**
+ * Renders action buttons for a modal (Cancel and Save).
+ * Save button is disabled visually when the form is not complete.
+ *
+ * @param {Object} props - Component props.
+ * @param {function} props.onCancel - Callback when cancel button is pressed.
+ * @param {function} props.onSave - Callback when save button is pressed.
+ * @param {boolean} props.isFormComplete - Indicates if the form is valid and complete.
+ * @returns {JSX.Element} Modal buttons component.
+ */
+const ModalButtons = (props) => {
+  return (
+    &lt;View style={styles.buttonContainer}>
+      {!props.isLoading &amp;&amp; (
+      &lt;Pressable onPress={props.onCancel} style={[styles.button, { backgroundColor: "#4B643F" }]}>
+        &lt;Text style={styles.textButton}>Cancel&lt;/Text>
+      &lt;/Pressable>
+      )}
 
-    <h3> </h3>
+      &lt;Pressable style={[styles.button, { backgroundColor: props.isFormComplete ? "#4B643F" : "#85917F", width: props.isLoading ? "98%" : "48%" }]} onPress={props.onSave}>
+        {props.isLoading &amp;&amp; &lt;ActivityIndicator size="small" color="white" style={styles.loader} />}
+        &lt;Text style={styles.textButton}>{props.isLoading ? "Loading..." : "Save"}&lt;/Text>
+      &lt;/Pressable>
+    &lt;/View>
+  );
+};
 
+const styles = StyleSheet.create({
+  buttonContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+  },
+  button: {
+    width: "48%",
+    marginHorizontal: "1%",
+    marginBottom: 10,
+    padding: 10,
+    borderRadius: 20,
+    textAlign: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textButton: {
+    fontSize: 20,
+    fontFamily: "InterBold",
+    color: "white",
+    textAlign: "center",
+    flexShrink: 1,
+  },
+  loader: {
+    marginRight: 5,
+  },
+});
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default ModalButtons;
+</code></pre>
+        </article>
+    </section>
 
 
 

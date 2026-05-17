@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/TitleIconPage.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,63 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/TitleIconPage.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Text, View, StyleSheet } from "react-native";
 
+/**
+ * TitleIconPage component that displays a page title with an optional icon.
+ * Used as a reusable header for main app screens.
+ *
+ * @param {Object} props - Component props.
+ * @param {React.ComponentType} props.icon - SVG icon component displayed next to the title.
+ * @param {string} props.titleText - Text displayed as the page title.
+ * @returns {JSX.Element} Page title with icon.
+ */
+export const TitleIconPage = (props) => {
+  const Icon = props.icon;
 
-    <h3> </h3>
+  return (
+    &lt;View style={styles.container}>
+      &lt;View style={styles.iconStyle}>{Icon &amp;&amp; &lt;Icon width={60} height={60} />}&lt;/View>
+      &lt;Text style={styles.title}>{props.titleText}&lt;/Text>
+    &lt;/View>
+  );
+};
 
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "85%",
+    alignItems: "center",
+  },
+  title: {
+    fontFamily: "MontserratBold",
+    marginLeft: 10,
+    marginBottom: 4,
+    fontSize: 36,
+    color: "#414141",
+  },
+  iconStyle: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+    elevation: 5,
+  }
+});
+</code></pre>
+        </article>
+    </section>
 
 
 

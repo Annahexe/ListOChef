@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/ItemView.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,77 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/ItemView.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { View, Text, StyleSheet } from "react-native";
 
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+/**
+ * Displays read-only information such as labels, ingredients,
+ * additional info, or time in a styled container.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.label - Section label.
+ * @param {string[]} [props.ingredients] - List of ingredients to display.
+ * @param {string} [props.info] - Additional information text.
+ * @param {number|string} [props.time] - Time value in minutes.
+ * @returns {JSX.Element} Styled information view component.
+ */
+const ItemView = (props) => (
+  &lt;View style={{ flex: 1, marginHorizontal: 5 }}>
+    &lt;Text style={styles.labelStyle} numberOfLines={1}>
+      {props.label?.toUpperCase()}
+    &lt;/Text>
+    &lt;View style={styles.textInfo}>
+      {props.ingredients?.map((ingredient, index) => (
+        &lt;Text key={index} style={styles.text}>
+          · {ingredient}
+        &lt;/Text>
+      ))}
+      {props.info ? &lt;Text style={styles.text}>{props.info}&lt;/Text> : null}
+      {props.time ? &lt;Text style={styles.text}>{props.time}min&lt;/Text> : null}
+    &lt;/View>
+  &lt;/View>
+);
+const styles = StyleSheet.create({
+  textInfo: {
+    width: "100%",
+    fontSize: 20,
+    fontFamily: "InterMedium",
+    backgroundColor: "#A5B19F",
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: -1, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    marginBottom: 10,
+    elevation: 5,
+  },
+  labelStyle: {
+    fontSize: 16,
+    fontFamily: "InterBold",
+    marginVertical: 5,
+    color: "#2C5818",
+    marginTop: 10,
+  },
+  text: {
+    fontSize: 18,
+    fontFamily: "InterMedium",
+    color: "white",
+  },
+});
+export default ItemView;
+</code></pre>
+        </article>
+    </section>
 
 
 

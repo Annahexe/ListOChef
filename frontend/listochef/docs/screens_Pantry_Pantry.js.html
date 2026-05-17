@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/Pantry/Pantry.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/Pantry/Pantry.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { StyleSheet, Text, View, ImageBackground, Pressable, ScrollView, Keyboard, Alert, Platform } from "react-native";
+import { useState, useContext } from "react";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import AddCircleButton from "../../components/AddCircleButton";
+import { Seeker } from "../../components/Seeker";
+import { TagsCarousel } from "../../components/TagsCarousel";
+import PantryTitleIcon from "../../../assets/icons/pantry_titleIcon.svg";
+import { TitleIconPage } from "../../components/TitleIconPage";
+import PantryCard from "../../components/PantryCard";
+import { postDataToken } from "../../services/services";
+import Toast from "react-native-toast-message";
+import { updatePantryListPetition } from "../../utils/pantryListUtils";
+import Context from "../../context/Context";
+
+/**
+ * Pantry screen that displays the user's pantry items with tag filtering.
+ * Allows adding new products, adjusting ingredient amounts, and deleting items.
+ *
+ * @param {Object} props - Navigation props.
+ * @returns {JSX.Element} Pantry screen.
+ */
+const Pantry = (props) => {
+  const { route, token, ingredientTags, pantryItems, setPantryItems } = useContext(Context);
+
+  const [selectedTags, setSelectedTags] = useState(["All"]);
+
+  const tabBarHeight = useBottomTabBarHeight();
+
+  const toggleTag = (selectedTag) => {
+    setSelectedTags((previousSelectedTags) => {
+      if (selectedTag == "All") {
+        return ["All"];
+      }
+      const tagsWithoutAll = previousSelectedTags.filter((element) => element !== "All");
+      if (tagsWithoutAll.includes(selectedTag)) {
+        const selectedTagsList = tagsWithoutAll.filter((element) => element !== selectedTag);
+        return selectedTagsList.length === 0 ? ["All"] : selectedTagsList;
+      }
+      return [...tagsWithoutAll, selectedTag];
+    });
+  };
+
+  /**
+   * Selected tags normalized to lowercase for case-insensitive comparison.
+   */
+  const normalizedSelectedTags = selectedTags.map((tag) => tag.toLowerCase());
+
+  /**
+   * Pantry items filtered by the selected ingredient tags.
+   * If "All" is selected, all pantry items are shown.
+   * Ingredients with null or missing tags are safely handled.
+   */
+  const filteredPantryItems = selectedTags.includes("All")
+    ? pantryItems
+    : pantryItems.filter((ingredient) => {
+        const ingredientTag = ingredient.ingredientTag?.toLowerCase() ?? "";
+
+        return normalizedSelectedTags.includes(ingredientTag);
+      });
+
+  /** Navigates to AddPantry screen. */
+  const goAddProduct = () => {
+    Keyboard.dismiss();
+    return props.navigation.navigate("AddPantry");
+  };
+
+  /**
+   * Shows a confirmation alert before deleting a pantry ingredient.
+   * @param {Object} item - Ingredient to delete.
+   */
+  const onDelete = (item) => {
+    Alert.alert("Delete ingredient", `Remove ${item.ingredientName}?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: async () => {
+          setPantryItems((prev) => prev.filter((i) => i.ingredientName !== item.ingredientName));
+          const respone = await removeFromPantryList(item.ingredientName);
+        },
+      },
+    ]);
+  };
+
+  /**
+   * Sends a request to remove an ingredient from the pantry in the backend.
+   * @param {string} ingredientName
+   * @returns {Promise&lt;boolean>} True if successful, false otherwise.
+   */
+  const removeFromPantryList = async (ingredientName) => {
+    const data = { ingredientName: ingredientName };
+
+    const response = await postDataToken(route + "/removeFromPantryList", data, token);
+
+    if (!response) {
+      Toast.show({
+        type: "error",
+        text1: "Error removing ingredient!",
+        text2: "Please try again later.",
+      });
+
+      return false;
+    }
+    return true;
+  };
+
+  /**
+   * Increments the amount of an ingredient by 1 and syncs with backend.
+   * @param {string} ingredientName
+   */
+  const addAmount = async (ingredientName) => {
+    const updatedPantryItems = pantryItems.map((item) =>
+      item.ingredientName === ingredientName
+        ? {
+            ...item,
+            ingredientAmount: item.ingredientAmount + 1,
+          }
+        : item,
+    );
+
+    await updatePantryAndSync(updatedPantryItems);
+  };
+
+  /**
+   * Decrements the amount of an ingredient by 1. Removes it if amount reaches 0.
+   * @param {string} ingredientName
+   */
+  const subtractAmount = async (ingredientName) => {
+    const updatedPantryItems = pantryItems
+      .map((item) =>
+        item.ingredientName === ingredientName
+          ? {
+              ...item,
+              ingredientAmount: item.ingredientAmount - 1,
+            }
+          : item,
+      )
+      .filter((item) => item.ingredientAmount > 0);
+
+    await updatePantryAndSync(updatedPantryItems);
+  };
+
+  /**
+   * Updates the pantry list in the backend and syncs with context if successful.
+   * @param {Object[]} updatedPantryItems
+   */
+  const updatePantryAndSync = async (updatedPantryItems) => {
+    const wasUpdated = await updatePantryListPetition({
+      route,
+      token,
+      pantryItems: updatedPantryItems,
+    });
+
+    if (!wasUpdated) {
+      return;
+    }
+
+    setPantryItems(updatedPantryItems);
+  };
+
+  return (
+    &lt;ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
+      &lt;View style={styles.overlay}>
+        &lt;View style={styles.container}>
+          &lt;TitleIconPage titleText="My Pantry" icon={PantryTitleIcon} />
+
+          &lt;Seeker placeholderText="Search new products..." onPress={goAddProduct} editable={false}>&lt;/Seeker>
+          &lt;TagsCarousel tagsList={ingredientTags} selectedTags={selectedTags} onToggleTag={toggleTag} />
+
+          &lt;Text style={styles.resumeText}>{filteredPantryItems.length} products&lt;/Text>
+          &lt;View style={{ flex: 1, width: "100%", maxHeight: "67%" }}>
+            &lt;ScrollView style={{ width: "100%" }} contentContainerStyle={{ paddingBottom: 80 }}>
+              {filteredPantryItems.map((ingredient, index) => (
+                &lt;PantryCard
+                  key={ingredient.ingredientName}
+                  ingredient={ingredient.ingredientName}
+                  amount={ingredient.ingredientAmount}
+                  tag={ingredient.ingredientTag}
+                  onDelete={() => onDelete(ingredient)}
+                  onAddAmount={() => addAmount(ingredient.ingredientName)}
+                  onSubtractAmount={() => subtractAmount(ingredient.ingredientName)}
+                />
+              ))}
+            &lt;/ScrollView>
+            &lt;View style={[styles.floatingButton, { bottom: tabBarHeight - (Platform.OS === "ios" ? 142 : 146) }]}>
+              &lt;Pressable onPress={goAddProduct}>
+                &lt;AddCircleButton />
+              &lt;/Pressable>
+            &lt;/View>
+          &lt;/View>
+        &lt;/View>
+      &lt;/View>
+    &lt;/ImageBackground>
+  );
+};
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(255, 255, 235, 0.7)",
+  },
+  container: {
+    flex: 1,
+    marginTop: 50,
+    position: "relative",
+    alignItems: "center",
+  },
+  resumeText: {
+    marginVertical: 10,
+    marginHorizontal: 20,
+    fontSize: 20,
+    fontFamily: "InterBold",
+    alignSelf: "flex-start",
+  },
+  floatingButton: {
+    position: "absolute",
+    right: 20,
+  },
+});
+export default Pantry;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Start.html">Start</a></li><li><a href="module-TermsConditions.html">TermsConditions</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AddCircleButton">AddCircleButton</a></li><li><a href="global.html#AddPantry">AddPantry</a></li><li><a href="global.html#AddProduct">AddProduct</a></li><li><a href="global.html#AddRecipe">AddRecipe</a></li><li><a href="global.html#AddTicket">AddTicket</a></li><li><a href="global.html#AutocompleteList">AutocompleteList</a></li><li><a href="global.html#Carousel">Carousel</a></li><li><a href="global.html#Context">Context</a></li><li><a href="global.html#EditProfile">EditProfile</a></li><li><a href="global.html#Expenses">Expenses</a></li><li><a href="global.html#FilterOrderDropdown">FilterOrderDropdown</a></li><li><a href="global.html#FilterTag">FilterTag</a></li><li><a href="global.html#GroceryList">GroceryList</a></li><li><a href="global.html#GroceryListItem">GroceryListItem</a></li><li><a href="global.html#Heart">Heart</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#INITIAL_ERRORS">INITIAL_ERRORS</a></li><li><a href="global.html#INITIAL_LAST_RECIPE_SEEN">INITIAL_LAST_RECIPE_SEEN</a></li><li><a href="global.html#INITIAL_PANTRY_ITEMS">INITIAL_PANTRY_ITEMS</a></li><li><a href="global.html#INITIAL_SELECTED_INGREDIENTS">INITIAL_SELECTED_INGREDIENTS</a></li><li><a href="global.html#INITIAL_USER">INITIAL_USER</a></li><li><a href="global.html#ItemInput">ItemInput</a></li><li><a href="global.html#ItemView">ItemView</a></li><li><a href="global.html#ListItem">ListItem</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#ModalButtons">ModalButtons</a></li><li><a href="global.html#NavigationExpenses">NavigationExpenses</a></li><li><a href="global.html#NavigationGroceryList">NavigationGroceryList</a></li><li><a href="global.html#NavigationPantry">NavigationPantry</a></li><li><a href="global.html#NavigationProfile">NavigationProfile</a></li><li><a href="global.html#NavigationRecipeList">NavigationRecipeList</a></li><li><a href="global.html#Pantry">Pantry</a></li><li><a href="global.html#PantryCard">PantryCard</a></li><li><a href="global.html#PhotoPicker">PhotoPicker</a></li><li><a href="global.html#PrimaryButton">PrimaryButton</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#Provider">Provider</a></li><li><a href="global.html#RecipeCard">RecipeCard</a></li><li><a href="global.html#RecipesList">RecipesList</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#ResetPassword">ResetPassword</a></li><li><a href="global.html#SearchRecipes">SearchRecipes</a></li><li><a href="global.html#Seeker">Seeker</a></li><li><a href="global.html#Subscription">Subscription</a></li><li><a href="global.html#TOGGLE_SAVED_STATUS">TOGGLE_SAVED_STATUS</a></li><li><a href="global.html#TagsCarousel">TagsCarousel</a></li><li><a href="global.html#TicketInfoRow">TicketInfoRow</a></li><li><a href="global.html#TitleIconPage">TitleIconPage</a></li><li><a href="global.html#TitleModalScreen">TitleModalScreen</a></li><li><a href="global.html#TitleProfile">TitleProfile</a></li><li><a href="global.html#ViewRecipe">ViewRecipe</a></li><li><a href="global.html#ViewTicket">ViewTicket</a></li><li><a href="global.html#buildIngredientsDiff">buildIngredientsDiff</a></li><li><a href="global.html#buildUpdatedPantryList">buildUpdatedPantryList</a></li><li><a href="global.html#dateBeautify">dateBeautify</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#isEmail">isEmail</a></li><li><a href="global.html#isPositiveInteger">isPositiveInteger</a></li><li><a href="global.html#isPositiveNumber">isPositiveNumber</a></li><li><a href="global.html#isRequired">isRequired</a></li><li><a href="global.html#isRequiredArray">isRequiredArray</a></li><li><a href="global.html#isValidDate">isValidDate</a></li><li><a href="global.html#matches">matches</a></li><li><a href="global.html#minLength">minLength</a></li><li><a href="global.html#postData">postData</a></li><li><a href="global.html#postDataOnboarding">postDataOnboarding</a></li><li><a href="global.html#postDataToken">postDataToken</a></li><li><a href="global.html#showToggleSavedToast">showToggleSavedToast</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#toastConfig">toastConfig</a></li><li><a href="global.html#toggleSavedPetition">toggleSavedPetition</a></li><li><a href="global.html#updatePantryListPetition">updatePantryListPetition</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sun May 17 2026 17:32:12 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

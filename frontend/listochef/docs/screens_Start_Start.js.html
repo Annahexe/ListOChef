@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: screens/Start/Start.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: screens/Start/Start.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { StyleSheet, Text, View, ImageBackground, Image } from "react-native";
+
+import RecipeListIcon from "../../../assets/icons/recipeList_iconActive.svg";
+import PantryIcon from "../../../assets/icons/pantry_iconActive.svg";
+import GroceryListIcon from "../../../assets/icons/groceryList_iconActive.svg";
+import ExpensesIcon from "../../../assets/icons/expenses_iconActive.svg";
+
+import { LinearGradient } from "expo-linear-gradient";
+import PrimaryButton from "../../components/PrimaryButton";
+import Carousel from "../../components/Carousel";
+
+/**
+ * Start screen of the ListOChef application.
+ *
+ * Displays the app logo, slogan, navigation buttons for login and
+ * registration, and a carousel presenting the app's main features.
+ *
+ * @module Start
+ */
+
+/**
+ * Renders the main welcome screen of the app.
+ *
+ * This screen acts as the entry point for users and allows them to:
+ * - navigate to the login screen
+ * - navigate to the registration screen
+ * - preview the application's main features through a carousel
+ *
+ * @function Start
+ * @param {Object} props - Props provided by the navigator.
+ * @returns {JSX.Element} The rendered start screen.
+ */
+const Start = (props) => {
+  /**
+   * Items displayed inside the feature carousel.
+   *
+   * Each item contains a title, short description, and icon representing
+   * one of the main features of the ListOChef app.
+   *
+   * @type {Array&lt;Object>}
+   */
+  const carouselItems = [
+    {
+      title: "Recipes",
+      description: "Discover new recipes or create your own in seconds",
+      icon: RecipeListIcon,
+    },
+    {
+      title: "Pantry Control",
+      description: "See all the ingredients you have at home at a glance",
+      icon: PantryIcon,
+    },
+    {
+      title: "Shopping List",
+      description: "Add the ingredients you need and never forget a thing",
+      icon: GroceryListIcon,
+    },
+    {
+      title: "Expenses Tracking",
+      description: "Track your spending by snapping a photo of your receipt",
+      icon: ExpensesIcon,
+    },
+  ];
+
+  /**
+   * Main UI layout of the Start screen.
+   *
+   * Structure:
+   * - Background image with gradient overlay
+   * - App logo and title
+   * - Slogan section
+   * - Navigation buttons (Login / Register)
+   * - Feature carousel
+   */
+  return (
+    &lt;ImageBackground source={require("../../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
+      {/* Gradient overlay for background */}
+      &lt;LinearGradient colors={["rgba(241, 255, 235, 0.39)", "rgba(49, 96, 29, 0.71)"]} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} style={styles.overlay}>
+        &lt;View style={styles.layout}>
+          {/* App logo */}
+          &lt;Image source={require("../../../assets/icons/ListoChefLogo.png")} style={styles.image} />
+
+          {/* App title */}
+          &lt;Text style={styles.appTitle}>ListOChef&lt;/Text>
+
+          {/* Slogan section */}
+          &lt;View style={styles.slogan}>
+            &lt;Text style={styles.textSlogan}>Plan your shopping.&lt;/Text>
+            &lt;Text style={styles.textSlogan}>Track your spending.&lt;/Text>
+            &lt;Text style={styles.textSlogan}>Cook like a chef.&lt;/Text>
+          &lt;/View>
+
+          {/* Navigation buttons */}
+          &lt;PrimaryButton buttonText={"Login"} onPress={() => props.navigation.navigate("Login")} />
+
+          &lt;PrimaryButton buttonText={"Register"} onPress={() => props.navigation.navigate("Register")} />
+
+          {/* Feature carousel showcasing app functionalities */}
+          &lt;Carousel
+            data={carouselItems}
+            autoScroll={true}
+            autoScrollInterval={4000}
+            renderItem={({ item }) => (
+              &lt;View style={styles.itemCard}>
+                {/* Feature icon */}
+                {item.icon &amp;&amp; &lt;item.icon width={40} height={40} />}
+
+                {/* Feature title */}
+                &lt;Text style={styles.itemTitle}>{item.title}&lt;/Text>
+
+                {/* Feature description */}
+                &lt;Text style={styles.itemDescription}>{item.description}&lt;/Text>
+              &lt;/View>
+            )}
+          />
+        &lt;/View>
+      &lt;/LinearGradient>
+    &lt;/ImageBackground>
+  );
+};
+
+/**
+ * Styles for the Start screen.
+ */
+const styles = StyleSheet.create({
+  /**
+   * Background image container covering the full screen.
+   */
+  background: {
+    flex: 1,
+    justifyContent: "center",
+  },
+
+  /**
+   * Gradient overlay placed above the background image.
+   */
+  overlay: {
+    flex: 1,
+  },
+
+  /**
+   * Main layout wrapper for all screen content.
+   */
+  layout: {
+    flex: 1,
+    justifyContent: "center",
+    alignContent: "center",
+    padding: "2%",
+  },
+
+  /**
+   * Main app title text style.
+   */
+  appTitle: {
+    fontFamily: "MontserratBold",
+    fontSize: 60,
+    lineHeight: 60,
+    color: "#173509",
+    textAlign: "center",
+    textShadowColor: "rgba(0, 0, 0, 0.1)",
+    textShadowOffset: { width: 0, height: 5 },
+    textShadowRadius: 4,
+    paddingTop: "1%",
+  },
+
+  /**
+   * Wrapper for the slogan text lines.
+   */
+  slogan: {
+    alignItems: "center",
+    margin: 20,
+    color: "#173509",
+  },
+
+  /**
+   * Individual slogan text style.
+   */
+  textSlogan: {
+    color: "#414141",
+    fontSize: 20,
+    lineHeight: 24,
+    fontFamily: "MontserratBold",
+  },
+
+  /**
+   * Logo image style.
+   */
+  image: {
+    paddingTop: "5%",
+    width: "50%",
+    height: 180,
+    resizeMode: "contain",
+    alignSelf: "center",
+    marginBottom: "2%",
+  },
+
+  /**
+   * Card style used for each carousel item.
+   */
+  itemCard: {
+    marginTop: 12,
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    backgroundColor: "#ecfbe5",
+    borderRadius: 10,
+    padding: 16,
+    minHeight: 160,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 4,
+  },
+
+  /**
+   * Title text for each carousel item.
+   */
+  itemTitle: {
+    fontSize: 20,
+    fontFamily: "InterSemiBold",
+    color: "#2C5818",
+  },
+
+  /**
+   * Description text for each carousel item.
+   */
+  itemDescription: {
+    fontSize: 15,
+    fontFamily: "MontserratSemiBold",
+    color: "black",
+    textAlign: "center",
+  },
+});
+
+export default Start;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Start.html">Start</a></li><li><a href="module-TermsConditions.html">TermsConditions</a></li></ul><h3>Global</h3><ul><li><a href="global.html#AddCircleButton">AddCircleButton</a></li><li><a href="global.html#AddPantry">AddPantry</a></li><li><a href="global.html#AddProduct">AddProduct</a></li><li><a href="global.html#AddRecipe">AddRecipe</a></li><li><a href="global.html#AddTicket">AddTicket</a></li><li><a href="global.html#AutocompleteList">AutocompleteList</a></li><li><a href="global.html#Carousel">Carousel</a></li><li><a href="global.html#Context">Context</a></li><li><a href="global.html#EditProfile">EditProfile</a></li><li><a href="global.html#Expenses">Expenses</a></li><li><a href="global.html#FilterOrderDropdown">FilterOrderDropdown</a></li><li><a href="global.html#FilterTag">FilterTag</a></li><li><a href="global.html#GroceryList">GroceryList</a></li><li><a href="global.html#GroceryListItem">GroceryListItem</a></li><li><a href="global.html#Heart">Heart</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#INITIAL_ERRORS">INITIAL_ERRORS</a></li><li><a href="global.html#INITIAL_LAST_RECIPE_SEEN">INITIAL_LAST_RECIPE_SEEN</a></li><li><a href="global.html#INITIAL_PANTRY_ITEMS">INITIAL_PANTRY_ITEMS</a></li><li><a href="global.html#INITIAL_SELECTED_INGREDIENTS">INITIAL_SELECTED_INGREDIENTS</a></li><li><a href="global.html#INITIAL_USER">INITIAL_USER</a></li><li><a href="global.html#ItemInput">ItemInput</a></li><li><a href="global.html#ItemView">ItemView</a></li><li><a href="global.html#ListItem">ListItem</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#ModalButtons">ModalButtons</a></li><li><a href="global.html#NavigationExpenses">NavigationExpenses</a></li><li><a href="global.html#NavigationGroceryList">NavigationGroceryList</a></li><li><a href="global.html#NavigationPantry">NavigationPantry</a></li><li><a href="global.html#NavigationProfile">NavigationProfile</a></li><li><a href="global.html#NavigationRecipeList">NavigationRecipeList</a></li><li><a href="global.html#Pantry">Pantry</a></li><li><a href="global.html#PantryCard">PantryCard</a></li><li><a href="global.html#PhotoPicker">PhotoPicker</a></li><li><a href="global.html#PrimaryButton">PrimaryButton</a></li><li><a href="global.html#Profile">Profile</a></li><li><a href="global.html#Provider">Provider</a></li><li><a href="global.html#RecipeCard">RecipeCard</a></li><li><a href="global.html#RecipesList">RecipesList</a></li><li><a href="global.html#Register">Register</a></li><li><a href="global.html#ResetPassword">ResetPassword</a></li><li><a href="global.html#SearchRecipes">SearchRecipes</a></li><li><a href="global.html#Seeker">Seeker</a></li><li><a href="global.html#Subscription">Subscription</a></li><li><a href="global.html#TOGGLE_SAVED_STATUS">TOGGLE_SAVED_STATUS</a></li><li><a href="global.html#TagsCarousel">TagsCarousel</a></li><li><a href="global.html#TicketInfoRow">TicketInfoRow</a></li><li><a href="global.html#TitleIconPage">TitleIconPage</a></li><li><a href="global.html#TitleModalScreen">TitleModalScreen</a></li><li><a href="global.html#TitleProfile">TitleProfile</a></li><li><a href="global.html#ViewRecipe">ViewRecipe</a></li><li><a href="global.html#ViewTicket">ViewTicket</a></li><li><a href="global.html#buildIngredientsDiff">buildIngredientsDiff</a></li><li><a href="global.html#buildUpdatedPantryList">buildUpdatedPantryList</a></li><li><a href="global.html#dateBeautify">dateBeautify</a></li><li><a href="global.html#getData">getData</a></li><li><a href="global.html#isEmail">isEmail</a></li><li><a href="global.html#isPositiveInteger">isPositiveInteger</a></li><li><a href="global.html#isPositiveNumber">isPositiveNumber</a></li><li><a href="global.html#isRequired">isRequired</a></li><li><a href="global.html#isRequiredArray">isRequiredArray</a></li><li><a href="global.html#isValidDate">isValidDate</a></li><li><a href="global.html#matches">matches</a></li><li><a href="global.html#minLength">minLength</a></li><li><a href="global.html#postData">postData</a></li><li><a href="global.html#postDataOnboarding">postDataOnboarding</a></li><li><a href="global.html#postDataToken">postDataToken</a></li><li><a href="global.html#showToggleSavedToast">showToggleSavedToast</a></li><li><a href="global.html#styles">styles</a></li><li><a href="global.html#toastConfig">toastConfig</a></li><li><a href="global.html#toggleSavedPetition">toggleSavedPetition</a></li><li><a href="global.html#updatePantryListPetition">updatePantryListPetition</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Sun May 17 2026 17:32:12 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

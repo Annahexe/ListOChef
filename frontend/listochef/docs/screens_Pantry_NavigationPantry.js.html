@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: screens/Pantry/NavigationPantry.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,41 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: screens/Pantry/NavigationPantry.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import Pantry from "./Pantry";
+import AddPantry from "./AddPantry";
 
-    <h3> </h3>
+const Stack = createNativeStackNavigator();
 
+/**
+ * Stack navigator for the Pantry section.
+ * Contains two screens: Pantry (main) and AddPantry.
+ *
+ * @returns {JSX.Element} Pantry stack navigator.
+ */
+const NavigationPantry = () => (
+  &lt;Stack.Navigator screenOptions={{ headerShown: false }}>
+    &lt;Stack.Group>
+      &lt;Stack.Screen name="Pantry" component={Pantry} />
+      &lt;Stack.Screen name="AddPantry" component={AddPantry} />
+    &lt;/Stack.Group>
+  &lt;/Stack.Navigator>
+);
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default NavigationPantry;
+</code></pre>
+        </article>
+    </section>
 
 
 

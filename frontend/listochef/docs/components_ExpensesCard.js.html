@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/ExpensesCard.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,116 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/ExpensesCard.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Text, View, StyleSheet, Pressable } from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
+/**
+ * Displays a card with pantry/ticket information.
+ * Includes supermarket name, date, number of products, total amount, and delete action.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.super - Supermarket name.
+ * @param {string} props.date - Purchase date.
+ * @param {number} props.amount - Number of products.
+ * @param {number} props.money - Total price.
+ * @param {function} props.onViewTicket - Callback when the card is pressed.
+ * @param {function} props.onDelete - Callback when delete button is pressed.
+ * @returns {JSX.Element} Pantry card component.
+ */
+const PantryCard = (props) => {
+  return (
+    &lt;View>
+      &lt;View style={styles.card}>
+        &lt;Pressable onPress={props.onViewTicket}>
+          &lt;View style={styles.tittle}>
+            &lt;Text style={styles.itemTittle}>{props.super}&lt;/Text>
+            &lt;Pressable onPress={props.onDelete}>
+              &lt;MaterialIcons name="delete-outline" size={27} color="red" />
+            &lt;/Pressable>
+          &lt;/View>
+          &lt;View style={styles.dateContainer}>
+            &lt;MaterialCommunityIcons
+              name="calendar-blank-outline"
+              size={25}
+              color="black"
+            />
+            &lt;Text style={styles.textAmount}> {props.date}&lt;/Text>
+          &lt;/View>
+          &lt;View style={styles.quantityContainer}>
+            &lt;Text style={styles.textAmount}>{props.amount} products&lt;/Text>
+            &lt;Text style={[styles.textAmount, { color: "#a1d77d" }]}>
+              {props.money}€
+            &lt;/Text>
+          &lt;/View>
+        &lt;/Pressable>
+      &lt;/View>
+    &lt;/View>
+  );
+};
 
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+const styles = StyleSheet.create({
+  card: {
+    flex: 1,
+    marginVertical: 10,
+    marginHorizontal: 20,
+    borderRadius: 15,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+    elevation: 5,
+    padding: 5,
+  },
+  itemTittle: {
+    fontFamily: "InterBold",
+    fontSize: 25,
+    color: "#4B643F",
+  },
+  tittle: {
+    width: "95%",
+    marginHorizontal: "2%",
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: "1%",
+    paddingVertical: "2%",
+    paddingHorizontal: "2%",
+  },
+  textAmount: {
+    fontFamily: "InterSemiBold",
+    color: "#414141",
+    fontSize: 19,
+  },
+  quantityContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: "2%",
+    paddingHorizontal: "2%",
+  },
+  dateContainer: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    paddingVertical: "2%",
+    paddingHorizontal: "2%",
+  },
+});
+export default PantryCard;
+</code></pre>
+        </article>
+    </section>
 
 
 

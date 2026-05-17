@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/AddCircleButton.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,50 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/AddCircleButton.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { View, StyleSheet } from "react-native";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
+/**
+ * Renders a circular button with a plus icon.
+ *
+ * @param {Object} props - Component props.
+ * @returns {JSX.Element} Circular add button.
+ */
+const AddCircleButton = (props) => {
+  return (
+    &lt;View style={[styles.button, props.style]}>
+      &lt;FontAwesome5 name="plus" size={50} color="white" />
+    &lt;/View>
+  );
+};
 
-    <h3> </h3>
+/**
+ * Stylesheet for the AddCircleButton component.
+ */
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: "#4B643F",
+    borderRadius: 50,
+    textAlign: "center",
+    marginBottom: 80,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+});
 
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default AddCircleButton;
+</code></pre>
+        </article>
+    </section>
 
 
 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/FilterOrderDropdown.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,89 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/FilterOrderDropdown.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useState } from "react";
+import { View, Pressable, StyleSheet, Text } from "react-native";
+import { Menu } from "react-native-paper";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
+/**
+ * FilterOrderDropdown component used to select the recipe order.
+ * Allows the user to choose between Oldest and Newest.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.filterOrderValue - Current selected order value.
+ * @param {Function} props.setFilterOrderValue - Updates the selected order value.
+ * @returns {JSX.Element} Dropdown menu for selecting recipe order.
+ */
+export const FilterOrderDropdown = ({ filterOrderValue, setFilterOrderValue }) => {
+  const [visible, setVisible] = useState(false);
 
-    <h3> </h3>
+  /**
+   * Updates the selected option and closes the dropdown menu.
+   *
+   * @param {string} option - Selected order option.
+   */
+  const selectOption = (option) => {
+    setFilterOrderValue(option);
+    setVisible(false);
+  };
 
+  return (
+    &lt;Menu
+      visible={visible}
+      onDismiss={() => setVisible(false)}
+      contentStyle={styles.menuContent}
+      anchor={
+        &lt;Pressable style={styles.anchor} onPress={() => setVisible(true)}>
+          &lt;Text style={styles.anchorText}>{filterOrderValue}&lt;/Text>
 
+          &lt;MaterialCommunityIcons name="chevron-down" size={22} color="#2C5818" />
+        &lt;/Pressable>
+      }
+    >
+      &lt;Menu.Item title="Oldest" onPress={() => selectOption("Oldest")} />
+      &lt;Menu.Item title="Newest" onPress={() => selectOption("Newest")} />
+    &lt;/Menu>
+  );
+};
 
-
-
-
-
-
-
-
-    
-
-
-
-
-
+const styles = StyleSheet.create({
+  anchor: {
+    height: 35,
+    width: 230,
+    paddingHorizontal: 12,
+    borderWidth: 1.5,
+    borderColor: "#2C5818",
+    borderRadius: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  anchorText: {
+    color: "#2C5818",
+    fontFamily: "MontserratSemiBold",
+    fontSize: 16,
+  },
+  menuContent: {
+    width: 230,
+    borderWidth: 1.5,
+    borderColor: "#2C5818",
+    borderRadius: 16,
+    backgroundColor: "white",
+  },
+});
+</code></pre>
+        </article>
+    </section>
 
 
 

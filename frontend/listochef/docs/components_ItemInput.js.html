@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/ItemInput.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,143 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/ItemInput.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
+import { useState } from "react";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
+/**
+ * Custom input component with support for password visibility toggle,
+ * multiline input, and error display.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.label - Input label.
+ * @param {string} props.placeholder - Placeholder text.
+ * @param {string} props.value - Current input value.
+ * @param {function} props.onChangeText - Callback when text changes.
+ * @param {boolean} [props.eye] - If true, shows password visibility toggle.
+ * @param {boolean} [props.multiline] - Enables multiline input.
+ * @param {number} [props.numberOfLines] - Number of visible lines for multiline input.
+ * @param {string} [props.keyboardType] - Keyboard type.
+ * @param {boolean} [props.editable] - Whether the input is editable.
+ * @param {string} [props.error] - Error message to display.
+ * @returns {JSX.Element} Custom input component.
+ */
+const ItemInput = (props) => {
+  const [showPassword, setShowPassword] = useState(!props.eye);
 
-    <h3> </h3>
+  return (
+    &lt;View>
+      &lt;Text style={[styles.labelStyle, props.style]}>
+        {props.label?.toUpperCase()}
+      &lt;/Text>
 
+      &lt;View
+        style={[
+          styles.inputContainer,
+          props.multiline &amp;&amp; styles.multilineInput,
+          props.error &amp;&amp; styles.inputError,
+        ]}
+      >
+        &lt;TextInput
+          style={[styles.textInput, props.eye &amp;&amp; styles.textInputWithEye]}
+          placeholder={props.placeholder}
+          placeholderTextColor="#ffffff83"
+          value={props.value}
+          onChangeText={props.onChangeText}
+          keyboardType={props.keyboardType}
+          multiline={props.multiline || false}
+          numberOfLines={props.multiline ? props.numberOfLines || 4 : 1}
+          textAlignVertical={props.multiline ? "top" : "center"}
+          secureTextEntry={props.eye &amp;&amp; !showPassword}
+          editable={props.editable ?? true}
+        />
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+        {props.eye &amp;&amp; (
+          &lt;Pressable
+            onPress={() => setShowPassword(!showPassword)}
+            style={styles.eyeContainer}
+          >
+            &lt;AntDesign
+              name={showPassword ? "eye-invisible" : "eye"}
+              size={26}
+              color="white"
+            />
+          &lt;/Pressable>
+        )}
+      &lt;/View>
+      {props.error ? &lt;Text style={styles.errorText}>{props.error}&lt;/Text> : null}
+    &lt;/View>
+  );
+};
+const styles = StyleSheet.create({
+  inputContainer: {
+    position: "relative",
+    justifyContent: "center",
+    backgroundColor: "#A5B19F",
+    paddingHorizontal: 10,
+    height: 50,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: -1, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    marginBottom: 10,
+    elevation: 5,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  textInput: {
+    flex: 1,
+    color: "#173509",
+    fontSize: 20,
+    fontFamily: "InterMedium",
+    textAlign: "left",
+  },
+  textInputWithEye: {
+    paddingRight: 50,
+  },
+  labelStyle: {
+    fontSize: 16,
+    fontFamily: "InterBold",
+    marginVertical: 5,
+    color: "#2C5818",
+    marginTop: 10,
+  },
+  multilineInput: {
+    height: 140,
+    paddingTop: 12,
+  },
+  eyeContainer: {
+    position: "absolute",
+    right: 15,
+    padding: 10,
+  },
+  inputError: {
+    borderWidth: 1,
+    borderColor: "#D9534F",
+  },
+  errorText: {
+    color: "#D9534F",
+    fontSize: 14,
+    marginTop: -5,
+    marginBottom: 8,
+    marginLeft: 4,
+    fontFamily: "InterMedium",
+  },
+});
+export default ItemInput;
+</code></pre>
+        </article>
+    </section>
 
 
 

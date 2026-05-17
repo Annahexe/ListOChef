@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: screens/RecipeList/NavigationRecipeList.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,62 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: screens/RecipeList/NavigationRecipeList.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import SearchRecipes from "./SearchRecipes";
+import AddRecipe from "./AddRecipe";
+import ViewRecipe from "./ViewRecipe";
+import RecipesList from "./RecipesList";
 
-    <h3> </h3>
+const Stack = createNativeStackNavigator();
 
+/**
+ * Stack navigator for the Recipes section.
+ * Contains four screens: RecipesList and SearchRecipes as main screens,
+ * and AddRecipe and ViewRecipe presented as transparent bottom-sheet modals.
+ *
+ * @returns {JSX.Element} Recipes stack navigator.
+ */
+const NavigationRecipeList = () => (
+  &lt;Stack.Navigator screenOptions={{ headerShown: false }}>
+    &lt;Stack.Group>
+      &lt;Stack.Screen name="RecipesList" component={RecipesList} />
+      &lt;Stack.Screen name="SearchRecipes" component={SearchRecipes} />
+    &lt;/Stack.Group>
+    &lt;Stack.Group
+      screenOptions={{
+        presentation: "transparentModal",
+        animation: "slide_from_bottom",
+        headerShown: false,
+      }}
+    >
+      &lt;Stack.Screen
+        name="AddRecipe"
+        component={AddRecipe}
+        options={{ headerShown: false, headerMode: "none" }}
+      />
+      &lt;Stack.Screen
+        name="ViewRecipe"
+        component={ViewRecipe}
+        options={{ headerShown: false, headerMode: "none" }}
+      />
+    &lt;/Stack.Group>
+  &lt;/Stack.Navigator>
+);
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default NavigationRecipeList;
+</code></pre>
+        </article>
+    </section>
 
 
 

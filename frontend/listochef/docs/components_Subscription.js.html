@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/Subscription.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,175 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/Subscription.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Text, View, Pressable, StyleSheet } from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
+/**
+ * Displays a subscription plan card (Free or Premium).
+ * Shows plan details, features, and action button.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.details - Plan type ("free" or "premium").
+ * @returns {JSX.Element} Subscription plan component.
+ */
+const Subscription = (props) => {
+  const detailsFree = [
+    "Basic access to the platform",
+    "Create up to 10 recipes",
+    "Email support",
+    "Store up to 30 ingredients in your pantry",
+  ];
+  const detailsPremium = [
+    "Total access to the platform",
+    "Create unlimited recipes",
+    "Email support and telephone support",
+    "Store unlimited ingredients in your pantry",
+  ];
+  return (
+    &lt;View
+      style={[
+        styles.containerPlan,
+        props.details !== "free" &amp;&amp; { borderWidth: 3 },
+      ]}
+    >
+      {props.details === "free" ? (
+        &lt;>
+          &lt;MaterialCommunityIcons
+            name="lightning-bolt-outline"
+            size={40}
+            color="#2C5818"
+          />
+          &lt;Text style={styles.type}>Free&lt;/Text>
+          &lt;Text style={styles.price}>0€/month&lt;/Text>
+          {detailsFree.map((detail, index) => (
+            &lt;View key={index} style={styles.detail}>
+              &lt;FontAwesome6 name="check" size={24} color="#8ce563" />
+              &lt;Text style={styles.detailText}>{detail}&lt;/Text>
+            &lt;/View>
+          ))}
+          &lt;Pressable style={styles.buttonFree}>
+            &lt;Text style={styles.buttonTextFree}>Current Plan&lt;/Text>
+          &lt;/Pressable>
+        &lt;/>
+      ) : (
+        &lt;>
+          &lt;Text style={styles.popular}>Most Popular&lt;/Text>
+          &lt;MaterialCommunityIcons
+            name="diamond-stone"
+            size={40}
+            color="#2C5818"
+          />
+          &lt;Text style={styles.type}>Premium&lt;/Text>
+          &lt;Text style={styles.price}>4,99€/month&lt;/Text>
+          {detailsPremium.map((detail, index) => (
+            &lt;View key={index} style={styles.detail}>
+              &lt;FontAwesome6 name="check" size={24} color="#8ce563" />
+              &lt;Text style={styles.detailText}>{detail}&lt;/Text>
+            &lt;/View>
+          ))}
+          &lt;Pressable style={styles.buttonPremium}>
+            &lt;Text style={styles.buttonTextPremium}>Hire Plan&lt;/Text>
+          &lt;/Pressable>
+        &lt;/>
+      )}
+    &lt;/View>
+  );
+};
 
-    <h3> </h3>
+const styles = StyleSheet.create({
+  containerPlan: {
+    borderWidth: 1,
+    borderColor: "#2C5818",
+    borderRadius: 30,
+    padding: 20,
+    marginVertical: 10,
+  },
+  type: {
+    fontSize: 20,
+    fontFamily: "InterBold",
+    color: "#2C5818",
+  },
+  price: {
+    fontSize: 36,
+    fontFamily: "MontserratRegular",
+    color: "#2C5818",
+    marginBottom: 15,
+  },
+  detail: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    marginVertical: 5,
+  },
+  detailText: {
+    paddingLeft: 10,
+    fontSize: 18,
+    fontFamily: "MontserratRegular",
+  },
+  popular: {
+    color: "white",
+    backgroundColor: "#2C5818",
+    marginTop: -33,
+    width: "35%",
+    alignSelf: "center",
+    padding: 5,
+    borderRadius: 10,
+    textAlign: "center",
+  },
+  buttonFree: {
+    width: "50%",
+    alignItems: "center",
+    alignSelf: "center",
+    borderWidth: 1,
+    borderColor: "#4B643F",
+    paddingVertical: 15,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    marginTop: 20,
+  },
+  buttonTextFree: {
+    fontSize: 15,
+    fontFamily: "MontserratRegular",
+    color: "black",
+  },
+  buttonPremium: {
+    width: "50%",
+    alignItems: "center",
+    alignSelf: "center",
+    backgroundColor: "#2C5818",
+    borderWidth: 1,
+    borderColor: "#4B643F",
+    paddingVertical: 15,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    marginTop: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: -1, height: 3 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
+  },
 
+  buttonTextPremium: {
+    fontSize: 15,
+    fontFamily: "MontserratBold",
+    color: "white",
+  },
+});
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export default Subscription;
+</code></pre>
+        </article>
+    </section>
 
 
 

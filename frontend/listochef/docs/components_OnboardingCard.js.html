@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/OnboardingCard.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,106 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/OnboardingCard.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+import { StyleSheet, Text, View, Pressable, ImageBackground, Image } from "react-native";
 
+import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import Feather from "@expo/vector-icons/Feather";
 
-    <h3> </h3>
+/**
+ * OnboardingCard component used as a common layout for onboarding screens.
+ * Displays the app background, gradient overlay, logo, app title, page title,
+ * back button and custom children content.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.pageTitle - Title displayed for the current onboarding page.
+ * @param {Object|Array} props.titleStyle - Optional custom style for the page title.
+ * @param {JSX.Element|JSX.Element[]} props.children - Screen content displayed inside the card.
+ * @returns {JSX.Element} Onboarding card layout.
+ */
+export default function OnboardingCard(props) {
+  const navigation = useNavigation();
 
+  return (
+    &lt;ImageBackground source={require("../../assets/fondoApp.png")} style={styles.background} resizeMode="cover">
+      &lt;LinearGradient colors={["rgba(241, 255, 235, 0.39)", "rgba(49, 96, 29, 0.71)"]} start={{ x: 0.5, y: 0 }} end={{ x: 0.5, y: 1 }} style={styles.overlay}>
+        &lt;View style={styles.card}>
+          &lt;View style={styles.titleContainer}>
+            &lt;Feather style={styles.backBtn} name="chevron-left" size={55} color="rgba(75, 100, 63, 0.7)" onPress={() => navigation.goBack()} />
+            &lt;Image source={require("../../assets/icons/ListoChefLogo.png")} style={styles.image} />
+            &lt;Text style={styles.appTitle}>ListOChef&lt;/Text>
+            &lt;Text style={[styles.pageTitle, props.titleStyle]}>{props.pageTitle}&lt;/Text>
+          &lt;/View>
+          {props.children}
+        &lt;/View>
+      &lt;/LinearGradient>
+    &lt;/ImageBackground>
+  );
+}
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  card: {
+    width: "90%",
+    height: "85%",
+    backgroundColor: "rgba(254,254,254,0.7)",
+    borderRadius: 20,
+    padding: 15,
+  },
+  titleContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative",
+  },
+  backBtn: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+  },
+  image: {
+    height: 120,
+    resizeMode: "contain",
+    alignSelf: "center",
+  },
+  appTitle: {
+    fontFamily: "MontserratBold",
+    fontSize: 50,
+    lineHeight: 60,
+    color: "#173509",
+    textShadowColor: "rgba(0, 0, 0, 0.1)",
+    textShadowOffset: { width: 0, height: 5 },
+    textShadowRadius: 4,
+  },
+  pageTitle: {
+    fontFamily: "MontserratBold",
+    fontSize: 40,
+    color: "#414141",
+    textAlign: "center",
+    textShadowColor: "rgba(0, 0, 0, 0.1)",
+    textShadowOffset: { width: 0, height: 5 },
+    textShadowRadius: 4,
+  },
+});
+</code></pre>
+        </article>
+    </section>
 
 
 

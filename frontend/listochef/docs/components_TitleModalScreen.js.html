@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: components/TitleModalScreen.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,60 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: components/TitleModalScreen.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { View, Text, StyleSheet, Pressable } from "react-native";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+/**
+ * Modal header component with title and close button.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} props.title - Title text to display.
+ * @param {function} props.onPress - Callback when close button is pressed.
+ * @param {number} [props.size] - Optional font size for the title.
+ * @returns {JSX.Element} Modal title header component.
+ */
+const TitleModalScreen = (props) => (
+  &lt;View style={styles.titlecontainer}>
+    &lt;Text style={[styles.title, { fontSize: props.size ? props.size : 40 }]}>
+      {props.title}
+    &lt;/Text>
+    &lt;Pressable onPress={props.onPress} style={styles.closeButton}>
+      &lt;AntDesign name="close" size={35} color="black" />
+    &lt;/Pressable>
+  &lt;/View>
+);
+const styles = StyleSheet.create({
+  titlecontainer: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+    position: "relative",
+  },
+  title: {
+    fontSize: 40,
+    fontFamily: "MontserratBold",
+    lineHeight: 45,
+    paddingRight: 45,
+  },
+  closeButton: {
+    position: "absolute",
+    right: 10,
+    top: 0,
+    padding: 5,
+  },
+});
+export default TitleModalScreen;
+</code></pre>
+        </article>
+    </section>
 
 
 
