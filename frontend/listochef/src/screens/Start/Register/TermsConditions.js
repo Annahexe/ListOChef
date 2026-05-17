@@ -1,4 +1,9 @@
-import { StyleSheet, Text, ScrollView } from "react-native";
+import { useContext, useState } from "react";
+import { StyleSheet, Text, ScrollView, View, Image } from "react-native";
+import Toast from "react-native-toast-message";
+import Context from "../../../context/Context";
+import PrimaryButton from "../../../components/PrimaryButton";
+import { postDataOnboarding } from "../../../services/services";
 import OnboardingCard from "../../../components/OnboardingCard";
 
 /**
@@ -16,6 +21,172 @@ import OnboardingCard from "../../../components/OnboardingCard";
  * @returns {JSX.Element} A scrollable view containing the app's terms and conditions
  */
 const TermsConditions = (props) => {
+  const {
+    route,
+    setToken,
+    setIngredientTags,
+    setUser,
+    setRecipesSaved,
+    setListRecipesTags,
+    setSelectedIngredients,
+    setPantryItems,
+    setListRecipesCategories,
+    setTicketsSaved,
+  } = useContext(Context);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  /**
+   * Performs a hidden guest login used for demo/testing purposes.
+   *
+   * This function first attempts to authenticate using a predefined
+   * guest account from the backend. If the server is unavailable,
+   * it falls back to locally generated mock data so the user can
+   * still explore the application without an internet connection.
+   *
+   * The function populates the global app context with:
+   * - Guest user information
+   * - Demo recipes
+   * - Demo expense tickets
+   * - Ingredient tags
+   * - Recipe categories and tags
+   * - Pantry and grocery list placeholders
+   *
+   * It is mainly intended for:
+   * - Academic demonstrations
+   * - Offline presentations
+   * - Long term testing without backend dependency
+   *
+   * On success, the user is redirected to the Home screen.
+   *
+   * @async
+   * @function secretGuestLogin
+   * @returns {Promise<void>}
+   */
+  const secretGuestLogin = async () => {
+    const guestCredentials = {
+      email: "guest@listochef.app",
+      password: "12345",
+    };
+
+    setIsLoading(true);
+
+    const response = await postDataOnboarding(route + "/login", guestCredentials);
+
+    setIsLoading(false);
+
+    if (!response) {
+      Toast.show({
+        type: "error",
+        text1: "Server offline",
+        text2: "Continuing as guest with limited data.",
+      });
+      setUser({
+        name: "Guest",
+        surname: "User",
+        email: "guest@listochef.app",
+        myTicketsList: [
+          {
+            ticketPictureUri: Image.resolveAssetSource(require("../../../../assets/icons/ListoChefLogo.png")).uri,
+            supermarket: "Mercadona",
+            ticketDate: "2026-05-06T19:05:21.360+00:00",
+            amountProducts: 1,
+            totalPrice: 10.8,
+          },
+        ],
+        myGroceryList: [],
+        myPantryList: [],
+      });
+
+      setToken("guest-token");
+      setIngredientTags([
+        { name: "All", icon: "" },
+        { name: "Proteins", icon: "🥩" },
+      ]);
+      setListRecipesTags([{ name: "Pasta" }, { name: "Dessert" }]);
+      setListRecipesCategories([{ name: "Breakfast" }, { name: "Lunch" }]);
+      setRecipesSaved([
+        {
+          id: "6a0377e43e56873dbe285369",
+          recipeName: "Spanish Omelette",
+          ingredients: ["Egg", "Potato", "Onion", "Olive Oil", "Salt"],
+          steps: "Fry the potatoes.\nMix with beaten eggs.\nCook in a pan on both sides until set.",
+          category: "Egg",
+          time: 40,
+          difficulty: "Medium",
+          photo: Image.resolveAssetSource(require("../../../../assets/icons/ListoChefLogo.png")).uri,
+          creationDate: "2025-12-19T00:00:00Z",
+          tags: ["Egg", "Traditional", "Spanish"],
+          saved: true,
+        },
+        {
+          id: "6a0377e43e56873dbe28536f",
+          recipeName: "Baked Salmon With Honey Mustard",
+          ingredients: ["Salmon", "Mustard", "Honey", "Olive Oil", "Lemon", "Salt", "Pepper"],
+          steps: "Mix the sauce.\nCoat the salmon.\nBake for 12–15 minutes.\nServe.",
+          category: "Fish",
+          time: 25,
+          difficulty: "Easy",
+          photo: Image.resolveAssetSource(require("../../../../assets/icons/ListoChefLogo.png")).uri,
+          creationDate: "2026-02-18T00:00:00Z",
+          tags: ["Fish", "Oven", "Healthy"],
+          saved: true,
+        },
+      ]);
+
+      setTicketsSaved([
+        {
+          ticketPictureUri: Image.resolveAssetSource(require("../../../../assets/icons/ListoChefLogo.png")).uri,
+          supermarket: "Mercadona",
+          ticketDate: "2026-05-06T19:05:21.360+00:00",
+          amountProducts: 1,
+          totalPrice: 10.8,
+        },
+      ]);
+
+      props.navigation.navigate("Home");
+      return;
+    }
+
+    const [status, jsonResponse] = response;
+
+    if (status === 200) {
+      setIngredientTags([
+        { name: "All", icon: "" },
+        ...jsonResponse.listIngredientsTags.map((ingredient) => ({
+          name: ingredient.ingredientCategoryName,
+          icon: ingredient.icon,
+        })),
+      ]);
+
+      setUser(jsonResponse.user);
+      setToken(jsonResponse.token);
+      setRecipesSaved(jsonResponse.recipesSavedList);
+      setTicketsSaved(jsonResponse.user.myTicketsList);
+
+      setListRecipesTags([
+        { name: "All", icon: "" },
+        ...jsonResponse.listRecipesTags.map((tag) => ({
+          name: tag.name,
+          icon: "",
+        })),
+      ]);
+
+      setListRecipesCategories(jsonResponse.listRecipesCategories);
+      setSelectedIngredients(jsonResponse.user.myGroceryList);
+      setPantryItems(jsonResponse.user.myPantryList);
+
+      props.navigation.navigate("Home");
+      return;
+    }
+
+    Toast.show({
+      type: "error",
+      text1: "Guest login failed",
+    });
+    props.navigation.navigate("Home");
+  };
+
   return (
     /**
      * OnboardingCard provides consistent layout and styling
@@ -23,14 +194,15 @@ const TermsConditions = (props) => {
      */
     <OnboardingCard pageTitle="Terms and Conditions">
       <ScrollView showsVerticalScrollIndicator={false}>
-        
         {/* Introduction text */}
         <Text style={styles.text}>
           Welcome to <Text style={styles.bold}>ListOChef</Text>. By using this application, you agree to the following terms and conditions.
         </Text>
 
         {/* Section 1 */}
-        <Text style={styles.sectionTitle}>1. Use of the App</Text>
+        <Text style={styles.sectionTitle} onPress={() => secretGuestLogin()}>
+          1. Use of the App
+        </Text>
         <Text style={styles.text}>
           ListOChef has been developed solely for <Text style={styles.bold}>educational purposes</Text> as part of a group academic project. By using this app,
           you agree to these <Text style={styles.bold}>Terms and Conditions</Text>.
@@ -99,7 +271,6 @@ const TermsConditions = (props) => {
             "These Terms and Conditions may be updated at any time for academic or technical reasons.\nContinued use of the app after changes means you accept the updated terms."
           }
         </Text>
-
       </ScrollView>
     </OnboardingCard>
   );
