@@ -15,7 +15,7 @@
 | [@Annahexe](https://github.com/Annahexe) | Frontend Developer · Scrum Master | 
 | [@BeaAlumFlor](https://github.com/BeaAlumFlor) | Frontend Developer |
 | [@Iggox](https://github.com/Iggox) | Backend Developer |
-| [@jomote-florida](https://github.com/jomote-florida) | Backend Developer · Product Owner |
+| [@Natare21](https://github.com/Natare21) | Backend Developer · Product Owner |
 | [@RTerabyte](https://github.com/RTerabyte) | Backend Developer |
 
 </div>
